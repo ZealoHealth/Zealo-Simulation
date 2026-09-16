@@ -1,0 +1,26 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+
+# Data: raw sources ARE tracked on purpose (reproducibility).
+# Intermediate build output is not.
+data/interim/*
+!data/interim/.gitkeep

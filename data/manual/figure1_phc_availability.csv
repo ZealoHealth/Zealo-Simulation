@@ -1,0 +1,20 @@
+# Template for R1 — see data/manual/REQUESTS.md
+# Source: Figure 1, page 4 of data/raw/gadag_phc_survey_cureus_e39341.pdf
+# Fill in availability_pct for each PHC. Keep the header row. Delete these comment lines or leave them; the parser skips lines starting with '#'.
+# Known from the paper's text: phc_4 = 94.17, phc_1 = 45.45. Mean of all 15 should be ~74.20.
+phc_label,availability_pct
+PHC 1,45.45
+PHC 2,
+PHC 3,
+PHC 4,94.17
+PHC 5,
+PHC 6,
+PHC 7,
+PHC 8,
+PHC 9,
+PHC 10,
+PHC 11,
+PHC 12,
+PHC 13,
+PHC 14,
+PHC 15,
