@@ -4,6 +4,54 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Milestone 8 — Inventory map — 2026-09-16
+
+**Status:** complete and verified in a real browser against the live backend. Nothing committed.
+
+### Added — `frontend/`
+Vite 8 + React 19 + TypeScript 6, Tailwind 4 (CSS-first `@theme` with Zealo's palette),
+Leaflet + react-leaflet 5 with marker clustering, TanStack Query, Zustand, Vitest.
+
+- `api/types.ts`, `api/client.ts`, `api/hooks.ts` — typed client mirroring the backend schemas,
+  including a typed `ApiError` that distinguishes *missing real-world inputs* from *broken*.
+- `state/store.ts` — view state only: day, mode, filters, selection.
+- `components/map/` — `InventoryMap` (tiles, boundary, clustered markers, animated transfer
+  lines, off-map manufacturer arrows), `icons.ts`, `Legend.tsx`, `mapLogic.ts`.
+- `components/panels/` — `FacilityPanel`, `MedicineSearch`, `EventFeed`.
+- `components/` — `Provenance` badges, `Disclaimer`, `NetworkTotals`, `MissingInputsNotice`,
+  `TimeControls`.
+- `pages/InventoryMapPage.tsx` — the assembled view.
+- **41 frontend tests** covering map logic, playback, the mode toggle and missing-run handling.
+
+### Design decisions worth keeping
+- **Markers encode two channels** — shape for facility type, colour for stock status, plus a
+  glyph — so the map stays readable without colour vision.
+- **Pure map logic is separated from Leaflet** so filtering, distance ranking and transfer-line
+  selection are tested without mounting a map.
+- **Out-of-stock facilities stay in the medicine search results.** "Who has run out" is the
+  question the map exists to answer; filtering them away would hide the shortage.
+- **Transfers stay visible for a short trailing window** — at playback speed a single-day line
+  would flicker past unseen.
+- **Manufacturers are drawn entering from the map edge**, because the dataset does not record
+  where they are and putting them at a point on the map would invent a location.
+- **Value figures are omitted, not zeroed**, in the totals panel.
+- The facility panel repeats *in place* that a PHC's stock pattern is an illustrative
+  assignment — a marker on a real location invites the reader to believe otherwise.
+
+### The 422 is a designed state
+`/simulate` currently refuses (R5 and R1 outstanding). The map still loads **77 real facility
+locations**, the taluk boundary and 53 real medicines, and the right-hand panel explains exactly
+which inputs are missing rather than showing a blank page or a fabricated run.
+
+### Verified in the browser
+Real OSM tiles, the boundary outline, clustering, the legend, layer toggles, the medicine list
+and the missing-inputs notice all render against the live API, with no console errors beyond the
+expected 422. Fixed two things found this way: absolute filesystem paths leaking into the UI
+through the error message, and a `?? []` that allocated a new array every render and defeated
+memoisation.
+
+---
+
 ## Milestone 7 — API — 2026-09-16
 
 **Status:** complete. Read endpoints serve real data; `/simulate` is built end to end but

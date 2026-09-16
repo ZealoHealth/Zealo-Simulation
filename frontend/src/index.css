@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Zealo's palette. Defined as theme tokens so components never hard-code a hex. */
+@theme {
+  --color-navy: #231C44;
+  --color-purple: #6A4CA8;
+  --color-coral: #F0674A;
+  --color-lavender: #F3F1F8;
+
+  --color-status-green: #1F9D55;
+  --color-status-amber: #D97706;
+  --color-status-red: #DC2626;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-lavender);
+  color: var(--color-navy);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Leaflet ships its own CSS; these keep it inside our layout. */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #f8f8f6;
+}
+
+/* A transfer line that reads as movement rather than a static link. */
+@keyframes zealo-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.zealo-transfer-line {
+  animation: zealo-dash 1s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zealo-transfer-line {
+    animation: none;
+  }
+}

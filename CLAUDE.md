@@ -201,6 +201,27 @@ Direct equivalents:
 - **Verified 2026-09-16:** `censusindia.gov.in` and `nppa.gov.in` both serve an incomplete TLS
   chain and cannot be fetched with verification on. Do not work around this with `-k`.
 
+## Frontend notes (Milestone 8)
+
+- `frontend/`: Vite 8 + React 19 + TypeScript 6, Tailwind 4 (CSS-first `@theme`, no JS config),
+  Leaflet + react-leaflet 5 + react-leaflet-cluster, TanStack Query for server state, Zustand
+  for view state, Vitest + Testing Library. Lint is `oxlint` (Vite template default).
+- **Split of concerns: TanStack Query owns server data, Zustand owns view state.** Playback
+  advances the day in the store many times a second and must never trigger a request; the
+  timeline arrives once from `/simulate`.
+- **Pure map logic lives in `components/map/mapLogic.ts`** so filtering, distance ranking and
+  transfer lines are testable without mounting Leaflet. Put new map behaviour there.
+- **Markers encode two channels**: shape = facility type, colour = stock status, plus a glyph.
+  Do not collapse to colour alone — it has to stay readable without colour vision.
+- **Tile URL and API base URL are env vars** (`frontend/.env.example`). OSM attribution is
+  always rendered; the tile provider is swappable without a code change.
+- `MissingInputsNotice` is a **designed state, not an error screen**: when `/simulate` returns
+  422 the map still shows real facilities and the panel explains which requests are outstanding.
+- Watch for `?? []` in render paths — it allocates a new array each render and silently breaks
+  memoisation. Use the module-level `NO_FACILITIES` / `NO_MEDICINES` constants.
+- Verified in a real browser against the live backend: tiles, boundary, clustering, legend,
+  medicine list and the 422 state all render, with no console errors beyond the expected 422.
+
 ## Open questions
 
 - **R7 match confirmations** — 51 of 104 survey items need a decision in
@@ -227,7 +248,7 @@ Direct equivalents:
 | 5 | Demand and starting inventory | blocked on R4, R5 |
 | 6 | Simulation core | **done — engine, both policies, metrics, 36 tests** |
 | 7 | API | **done — all endpoints; /simulate gated on R1+R5** |
-| 8 | Inventory map | not started |
+| 8 | Inventory map | **done — map, search, panel, playback, feed** |
 | 9 | Facility dashboard + redistribution view | not started |
 | 10 | Comparison, Settings, Data Sources, About | not started |
 | 11 | Deployment | not started |

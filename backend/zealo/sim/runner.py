@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from zealo.config import MANUAL_DIR
+from zealo.config import MANUAL_DIR, REPO_ROOT
 from zealo.data_access import load_facilities, survey_linked_medicines
 from zealo.sim.engine import RunResult, Scenario, run
 from zealo.sim.models import (
@@ -116,6 +116,15 @@ def load_availability_matrix(path: Path | None = None) -> dict[tuple[int, int], 
     return matrix
 
 
+def _repo_relative(path: Path) -> str:
+    """Paths shown to users are repo-relative: an absolute path exposes whoever
+    happened to run the build, and means nothing to a reader of the site."""
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def check_inputs() -> None:
     """Raise unless every real-world input a run needs is present."""
     missing: list[str] = []
@@ -123,13 +132,13 @@ def check_inputs() -> None:
     if load_population() is None:
         missing.append(
             "official Gadag taluk and Karnataka population figures "
-            f"(expected at {POPULATION_JSON})"
+            f"(expected at {_repo_relative(POPULATION_JSON)})"
         )
         requests.append("R5")
     if load_availability_matrix() is None:
         missing.append(
             "the reconstructed PHC availability matrix, which needs the Figure 1 "
-            f"per-PHC values (expected at {AVAILABILITY_MATRIX_CSV})"
+            f"per-PHC values (expected at {_repo_relative(AVAILABILITY_MATRIX_CSV)})"
         )
         requests.append("R1")
     if missing:
