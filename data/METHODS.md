@@ -156,6 +156,52 @@ indent is a *request*, not consumption, so this is a demand proxy — not measur
 
 ---
 
+## `methods:facility_list` — Building the facility list *(Milestone 4 — implemented)*
+
+**Script:** `data/pipeline/03_build_facilities.py`. **Code:** `backend/zealo/pipeline/facilities.py`.
+**Tests:** `backend/tests/test_facilities.py`.
+
+**Coordinates are `real`** — copied from OSM. **Facility type and ownership are `derived`**:
+OSM carries no `operator` or `beds` tag for any facility in Gadag, so both are inferred from
+names and descriptions. **Beds are unknown**, not estimated.
+
+**Type rules**, in order: an explicit "District Hospital" → district hospital; "PHC" or
+"primary health" → PHC; "CHC"/"community health" → CHC; "taluk"/"taluka" → taluk hospital;
+`amenity=pharmacy` → pharmacy; any other government marker → **`government_other`**;
+`amenity=hospital` → private hospital; `amenity=clinic|doctors` → clinic.
+
+`government_other` exists deliberately. "Railway Hospital", "Rural Medical Service Hulkoti",
+"Kadadi Government Hospital" and "Mulagund Government Hospital" are clearly government but of
+unstated level. **The level decides which medicine list a facility carries** (the indent's
+PHC/CHC/TLH/DLH columns), so calling them all taluk hospitals would hand several of them the
+wrong list. They are typed as unclear and sent to a human.
+
+A bare "Primary Health Care" is also flagged rather than trusted — a private clinic can use that
+phrase, and treating it as a government PHC would put a state medicine list on a private clinic.
+
+**De-duplication** merges two records only when they are within **50 m** *and* score **≥ 85** on
+name similarity, which ignores generic words ("hospital", "clinic", "nursing home", "dr") and
+compares with `token_sort_ratio`. Pairs within 120 m scoring ≥ 70 are **flagged, not merged**.
+
+The scorer matters: `token_set_ratio` and a substring test both score a subset as a perfect
+match, which merged "J C Shirol Nursing Home", "V C Shirol Nursing Home", "Shirol Nursing Home"
+and "Shirola Hospital" into a single facility — almost certainly different practices sharing a
+family name. **Erasing a real facility is worse than asking a human**, so the distinguishing
+initials are allowed to lower the score.
+
+**Exclusions** are recorded with a reason, never silently dropped: a veterinary hospital (animal
+health) and a blood bank (no medicine inventory). Both appear in the build report.
+
+**Labels.** Facilities are numbered per type, ordered north→south then west→east, so labels are
+stable across runs. A type with a single member drops the number ("District Hospital"). Real
+names never reach `data/processed/`; a test asserts it, after a review note quoting a
+neighbouring facility's name leaked one during development.
+
+**Nothing is usable yet:** `verified` is false for all 77 until the team confirms
+`data/manual/facility_verification.csv`.
+
+---
+
 ## `methods:facility_demand_split` — Splitting demand between facilities *(Milestone 5)*
 
 Preferred: split each item's taluk demand across the government facilities that carry it (per

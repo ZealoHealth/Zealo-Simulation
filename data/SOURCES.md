@@ -116,17 +116,42 @@ from text or word distance — see `methods:survey_tables` and `methods:indent_m
 
 ---
 
-## 3. `osm_overpass` — OpenStreetMap health facilities — **planned** (Milestone 4)
+## 3. `osm_overpass` — OpenStreetMap health facilities — **obtained**
 
 | | |
 |---|---|
-| **Source** | OpenStreetMap via the Overpass API |
-| **Query** | `amenity=hospital\|clinic\|doctors\|pharmacy`, `healthcare=*` within the Gadag taluk boundary |
+| **Source** | OpenStreetMap via the Overpass API (`overpass-api.de`) |
+| **Query** | `nwr[amenity~"^(hospital\|clinic\|doctors\|pharmacy)$"]` and `nwr[healthcare]` within area `3604155661` |
 | **Licence** | **ODbL**. Required credit: **© OpenStreetMap contributors** — shown on every map. |
-| **Access** | Automated (Overpass API is intended for programmatic use; we rate-limit and set a descriptive user agent). |
+| **Access** | Automated. Overpass is intended for programmatic use; a descriptive user agent is sent and queries are run once and cached to `data/raw/`, not re-fetched per build. |
+| **Retrieved** | 2026-09-16 |
+| **Raw files** | `data/raw/osm/overpass_gadag_health_20260916.json` (82 elements)<br>`data/raw/osm/overpass_gadag_taluk_boundary_20260916.json` |
 
-**Limitations:** OSM coverage in small Indian towns is uneven; absence from OSM is not evidence
-that a facility does not exist. Tags are contributor-entered and may be stale.
+**Boundary:** OSM relation **4155661**, `name="Gadag taluk"`, `admin_level=6`
+(wikidata Q123257397). Note admin_level **5** is the *district* ("Gadag", Q2353931) in this part
+of India — the two are easy to confuse. The relation's 9 outer ways stitch into a single closed
+ring of 446 points, used both to draw the taluk outline and to validate that every facility
+coordinate falls inside it.
+
+**What it yielded:** 82 OSM elements → **77 facilities** after merging duplicates and excluding 2
+non-human-medicine records (a veterinary hospital and a blood bank). All 77 fall inside the
+boundary. Breakdown: 39 private hospitals, 25 clinics, 5 PHCs, 4 government facilities of
+unclear level, 3 pharmacies, 1 district hospital.
+
+**Limitations — these matter a great deal here:**
+- **Only 5 of the taluk's 15 PHCs are in OSM.** The survey covers all 15, so 10 availability
+  profiles have no location to attach to. Blocked on the HMIS facility list (request R4).
+  **No PHC locations will be invented.**
+- **Only 3 pharmacies.** A taluk with Gadag town in it plainly has many more. Absence from OSM
+  is not evidence that a facility does not exist.
+- **No `operator` tag and no `beds` tag on any facility.** Facility type and ownership are
+  therefore `derived` from names and descriptions, not read from a field, and bed counts are
+  simply unknown. This is why every facility goes to a verification sheet and why `verified`
+  starts false for all 77.
+- Tags are contributor-entered and may be stale. Several records cite `source=Local Knowledge`.
+
+**Real names** are kept in `data/raw/osm/` and in `data/manual/facility_verification.csv` only.
+`data/processed/facilities.csv` carries display labels and no names, enforced by a test.
 
 ---
 

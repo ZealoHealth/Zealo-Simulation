@@ -125,6 +125,18 @@ Direct equivalents:
   starts between x=158.3 and x=178.9, so the category/PHC split at 178.0 is unambiguous.
 - **Indent codes have three forms:** `D#####` (761), `M#####` (122 consumables), and 7 dotted
   EDL-style codes. The dotted ones share no values with the survey, so there is still no join.
+- **OSM boundary: relation 4155661 = "Gadag taluk" (admin_level 6).** admin_level 5 is the
+  *district*, not the taluk — easy to confuse. 9 outer ways stitch to one closed 446-point ring.
+- **OSM has no `operator` or `beds` tag for any Gadag facility**, so type and ownership are
+  `derived` from names and beds are unknown. Hence the verification sheet and `verified=false`.
+- **`government_other` is a deliberate type.** "Railway Hospital" etc. are government but of
+  unstated level, and the level picks the medicine list — so it is not guessed.
+- **Use `token_sort_ratio` for facility names, never `token_set_ratio` or a substring test.**
+  Both score a subset as perfect and merged four distinct Shirol practices into one facility.
+- **Real names must never reach `data/processed/`.** A review note quoting a neighbouring
+  facility's name leaked one; flags in processed output are now short codes, with the
+  name-bearing prose confined to the verification sheet. Guarded by a test.
+- **PHC gap: OSM has 5, the survey covers 15.** Blocked on R4 (HMIS). Do not invent locations.
 - **Matching needs three signals, not one score.** Name similarity alone matched syrup to
   capsules at 81 and a wrong drug at 50. Base name + dosage form + per-family strength, all
   three required, plus no near-tie and no two items claiming the same indent row.
@@ -149,6 +161,10 @@ Direct equivalents:
 
 - **R7 match confirmations** — 51 of 104 survey items need a decision in
   `data/manual/indent_match_review.csv`. They are excluded from the build until then.
+- **R8 facility verification** — 77 facilities need checking; 12 carry flags. `verified` is
+  false for all of them until then.
+- **PHC gap (R4)** — only 5 of 15 PHCs are locatable from OSM. Blocks assigning the survey's 15
+  availability profiles to real locations.
 - **R5 population figures** — blocks the demand formula; must be official and cited.
 - **Unit prices** — no source identified yet; ask before using illustrative prices.
 - **HMIS availability** — determines whether the demand split is `derived` or `estimated`.
@@ -163,7 +179,7 @@ Direct equivalents:
 | 1 | Plan and scaffold | **done** |
 | 2 | Survey data | **tables 1–3 extracted + verified; matrix blocked on R1** |
 | 3 | Medicine master list | **done — 51 matches await your confirmation (R7)** |
-| 4 | Facilities | blocked on R2, R3 |
+| 4 | Facilities | **built from OSM — awaiting R8 verification; PHC gap needs R4** |
 | 5 | Demand and starting inventory | blocked on R4, R5 |
 | 6 | Simulation core | not started |
 | 7 | API | not started |

@@ -4,6 +4,60 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Milestone 4 — Facility list from OpenStreetMap — 2026-09-16
+
+**Status:** built and tested. **Not usable until you verify it (R8)**, and the PHC gap needs R4.
+Nothing committed.
+
+### Added
+- `backend/zealo/pipeline/facilities.py` — boundary stitching, point-in-polygon, type and
+  ownership classification, de-duplication, stable labelling.
+- `data/pipeline/03_build_facilities.py` — runnable; preserves anything already recorded in the
+  verification sheet.
+- `backend/tests/test_facilities.py` — 32 tests.
+
+### Data obtained (Overpass API, ODbL, retrieved 2026-09-16)
+- `data/raw/osm/overpass_gadag_health_20260916.json` — 82 elements
+- `data/raw/osm/overpass_gadag_taluk_boundary_20260916.json` — relation **4155661**,
+  `admin_level=6`. (admin_level 5 is the *district* — a real trap.)
+
+### Output
+- `data/processed/facilities.csv` — **77 facilities, no real names**
+- `data/processed/gadag_taluk_boundary.geojson` — 446-point ring for the map
+- `data/manual/facility_verification.csv` — **77 rows with names and two map links, for R8**
+- `data/interim/facility_build_report.json`
+
+82 elements → 77 facilities: 39 private hospitals, 25 clinics, 5 PHCs, 4 government facilities of
+unclear level, 3 pharmacies, 1 district hospital. All 77 verified as inside the taluk boundary.
+2 excluded with a recorded reason (veterinary hospital, blood bank).
+
+### The finding that matters most
+**OSM has 5 PHCs; the survey covers 15.** Ten of the survey's availability profiles have no
+location to attach to. This is not worked around — it needs the HMIS facility list (R4), and no
+PHC location will be invented. OSM also lists only **3 pharmacies** in the whole taluk, which is
+plainly an undercount.
+
+### Three defects found and fixed
+1. **Over-merging erased real facilities.** `token_set_ratio` and a substring test both score a
+   subset as a perfect match, so "J C Shirol Nursing Home", "V C Shirol Nursing Home", "Shirol
+   Nursing Home" and "Shirola Hospital" collapsed into one. Switched to `token_sort_ratio` with
+   no substring shortcut: the distinguishing initials now lower the score, J C and V C stay
+   separate, and the pair is flagged for a human instead.
+2. **Real names leaked into `data/processed/`** — a duplicate-suspect note read *"29 m from 'V C
+   Shirol Nursing Home'"*, and `facilities.csv` is what the website reads. Review output is now
+   split: short flag codes (safe to publish) in processed data, name-bearing prose only in the
+   verification sheet. **A test now asserts no real name appears anywhere in `data/processed/`.**
+3. **Government facilities were being called taluk hospitals.** "Railway Hospital" and "Rural
+   Medical Service Hulkoti" are government but of unstated level, and the level decides which
+   medicine list a facility carries. Added a `government_other` type so the level is asked for
+   rather than guessed. A bare "Primary Health Care" name is likewise flagged, not trusted.
+
+### Provenance
+Coordinates are `real` (OSM). Type and ownership are `derived` — OSM has no `operator` tag for
+any Gadag facility. Beds are **unknown**, not estimated. `verified` is false for all 77.
+
+---
+
 ## Milestone 3 — Medicine master list and indent matching — 2026-09-16
 
 **Status:** complete. 51 matches await your confirmation before they enter the build.

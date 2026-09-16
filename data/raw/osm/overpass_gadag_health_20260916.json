@@ -1,0 +1,1209 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-09-16T07:34:35Z",
+    "timestamp_areas_base": "2026-09-15T17:29:01Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1466778156,
+  "lat": 15.4330500,
+  "lon": 75.6367673,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr K D Godkhindi"
+  }
+},
+{
+  "type": "node",
+  "id": 1466778238,
+  "lat": 15.4311936,
+  "lon": 75.6371348,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "Shirol Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 1473218502,
+  "lat": 15.4325215,
+  "lon": 75.6375704,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Lakhani Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 1473276613,
+  "lat": 15.4329662,
+  "lon": 75.6453273,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr Bhaskar Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 1474002795,
+  "lat": 15.4314545,
+  "lon": 75.6357379,
+  "tags": {
+    "amenity": "pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 1474002803,
+  "lat": 15.4315773,
+  "lon": 75.6464587,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Hiregoudar Dental Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 1474002807,
+  "lat": 15.4317079,
+  "lon": 75.6361992,
+  "tags": {
+    "amenity": "pharmacy",
+    "name": "Fathepur Medicals"
+  }
+},
+{
+  "type": "node",
+  "id": 1474289491,
+  "lat": 15.4297273,
+  "lon": 75.6332647,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Veterinary Hospital",
+    "name:kn": "ಪಶುವೈದ್ಯ ಆಸ್ಪತ್ರೆ"
+  }
+},
+{
+  "type": "node",
+  "id": 1474289553,
+  "lat": 15.4345955,
+  "lon": 75.6372110,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Khona Blood bank"
+  }
+},
+{
+  "type": "node",
+  "id": 1474747637,
+  "lat": 15.4292788,
+  "lon": 75.6299550,
+  "tags": {
+    "amenity": "pharmacy",
+    "name": "Vikram Medicals"
+  }
+},
+{
+  "type": "node",
+  "id": 6939465009,
+  "lat": 15.4276582,
+  "lon": 75.6471106,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Near Stadium 3Road Cross Panchaxari Nagar Plot No-445/B, Anand Ashram Road",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Dr.Gadag Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6944236563,
+  "lat": 15.4314887,
+  "lon": 75.6403515,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "K C Rani Road,Masari",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Hosmath Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6944464757,
+  "lat": 15.4206667,
+  "lon": 75.6225644,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulgunda Road",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Kasturba Hospital, Gadag",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6944464762,
+  "lat": 15.4195950,
+  "lon": 75.6218630,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulagunda Road",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Shobha Hospital, Gadag",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6944561880,
+  "lat": 15.4305127,
+  "lon": 75.6445691,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, 1st Cross",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Maruthi Netralaya",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6944566399,
+  "lat": 15.4329850,
+  "lon": 75.6452425,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vivekananda Road, 4Th Cross, Masari",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Vaatsalya Hospital - Gadag",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6947336859,
+  "lat": 15.4335991,
+  "lon": 75.6439081,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vivekanand Road",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Prasad Nursing Home, Gadag",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6947336864,
+  "lat": 15.4375632,
+  "lon": 75.6382164,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "R.T. Kulkarni Nursing Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6947336869,
+  "lat": 15.4314680,
+  "lon": 75.6372173,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": ",Extension",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Shirola Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6947905246,
+  "lat": 15.4433054,
+  "lon": 75.6418776,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Gadag-Betgeri",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Basel Mission ( C.S.I ) Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7205430734,
+  "lat": 15.2829522,
+  "lon": 75.5254909,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Behind Bus Terminus Mulgund",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "contact:phone": "8372280123",
+    "name": "Mulagund Government Hospital",
+    "name:kn": "ಮುಳಗುಂದ ಸರ್ಕಾರಿ ಆಸ್ಪತ್ರೆ",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7205430767,
+  "lat": 15.4405840,
+  "lon": 75.6544600,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Basavanagudi Badavane, Betigeri",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Betigeri",
+    "name:kn": "ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7205430832,
+  "lat": 15.3658900,
+  "lon": 75.5251180,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Opposite Darga, Near Govt Urdu School Kurtkoti",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "contact:phone": "8372287007",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Kurtakoti PHC",
+    "name:kn": "ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7205430838,
+  "lat": 15.4189710,
+  "lon": 75.5416280,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Kurtkoti Road",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "contact:phone": "8372289444",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Hulkoti PHC",
+    "name:kn": "ಹಿಲಿಕೋಟಿ ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7205448466,
+  "lat": 15.5858130,
+  "lon": 75.6304190,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Near Primary School Kadadi, Balaganur Road",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Kadadi Government Hospital",
+    "name:kn": "ಕದಡಿ ಸರ್ಕಾರಿ ಆಸ್ಪತ್ರೆ",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711860,
+  "lat": 15.4464490,
+  "lon": 75.6450750,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Manjunath Nagar, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Raghavendra clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711861,
+  "lat": 15.4339095,
+  "lon": 75.6368537,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Shankaracharya Road, Vakil Chawl, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Basavaraddi Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711862,
+  "lat": 15.4147410,
+  "lon": 75.6203707,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Zakir Hussain Colony, Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Telkar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711864,
+  "lat": 15.4314959,
+  "lon": 75.6386118,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "K C Rani Road, Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "M B Nimbannavar Children Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711868,
+  "lat": 15.4315592,
+  "lon": 75.6337938,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Tanga Koot, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Homeopathy Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711870,
+  "lat": 15.4449169,
+  "lon": 75.6461977,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Pala, Gandhi Peth, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Sanjivini Hospital",
+    "name:kn": "ಸಂಜೀವಿನಿ ಆಸ್ಪತ್ರೆ",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711873,
+  "lat": 15.4283350,
+  "lon": 75.6409627,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Kuradagi Hospital",
+    "name:kn": "ಕುರಡಗಿ ಆಸ್ಪತ್ರೆ",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711875,
+  "lat": 15.4319920,
+  "lon": 75.6397281,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Sai Susrut Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711879,
+  "lat": 15.4103870,
+  "lon": 75.6241580,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Hudco Colony, Gadag-Betigeri",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "doctors",
+    "name": "Dr. Suvarna",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711880,
+  "lat": 15.4198962,
+  "lon": 75.6224432,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulgund Road, Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Renuka Child Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711884,
+  "lat": 15.4318751,
+  "lon": 75.6488570,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Hatalgeri Road, Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Solomon Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711887,
+  "lat": 15.4321610,
+  "lon": 75.6412490,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "K C Rani Road, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Sanjeevini Hospital",
+    "name:kn": "ಸಂಜೀವಿನಿ ಆಸ್ಪತ್ರೆ",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711888,
+  "lat": 15.4223477,
+  "lon": 75.6355650,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Sidha Maheshwar Nagar, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Dr. Alur Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711890,
+  "lat": 15.4301450,
+  "lon": 75.6353360,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Pala Badami Road, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Dr. Kololgi Laser Centre,Hair And Skin Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711893,
+  "lat": 15.4328564,
+  "lon": 75.6443917,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Dr. Jawaharlal Mehrwade Eye Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711895,
+  "lat": 15.4159566,
+  "lon": 75.6203812,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Zakir Hussain Colony, Veereshwar Nagar, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Basayya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711898,
+  "lat": 15.4178240,
+  "lon": 75.6221400,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulgund Road, Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Varavi Children Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711899,
+  "lat": 15.4047648,
+  "lon": 75.6088205,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Radhakishna, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "LYDM Sparsh Multispeciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711900,
+  "lat": 15.4315230,
+  "lon": 75.6436992,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Masari, Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Dr. Jamadar Skin Specalist",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711901,
+  "lat": 15.4234870,
+  "lon": 75.6284412,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Tanga Koot, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Dr. Shettars Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711902,
+  "lat": 15.4330210,
+  "lon": 75.6464290,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Malipatil Nursing Home",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711904,
+  "lat": 15.4343710,
+  "lon": 75.6418560,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Railway Hospital",
+    "name:kn": "ರೈಲ್ವೇ ಆಸ್ಪತ್ರೆ",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711905,
+  "lat": 15.4284080,
+  "lon": 75.6262330,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Janata Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711910,
+  "lat": 15.4291314,
+  "lon": 75.6303938,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Tanga Koot, Gadag-Betigeri",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "B R Patil ENT Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711911,
+  "lat": 15.4117854,
+  "lon": 75.6173741,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulgund Road, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Adamya Hospital and Ortho Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711913,
+  "lat": 15.4283507,
+  "lon": 75.6517481,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Rajiv Gandhi Nagar Road, Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Dr. S S Koppal Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711917,
+  "lat": 15.4358177,
+  "lon": 75.6236132,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Rahmat Nagar, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Primary Health Care",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711918,
+  "lat": 15.4339915,
+  "lon": 75.6372407,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Shri Manjunath Skin Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711925,
+  "lat": 15.4429884,
+  "lon": 75.6438727,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Kabadi Road, Pala, Gandhi Peth, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Ashwini Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711926,
+  "lat": 15.4440602,
+  "lon": 75.6462217,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Pala, Gandhi Peth, Gadag",
+    "addr:postcode": "582102",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Madav clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711928,
+  "lat": 15.4312099,
+  "lon": 75.6380860,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Aashraya Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711931,
+  "lat": 15.4319380,
+  "lon": 75.6356970,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Ballary ENT hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711932,
+  "lat": 15.4358830,
+  "lon": 75.6298940,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Gangapurpet, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Menon Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711933,
+  "lat": 15.4337780,
+  "lon": 75.6370690,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Shri Shankaracharya Road, Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Chintamani Heart Care Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711943,
+  "lat": 15.4205379,
+  "lon": 75.6377663,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Sambhapur Road, Panchal Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sankanur Hospital And Research Centre",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711944,
+  "lat": 15.4319665,
+  "lon": 75.6372723,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Dr. Reshme Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711946,
+  "lat": 15.4085465,
+  "lon": 75.6267192,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Kalasapur Road, Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Shri Sai Krishna Poly Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711949,
+  "lat": 15.4117930,
+  "lon": 75.6370770,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Panchal Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Chirayu Critical Care Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711952,
+  "lat": 15.4231590,
+  "lon": 75.6273850,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Gadag Gajendragad Road, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Huyilagoli City Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711955,
+  "lat": 15.4315452,
+  "lon": 75.6422157,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Masari, Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Alloli Children Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711960,
+  "lat": 15.4146104,
+  "lon": 75.6207872,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulgund Road, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Skin Hair and Laser Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711962,
+  "lat": 15.4148458,
+  "lon": 75.6215173,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Girija Basava Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711965,
+  "lat": 15.4187226,
+  "lon": 75.6217246,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Mulgund Road, Zakir Hussain Colony, Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Shree Krishna Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711967,
+  "lat": 15.4215184,
+  "lon": 75.6235253,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Dr. N B Patil Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711968,
+  "lat": 15.4218170,
+  "lon": 75.6351000,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Sidha Maheshwar Nagar, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "MGM Multi Speciality Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711969,
+  "lat": 15.4326234,
+  "lon": 75.6331876,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Basaveshwara Nagar, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "name": "Harsh Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7565711973,
+  "lat": 15.4135662,
+  "lon": 75.6227650,
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Hudco Colony, Gadag",
+    "addr:postcode": "582103",
+    "addr:state": "Karnataka",
+    "amenity": "doctors",
+    "name": "Dr. Amaresh Hombal",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8188037213,
+  "lat": 15.4405284,
+  "lon": 75.6545169,
+  "tags": {
+    "addr:full": "Basavanagudi Badavane, Sharanabasaveshwar Nagar, Gadag, Karnataka",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Phc Betageri",
+    "name:kn": "ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ"
+  }
+},
+{
+  "type": "way",
+  "id": 133182945,
+  "center": {
+    "lat": 15.4292794,
+    "lon": 75.5279240
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "Rural Medical Service Hulkoti"
+  }
+},
+{
+  "type": "way",
+  "id": 133182949,
+  "center": {
+    "lat": 15.4291027,
+    "lon": 75.5274768
+  },
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Hulakoti",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Kh Patil Hospital Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 133266613,
+  "center": {
+    "lat": 15.4312177,
+    "lon": 75.6371261
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "V C Shirol Nursing Home"
+  }
+},
+{
+  "type": "way",
+  "id": 133266616,
+  "center": {
+    "lat": 15.4312203,
+    "lon": 75.6372502
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "name": "J C Shirol Nursing Home"
+  }
+},
+{
+  "type": "way",
+  "id": 133266626,
+  "center": {
+    "lat": 15.4330580,
+    "lon": 75.6367532
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr K D Godkhindi Clinic"
+  }
+},
+{
+  "type": "way",
+  "id": 133293764,
+  "center": {
+    "lat": 15.4318234,
+    "lon": 75.6375389
+  },
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Vidya Nagar, Kalasapur, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "name": "Chafekar Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "way",
+  "id": 133745373,
+  "center": {
+    "lat": 15.4361801,
+    "lon": 75.6377416
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 133952361,
+  "center": {
+    "lat": 15.4320719,
+    "lon": 75.6349735
+  },
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Tanga Koot, Gadag-Betigeri, Gadag",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "hospital",
+    "description": "District Hospital",
+    "name": "Government Hospital, Gadag",
+    "name:kn": "ಸರ್ಕಾರಿ ಆಸ್ಪತ್ರೆ",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 771830453,
+  "center": {
+    "lat": 15.3930370,
+    "lon": 75.7161354
+  },
+  "tags": {
+    "addr:district": "Gadag",
+    "addr:full": "Near Bsnl Office, Hatalgeri Road",
+    "addr:postcode": "582101",
+    "addr:state": "Karnataka",
+    "amenity": "clinic",
+    "building": "yes",
+    "contact:phone": "8372283100",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Lakkundi PHC",
+    "name:kn": "ಲಕ್ಕುಂಡಿ ಪ್ರಾಥಮಿಕ ಆರೋಗ್ಯ ಕೇಂದ್ರ",
+    "source": "OpenGovernmentData"
+  }
+}
+
+  ]
+}

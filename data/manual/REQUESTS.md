@@ -102,7 +102,48 @@ case where two survey items both claim the single "Disposable Mask Triple Layer"
 
 ---
 
+### R8 — Verify the 77 facilities  →  `data/manual/facility_verification.csv`
+
+**Why manual:** OSM has no `operator` or `beds` field for any Gadag facility, so **facility type
+and ownership are inferred from names** — a guess, however careful. The list is not used until
+your team confirms it, and `verified` is false for all 77 rows.
+
+**What to do:** each row has the OSM name, the inferred type and ownership, and **two map links**
+(OpenStreetMap and Google Maps) to check the location. Fill in:
+- `verified` → `yes` once you have checked the location and type
+- `correct_type` / `correct_ownership` → only if my inference is wrong
+- `beds` → if you know it; otherwise leave blank and it stays unknown
+- `notes` → anything else
+
+**12 rows carry a flag and deserve the most attention:**
+- 4 × `unclear_government_level` — "Railway Hospital", "Rural Medical Service Hulkoti", "Kadadi
+  Government Hospital", "Mulagund Government Hospital". **These need a level (PHC / CHC / taluk
+  hospital)**, because the level decides which medicine list the facility carries.
+- 1 × `generic_phc_name` — a facility named "Primary Health Care". Is it a government PHC or a
+  private clinic using the phrase?
+- 3 × `merged_records` — two or more OSM records treated as one facility.
+- 3 × `possible_duplicate_nearby` — close by and similarly named, **not** merged. Are "J C Shirol
+  Nursing Home" and "V C Shirol Nursing Home" the same place or different practices?
+- 2 × `unnamed_in_osm`.
+
+Re-running the pipeline preserves what you have filled in.
+
+---
+
+### R4 is now urgent — the PHC gap
+
+**OSM has 5 PHCs. The survey covers 15.** So 10 of the survey's availability profiles have no
+location to attach to, and the inventory map would show a third of the taluk's PHC network.
+
+I will **not** invent PHC locations. This needs the **HMIS facility list for Gadag taluk**
+(request R4 above) — the same list the survey's authors used. If HMIS is not obtainable, tell me
+and the map will show only the 5 locatable PHCs, with the shortfall stated on the page.
+
+Relatedly, OSM has only **3 pharmacies** in the whole taluk, which is plainly an undercount.
+R2/R3 (Open Government Data, ABDM) would help most here.
+
+---
+
 ## Confirmations I will ask for later
 
-- **Milestone 4:** `data/manual/facility_verification.csv` — every candidate facility with a map
-  link, for your team to eyeball before the list is used.
+- Nothing outstanding beyond R7 (medicine matches) and R8 (facilities) above.
