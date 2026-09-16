@@ -157,6 +157,31 @@ Direct equivalents:
 - Determinism is a requirement, not a nicety: same seed → identical results, and both modes must
   share identical demand draws and starting stock so differences are attributable to policy.
 
+## Simulation notes (Milestone 6)
+
+- `backend/zealo/sim/`: `models` (entities) · `inventory` (FEFO batches) · `forecast`
+  (`Forecaster` interface + EWMA) · `events` (log + metrics) · `engine` (day loop, `Scenario`,
+  `SimulationState`) · `policies` (baseline + Zealo).
+- **`NodeKind` has exactly two members**, `facility` and `manufacturer`. That is how "no
+  warehouses, no distributors" is enforced — a `Delivery` cannot name a node kind that does not
+  exist, and `Delivery.__post_init__` rejects a transfer that is not facility-to-facility.
+- **Policies never touch inventories directly.** They call `state.place_order` and
+  `state.transfer`, which enforce the invariants (no self-transfer, both ends in-network,
+  minimum shelf life) and write the event log. Keep it that way.
+- **Determinism comes from `Scenario`**, which holds a pre-generated demand array. The engine
+  draws no randomness. Both modes read the same `Scenario`, which is what makes the comparison
+  fair — there are tests for both.
+- **A facility with `in_network=False` must behave identically to the baseline.** Tested. The
+  shared `review_alone()` in `policies.py` is what guarantees it.
+- **Performance:** 180 days x 77 facilities x 104 medicines is ~9 s baseline, ~26 s Zealo.
+  The big win was indexing in-transit deliveries by `(facility, medicine)` — `arrivals_within`
+  and `next_arrival_day` were scanning one flat list per call and were 33 of 36 profiled
+  seconds. A per-day forecast cache was tried and reverted: no measurable gain, and it added a
+  stale-read footgun. Further speedup needs vectorising the policy loop — ask first.
+- **Value metrics are withheld, not zeroed**, when prices are unknown (R6 still open).
+- Test scenario factories live in `backend/tests/factories.py`. They are synthetic **on
+  purpose** and must never move into the shipped package or into `data/processed/`.
+
 ## Open questions
 
 - **R7 match confirmations** — 51 of 104 survey items need a decision in
@@ -181,7 +206,7 @@ Direct equivalents:
 | 3 | Medicine master list | **done — 51 matches await your confirmation (R7)** |
 | 4 | Facilities | **built from OSM — awaiting R8 verification; PHC gap needs R4** |
 | 5 | Demand and starting inventory | blocked on R4, R5 |
-| 6 | Simulation core | not started |
+| 6 | Simulation core | **done — engine, both policies, metrics, 36 tests** |
 | 7 | API | not started |
 | 8 | Inventory map | not started |
 | 9 | Facility dashboard + redistribution view | not started |

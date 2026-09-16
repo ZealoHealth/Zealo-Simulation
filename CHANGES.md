@@ -4,6 +4,56 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Milestone 6 — Simulation core — 2026-09-16
+
+**Status:** complete. Built ahead of Milestone 5, which is blocked on R4/R5, so the engine runs
+on synthetic test scenarios until real demand and opening stock arrive. Nothing committed.
+
+### Added — `backend/zealo/sim/`
+- `models.py` — facilities, medicines, batches, deliveries, manufacturers, rules.
+- `inventory.py` — per-facility batch store, consumed **earliest-expiry-first**.
+- `forecast.py` — `Forecaster` interface plus an EWMA default.
+- `events.py` — event log with plain-language messages, and the metrics accumulator.
+- `engine.py` — the day loop, `Scenario`, `SimulationState`, facility status, `RunResult`.
+- `policies.py` — `BaselinePolicy` and `ZealoPolicy`.
+- `backend/tests/factories.py` + `test_simulation.py` — **36 tests**. Total suite now **144**.
+
+### How the guarantees are made structural
+- **No warehouses.** `NodeKind` has exactly two members, `facility` and `manufacturer`, so a
+  delivery cannot name a warehouse or distributor. `Delivery.__post_init__` rejects a transfer
+  that is not facility-to-facility, and a facility sending to itself.
+- **Determinism.** All randomness lives in the demand array, generated once into `Scenario`
+  before either mode runs. Same seed → byte-identical metrics, events and timeline.
+- **Fair comparison.** Both modes read the same `Scenario`, so demand and opening stock are
+  identical and any difference is caused by policy alone.
+- **Opting out means opting out.** A facility with `in_network=False` behaves *exactly* as it
+  does in the baseline — same shared code path, and a test asserts the metrics match exactly.
+- **Conservation.** `starting + manufacturer arrivals == dispensed + expired + on hand + in
+  transit`, checked for both policies.
+- **Value metrics are withheld, not zeroed**, when prices are unknown (R6). A zero would read
+  as a real figure.
+
+### Result on a full-scale synthetic run (77 facilities x 104 medicines x 180 days)
+| | availability | unmet units | transfers |
+|---|---|---|---|
+| Without Zealo | 92.63% | 951,105 | 0 |
+| With Zealo | **99.64%** | **33,361** | 10,193 |
+
+Identical demand and identical opening stock, so the difference is policy alone.
+
+### Performance
+Indexing in-transit deliveries by `(facility, medicine)` cut the Zealo run **29.1 s → 1.9 s** at
+20x40x180 with byte-identical output: `arrivals_within` and `next_arrival_day` were scanning one
+flat list on every call and accounted for 33 of 36 profiled seconds. Caching inventory totals
+gave a smaller further win. A per-day forecast cache was tried and **reverted** — no measurable
+gain and it introduced a stale-read footgun.
+
+Full scale now runs in ~9 s (baseline) and ~26 s (Zealo). Runs are cached and the site will ship
+a pre-computed default run, so this is a build cost rather than a page-load one. Going faster
+means vectorising the policy loop, which is a larger change worth agreeing first.
+
+---
+
 ## Milestone 4 — Facility list from OpenStreetMap — 2026-09-16
 
 **Status:** built and tested. **Not usable until you verify it (R8)**, and the PHC gap needs R4.

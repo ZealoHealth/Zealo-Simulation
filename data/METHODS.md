@@ -245,14 +245,77 @@ expiry. Tagged `estimated` — the survey records no expiry dates whatsoever.
 
 ---
 
-## `methods:facility_status` — Map colour per facility per day *(Milestone 6)*
+## `methods:facility_status` — Map colour per facility per day *(Milestone 6 — implemented)*
 
 - **red** — any carried medicine is out of stock
-- **amber** — two or more carried medicines have under 7 days of cover, **or** near-expiry
-  stock is above the configured threshold
+- **amber** — **2 or more** carried medicines have under **7 days** of cover, **or** more than
+  **25%** of units on hand expire within **90 days**
 - **green** — otherwise
 
-`derived` from simulation state.
+`derived` from simulation state. Days of cover use the forecast, not a fixed average.
+
+---
+
+## `methods:simulation` — The simulated day and the two policies *(Milestone 6 — implemented)*
+
+**Code:** `backend/zealo/sim/`. **Tests:** `backend/tests/test_simulation.py` (36 tests).
+
+**The day**, in this fixed order: deliveries and transfers due today arrive → expired batches are
+removed and counted as waste → demand is served **earliest-expiry-first** → the active policy
+decides → end-of-day state is recorded. FEFO matters: consuming newest-first would mean nothing
+was ever at risk of expiring, and near-expiry rebalancing would have nothing to do.
+
+**Determinism.** All randomness lives in the demand draw, generated once into the scenario before
+either mode runs. The engine itself draws nothing, so the same seed gives byte-identical metrics,
+events and timeline.
+
+**Fairness.** Both modes read the same scenario, so they get identical demand and identical
+opening stock. Any difference between them is caused by policy alone. Both properties are tested.
+
+### Without Zealo (baseline)
+Each facility reviews its own stock every **7 days**, orders from the manufacturer up to
+**30 days** of forecast demand when its position falls below `forecast x (lead time + safety
+days)`, **over-orders by 1.5x after a stockout**, accepts whatever shelf life it is sent, and
+never shares stock with anyone.
+
+### With Zealo
+Daily, for facilities where `in_network` is true. A facility that opts out behaves **exactly** as
+it does in the baseline — tested, because otherwise the comparison would be rigged.
+
+1. **Forecast** — `Forecaster` is an interface (`update` / `predict`) so a trained model can
+   replace the default without touching the policies. The default is an EWMA (alpha 0.2) of
+   **served plus unmet** demand; forecasting on served demand alone would teach an
+   already-short facility to stay short. *No outbreak or disease-surge model is built.*
+2. **Shortage relief** — if stock plus arrivals within the manufacturer lead time will not cover
+   demand until the next delivery, pull the gap from the **nearest network facility holding more
+   than its own safety level**. Only if no peer can help does an express order go to a
+   manufacturer: moving stock that already exists beats making more of it.
+3. **Near-expiry rebalancing** — at-risk quantity is whatever expires before this facility's own
+   consumption would reach it. It moves to the nearest network facility whose forecast demand
+   will actually consume it before that expiry day; otherwise the move would only relocate waste.
+4. **Refill** — order up to the target when position falls below `forecast x (lead time + safety
+   days)`. Orders above the auto-approval limit raise an approval request and wait the approval
+   delay; a recorded manual decision can reject them instead.
+5. **Minimum shelf life** — Zealo refuses manufacturer stock with under **180 days** remaining.
+   The baseline accepts it. Both are tested.
+
+**Transfers only ever move between two different network facilities.** There is no warehouse and
+no distributor: `NodeKind` has exactly two members, `facility` and `manufacturer`, so a delivery
+cannot even name such a node. A transfer that would leave a facility for itself, or involve a
+non-member, raises.
+
+**Conservation.** `starting + manufacturer arrivals == dispensed + expired + on hand + in
+transit`, checked for both policies.
+
+**Prices.** Value figures (expired value, value moved, stock value) are **withheld entirely**
+when any medicine is unpriced, rather than shown as zero — no public price source is confirmed
+yet (request R6), and a zero would read as a real figure.
+
+**Performance.** A 180-day run over 77 facilities x 104 medicines takes about **9 s** for the
+baseline and **26 s** for the Zealo policy. Indexing in-transit deliveries by their destination
+cut the Zealo run from 29 s to under 2 s at a smaller scale; what remains is the roughly 4.3
+million policy evaluations a full run performs. Runs are cached, and the site ships a
+pre-computed default run, so this is a build-time cost rather than a page-load one.
 
 ---
 
