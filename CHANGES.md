@@ -4,6 +4,51 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Milestone 7 — API — 2026-09-16
+
+**Status:** complete. Read endpoints serve real data; `/simulate` is built end to end but
+refuses to run until R5 and R1 are supplied. Nothing committed.
+
+### Added
+- `backend/zealo/api/routes.py` — `/facilities`, `/medicines`, `/sources`, `/simulate`,
+  `/runs/{id}/facilities/{fid}`, `/runs/{id}/medicines/{mid}`.
+- `backend/zealo/api/schemas.py` — typed request and response models.
+- `backend/zealo/data_access.py` — cached loaders for `data/processed/`.
+- `backend/zealo/sources_registry.py` — the 8-source structured registry.
+- `backend/zealo/sim/runner.py` — scenario assembly from real data, plus a bounded run cache.
+- `backend/tests/test_api.py` — **37 tests**. Total suite now **181**.
+
+### Serving real data
+77 facilities with per-field provenance and the taluk boundary; 890 medicines, of which the
+**53 confirmed** survey links carry real availability and the 51 pending ones are excluded;
+8 sources with licences, attributions and limitations — including the ones we could **not**
+obtain, marked `pending` with the reason rather than quietly omitted.
+
+### `/simulate` refuses rather than inventing
+Taluk demand needs the population ratio (**R5**) and PHC opening stock needs the availability
+matrix (**R1**). Neither exists, so `build_scenario` raises `MissingDemandInputs` and the
+endpoint returns **422** naming both requests. Everything else — facilities, medicines, levels,
+both policies, the cache — is wired and starts working the moment those land.
+
+### Two source checks I had previously skipped
+I had called R5 and R6 blocked without trying. Having now tried:
+- **`censusindia.gov.in` serves an incomplete TLS certificate chain** (omits the intermediate
+  CA), so it cannot be fetched with verification on. I will not disable verification for a
+  figure I would present as authoritative. `census2011.co.in` works but is an unofficial
+  aggregator — your call whether that is acceptable.
+- **`nppa.gov.in` has the same TLS problem**, and Jan Aushadhi is a JavaScript app. So there is
+  still no price source, and value figures stay withheld rather than zeroed.
+
+### Contract details worth keeping
+- `run_id` is a hash of the scenario settings, so identical settings hit the cache.
+- A missing run returns 404 `run_not_found` telling the client to re-submit — the frontend
+  re-runs instead of rendering an empty map.
+- Every data response carries the disclaimer and its own caveats.
+- Playback data (per-day facility status) is returned once by `/simulate`; there is no per-day
+  endpoint to poll.
+
+---
+
 ## Milestone 6 — Simulation core — 2026-09-16
 
 **Status:** complete. Built ahead of Milestone 5, which is blocked on R4/R5, so the engine runs

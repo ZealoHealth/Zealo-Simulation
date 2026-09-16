@@ -182,6 +182,25 @@ Direct equivalents:
 - Test scenario factories live in `backend/tests/factories.py`. They are synthetic **on
   purpose** and must never move into the shipped package or into `data/processed/`.
 
+## API notes (Milestone 7)
+
+- `zealo/api/routes.py` (endpoints) · `api/schemas.py` (request/response models) ·
+  `data_access.py` (loads `data/processed/`, cached) · `sources_registry.py` (structured
+  source list behind `GET /sources`) · `sim/runner.py` (scenario assembly + run cache).
+- **`/simulate` deliberately returns 422, not a fabricated run**, while population figures
+  (R5) and the availability matrix (R1) are missing. `MissingDemandInputs` carries the exact
+  request ids so the UI can say what is needed. Everything else is already wired to real data.
+- **Every data response carries the disclaimer and its own caveats.** Don't add an endpoint
+  that returns numbers without them.
+- A missing run returns 404 `run_not_found` with a message telling the client to re-submit to
+  `/simulate` — the frontend re-runs on this rather than rendering an empty map.
+- `run_id` is a hash of the scenario settings, so the same settings always name the same run
+  and the cache hits.
+- Only `auto` and `confirmed` medicine matches reach the API. Pending ones are excluded in
+  `data_access.load_medicines`, so an unreviewed guess cannot appear in the UI.
+- **Verified 2026-09-16:** `censusindia.gov.in` and `nppa.gov.in` both serve an incomplete TLS
+  chain and cannot be fetched with verification on. Do not work around this with `-k`.
+
 ## Open questions
 
 - **R7 match confirmations** — 51 of 104 survey items need a decision in
@@ -207,7 +226,7 @@ Direct equivalents:
 | 4 | Facilities | **built from OSM — awaiting R8 verification; PHC gap needs R4** |
 | 5 | Demand and starting inventory | blocked on R4, R5 |
 | 6 | Simulation core | **done — engine, both policies, metrics, 36 tests** |
-| 7 | API | not started |
+| 7 | API | **done — all endpoints; /simulate gated on R1+R5** |
 | 8 | Inventory map | not started |
 | 9 | Facility dashboard + redistribution view | not started |
 | 10 | Comparison, Settings, Data Sources, About | not started |

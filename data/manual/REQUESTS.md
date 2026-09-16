@@ -62,20 +62,37 @@ no robots file.
 **If you cannot get this:** say so and I will use a documented facility-type weighting instead,
 tagged `estimated` and labelled as such in the UI. I will not silently substitute it.
 
-### R5 — Population figures  →  tell me the numbers and the citation
+### R5 — Population figures  →  `data/manual/population.json`
 
-- **Gadag taluk** population
-- **Karnataka** population
+**I tried to fetch this and could not.** `censusindia.gov.in` serves an **incomplete TLS
+certificate chain** (`unable to verify the first certificate` — it omits the intermediate CA),
+so it cannot be fetched with certificate verification on. I will not disable verification to
+obtain a figure I would then present as authoritative.
 
-Must be Census of India or an official projection, with the source so I can cite it. The spec
-says not to estimate this myself, so this one genuinely blocks the demand formula.
+**What I need:** the **Gadag taluk** and **Karnataka** populations, with the citation.
+A template is at `data/manual/population.json.template` — copy it to `population.json`.
+
+`census2011.co.in` is reachable and carries taluk figures, but it is an **unofficial
+third-party aggregator**, and the spec asks for Census of India or an official projection. Tell
+me if you would rather I use it with that clearly labelled, and I will.
+
+**This is the single highest-value thing you can give me.** It is two numbers, and together with
+R1 it unblocks Milestone 5 and makes `POST /simulate` work end to end.
 
 ### R6 — Unit prices — *decision needed, not a file*
 
-I will search for a public price source (government ceiling price list / public generic price
-list). If I find one I will cite it and tag prices `real`. **If I find nothing, I will come back
-and ask** before using illustrative prices — I will not put made-up prices on screen without
-your say-so.
+**I searched and came up empty.** `nppa.gov.in` (the price regulator) has the **same incomplete
+TLS certificate chain problem** as the census site, and the Jan Aushadhi portal is a JavaScript
+application with no scrapable price list. `pmbi.co.in` returns 404.
+
+**Current behaviour, which needs no decision from you unless you dislike it:** all value figures
+— stock value, value moved, value saved from expiry — are **withheld entirely** rather than shown
+as zero, because a zero reads as a real number. Everything is reported in **units** instead.
+
+**Your options:** (a) leave it as units-only, which is fully honest and costs nothing;
+(b) supply a price list you trust and I will tag prices `real` and cite it; (c) authorise
+illustrative prices, which I will tag `estimated` and label on screen. I will not pick (c) on
+my own.
 
 ---
 

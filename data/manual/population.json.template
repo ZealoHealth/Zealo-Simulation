@@ -1,0 +1,7 @@
+{
+  "_comment": "Copy this file to population.json and fill in official figures. See R5 in REQUESTS.md. Do NOT guess these numbers - the simulation refuses to run rather than use an estimate.",
+  "gadag_taluk_population": null,
+  "karnataka_population": null,
+  "source": "e.g. Census of India 2011, District Census Handbook, Gadag (Series 30, Part XII-B)",
+  "retrieved": "YYYY-MM-DD"
+}

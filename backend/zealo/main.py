@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from zealo import __version__
+from zealo.api.routes import router
 from zealo.config import settings
 
 DISCLAIMER = (
@@ -27,6 +28,9 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+app.include_router(router)
 
 
 @app.get("/health")
