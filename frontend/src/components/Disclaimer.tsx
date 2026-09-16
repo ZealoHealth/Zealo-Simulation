@@ -13,7 +13,7 @@ export function Disclaimer({ className = "" }: { className?: string }) {
   return (
     <p
       role="note"
-      className={`text-[11px] leading-snug text-navy/70 ${className}`}
+      className={`text-[11px] leading-snug text-ink-subtle ${className}`}
       data-testid="disclaimer"
     >
       {DISCLAIMER_TEXT}

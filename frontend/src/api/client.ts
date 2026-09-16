@@ -12,6 +12,7 @@ import type {
   MedicineAtFacilitiesResponse,
   MedicinesResponse,
   Mode,
+  RedistributionResponse,
   ScenarioRequest,
   SimulateResponse,
   SourcesResponse,
@@ -56,9 +57,27 @@ export const simulate = (scenario: ScenarioRequest) =>
     body: JSON.stringify(scenario),
   });
 
-export const getFacilityRun = (runId: string, facilityId: string, mode: Mode, day: number) =>
+export const getFacilityRun = (
+  runId: string,
+  facilityId: string,
+  mode: Mode,
+  day: number,
+  series?: string,
+) =>
   request<FacilityRunResponse>(
-    `/runs/${runId}/facilities/${facilityId}?mode=${mode}&day=${day}`,
+    `/runs/${runId}/facilities/${facilityId}?mode=${mode}&day=${day}` +
+      (series ? `&series=${encodeURIComponent(series)}` : ""),
+  );
+
+export const getRedistribution = (
+  runId: string,
+  mode: Mode,
+  day: number,
+  medicineId?: string,
+) =>
+  request<RedistributionResponse>(
+    `/runs/${runId}/redistribution?mode=${mode}&day=${day}` +
+      (medicineId ? `&medicine_id=${encodeURIComponent(medicineId)}` : ""),
   );
 
 export const getMedicineRun = (runId: string, medicineId: string, mode: Mode, day: number) =>

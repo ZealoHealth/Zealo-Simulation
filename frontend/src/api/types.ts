@@ -154,7 +154,66 @@ export interface FacilityRunResponse {
   status: FacilityStatus;
   medicines: FacilityMedicineRow[];
   events: SimulationEvent[];
+  expiry_alerts: ExpiryAlert[];
+  series: MedicineSeries | null;
   disclaimer: string;
+}
+
+export interface MedicineSeries {
+  medicine_id: string;
+  name: string;
+  days: number[];
+  on_hand: number[];
+  demand: number[];
+  dispensed: number[];
+  unmet: number[];
+  forecast: number[];
+}
+
+export interface ExpiryAlert {
+  medicine_id: string;
+  name: string;
+  on_hand: number;
+  expires_on_day: number;
+  days_until_expiry: number;
+  bucket: 30 | 60 | 90;
+}
+
+export interface TransferPoint {
+  day: number;
+  transfers: number;
+  units: number;
+  distance_km: number;
+}
+
+export interface MedicineImpact {
+  medicine_id: string;
+  name: string;
+  relief_transfers: number;
+  relief_units: number;
+  rebalance_transfers: number;
+  rebalance_units: number;
+}
+
+export interface FacilityBalance {
+  facility_id: string;
+  display_label: string;
+  medicine_id: string;
+  on_hand: number;
+  days_of_cover: number | null;
+  position: "surplus" | "short" | "balanced";
+}
+
+export interface RedistributionResponse {
+  run_id: string;
+  mode: Mode;
+  day: number;
+  transfers_over_time: TransferPoint[];
+  top_medicines: MedicineImpact[];
+  balances: FacilityBalance[];
+  totals: Record<string, number | null>;
+  disclaimer: string;
+  caveats: string[];
 }
 
 export interface MedicineDayRow {

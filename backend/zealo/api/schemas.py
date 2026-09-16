@@ -146,6 +146,45 @@ class SimulateResponse(BaseModel):
     caveats: list[str]
 
 
+class TransferPoint(BaseModel):
+    day: int
+    transfers: int
+    units: int
+    distance_km: float
+
+
+class MedicineImpact(BaseModel):
+    medicine_id: str
+    name: str
+    relief_transfers: int
+    relief_units: int
+    rebalance_transfers: int
+    rebalance_units: int
+
+
+class FacilityBalance(BaseModel):
+    """How a facility stands on one medicine: surplus, short, or neither."""
+
+    facility_id: str
+    display_label: str
+    medicine_id: str
+    on_hand: int
+    days_of_cover: float | None
+    position: str = Field(description="'surplus' | 'short' | 'balanced'")
+
+
+class RedistributionResponse(BaseModel):
+    run_id: str
+    mode: str
+    day: int
+    transfers_over_time: list[TransferPoint]
+    top_medicines: list[MedicineImpact]
+    balances: list[FacilityBalance]
+    totals: dict
+    disclaimer: str
+    caveats: list[str]
+
+
 class MedicineDayRow(BaseModel):
     facility_id: str
     display_label: str
@@ -178,6 +217,28 @@ class FacilityMedicineRow(BaseModel):
     status: str
 
 
+class MedicineSeries(BaseModel):
+    """A medicine's history at one facility, for the dashboard chart."""
+
+    medicine_id: str
+    name: str
+    days: list[int]
+    on_hand: list[int]
+    demand: list[int]
+    dispensed: list[int]
+    unmet: list[int]
+    forecast: list[float]
+
+
+class ExpiryAlert(BaseModel):
+    medicine_id: str
+    name: str
+    on_hand: int
+    expires_on_day: int
+    days_until_expiry: int
+    bucket: int = Field(description="30, 60 or 90 - the window it falls into.")
+
+
 class FacilityRunResponse(BaseModel):
     run_id: str
     mode: str
@@ -189,4 +250,8 @@ class FacilityRunResponse(BaseModel):
     status: str
     medicines: list[FacilityMedicineRow]
     events: list[dict]
+    expiry_alerts: list[ExpiryAlert]
+    series: MedicineSeries | None = Field(
+        default=None, description="Populated when ?series=<medicine_id> is given."
+    )
     disclaimer: str

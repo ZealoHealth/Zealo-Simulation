@@ -1,15 +1,36 @@
 @import "tailwindcss";
 
-/* Zealo's palette. Defined as theme tokens so components never hard-code a hex. */
+/* A real typeface. Inter for UI text, with tabular figures so numbers in tables
+   and stat tiles stop shifting as they change during playback. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 @theme {
+  /* Zealo's palette. */
   --color-navy: #231C44;
   --color-purple: #6A4CA8;
   --color-coral: #F0674A;
   --color-lavender: #F3F1F8;
 
+  /* Tints derived from the brand colours, so surfaces have depth without
+     introducing greys that fight the palette. */
+  --color-ink: #231C44;
+  --color-ink-muted: #5B5474;
+  --color-ink-subtle: #8C86A3;
+  --color-surface: #FFFFFF;
+  --color-surface-sunken: #F7F6FB;
+  --color-hairline: #E6E2F0;
+
   --color-status-green: #1F9D55;
   --color-status-amber: #D97706;
   --color-status-red: #DC2626;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Soft, low-contrast elevation. Separation comes from shadow and spacing
+     rather than a border on every edge, which is what made the first pass look
+     like a wireframe. */
+  --shadow-card: 0 1px 2px rgba(35, 28, 68, 0.04), 0 2px 8px rgba(35, 28, 68, 0.06);
+  --shadow-raised: 0 2px 6px rgba(35, 28, 68, 0.08), 0 12px 28px rgba(35, 28, 68, 0.10);
 }
 
 html,
@@ -19,19 +40,35 @@ body,
 }
 
 body {
-  background: var(--color-lavender);
-  color: var(--color-navy);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--color-surface-sunken);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Leaflet ships its own CSS; these keep it inside our layout. */
+/* Numbers that change during playback must not reflow their column. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
-  background: #f8f8f6;
+  background: #f4f2f8;
+  font-family: var(--font-sans);
 }
 
-/* A transfer line that reads as movement rather than a static link. */
+/* Leaflet's default control chrome is boxy; soften it to match the cards. */
+.leaflet-control-zoom a {
+  border-radius: 8px !important;
+  color: var(--color-ink) !important;
+}
+.leaflet-bar {
+  border: none !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
 @keyframes zealo-dash {
   to {
     stroke-dashoffset: -24;
@@ -42,8 +79,35 @@ body {
   animation: zealo-dash 1s linear infinite;
 }
 
+/* Custom range track, because the default one is the single strongest "cheap" tell. */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-hairline);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--color-purple);
+  box-shadow: 0 1px 4px rgba(35, 28, 68, 0.3);
+  cursor: pointer;
+}
+input[type="range"]:disabled::-webkit-slider-thumb {
+  background: var(--color-ink-subtle);
+  cursor: not-allowed;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .zealo-transfer-line {
     animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
   }
 }

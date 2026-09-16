@@ -8,6 +8,8 @@ import { useMemo, useState } from "react";
 import type { Facility, Medicine, MedicineDayRow } from "../../api/types";
 import { ProvenanceBadge } from "../Provenance";
 import { rankByDistance } from "../map/mapLogic";
+import { CardTitle, Select, TextInput } from "../../ui";
+import { shortMedicineName } from "../../api/format";
 
 export interface MedicineSearchProps {
   medicines: Medicine[];
@@ -56,72 +58,101 @@ export function MedicineSearch({
   const origin = facilities.find((f) => f.id === originFacilityId);
 
   return (
-    <div className="flex h-full flex-col">
-      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-navy/50">
-        Find a medicine
-      </label>
-      <input
+    <div className="flex h-full min-h-0 flex-col">
+      <CardTitle hint="Pick one to recolour the map by its stock.">Find a medicine</CardTitle>
+
+      <TextInput
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search by name or therapeutic group"
+        placeholder="Search by name or group"
         aria-label="Search medicines"
-        className="mb-2 w-full rounded border border-navy/20 px-2 py-1.5 text-sm"
+        className="mb-2"
       />
 
-      <select
-        value={selectedMedicineId ?? ""}
-        onChange={(e) => onSelect(e.target.value || null)}
+      {/* A real list rather than a native multi-select: the browser default
+          cannot be styled and was the loudest unpolished element on the page. */}
+      <ul
+        role="listbox"
         aria-label="Select a medicine"
-        size={6}
-        className="mb-3 w-full rounded border border-navy/20 bg-white px-1 py-1 text-xs"
+        className="mb-3 max-h-56 min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1"
       >
-        <option value="">All medicines (facility status)</option>
+        <li>
+          <button
+            type="button"
+            role="option"
+            aria-selected={selectedMedicineId === null}
+            onClick={() => onSelect(null)}
+            className={`w-full rounded-lg px-2 py-1.5 text-left text-xs transition ${
+              selectedMedicineId === null
+                ? "bg-purple text-white font-semibold"
+                : "text-ink-muted hover:bg-surface-sunken"
+            }`}
+          >
+            All medicines (facility status)
+          </button>
+        </li>
         {matches.map((m) => (
-          <option key={m.id} value={m.id}>
-            {m.name}
-          </option>
+          <li key={m.id}>
+            <button
+              type="button"
+              role="option"
+              aria-selected={selectedMedicineId === m.id}
+              onClick={() => onSelect(m.id)}
+              title={m.name}
+              className={`w-full truncate rounded-lg px-2 py-1.5 text-left text-xs leading-snug transition ${
+                selectedMedicineId === m.id
+                  ? "bg-purple text-white font-semibold"
+                  : "text-ink hover:bg-surface-sunken"
+              }`}
+            >
+              {shortMedicineName(m.name)}
+            </button>
+          </li>
         ))}
-      </select>
+        {matches.length === 0 && (
+          <li className="px-2 py-3 text-center text-xs text-ink-subtle">
+            No medicine matches &ldquo;{query}&rdquo;.
+          </li>
+        )}
+      </ul>
 
       {selectedMedicineId && (
         <>
-          <div className="mb-2 flex items-center gap-2 text-xs">
-            <label className="flex items-center gap-1 text-navy/70">
-              Within
-              <select
-                value={radiusKm ?? ""}
-                onChange={(e) => onRadiusChange(e.target.value ? Number(e.target.value) : null)}
-                aria-label="Filter by radius"
-                className="rounded border border-navy/20 px-1 py-0.5"
-              >
-                <option value="">any distance</option>
-                <option value="5">5 km</option>
-                <option value="10">10 km</option>
-                <option value="25">25 km</option>
-              </select>
-            </label>
+          <div className="mb-2">
+            <Select
+              value={radiusKm ?? ""}
+              onChange={(e) => onRadiusChange(e.target.value ? Number(e.target.value) : null)}
+              aria-label="Filter by radius"
+            >
+              <option value="">Any distance</option>
+              <option value="5">Within 5 km</option>
+              <option value="10">Within 10 km</option>
+              <option value="25">Within 25 km</option>
+            </Select>
           </div>
 
-          <p className="mb-1 text-xs text-navy/70" data-testid="medicine-search-summary">
+          <p className="mb-1 text-xs text-ink-muted" data-testid="medicine-search-summary">
             <strong>{inStock}</strong> of {ranked.length} facilities have it
             {origin ? ` · nearest first from ${origin.display_label}` : ""}
           </p>
 
-          <ul className="flex-1 divide-y divide-navy/5 overflow-y-auto text-xs">
+          <ul className="min-h-0 flex-1 overflow-y-auto text-xs">
             {ranked.map((row) => (
               <li
                 key={row.facility_id}
-                className="flex items-center justify-between gap-2 py-1.5"
+                className="flex items-center justify-between gap-2 rounded-lg px-1.5 py-1.5 hover:bg-surface-sunken"
               >
                 <span className="truncate">{row.display_label}</span>
-                <span className="flex shrink-0 items-center gap-2 tabular-nums">
+                <span className="tabular flex shrink-0 items-center gap-2">
                   {row.distanceKm != null && (
-                    <span className="text-navy/50">{row.distanceKm.toFixed(1)} km</span>
+                    <span className="text-ink-subtle">{row.distanceKm.toFixed(1)} km</span>
                   )}
                   <span
                     className={
-                      row.on_hand > 0 ? "font-semibold text-status-green" : "font-semibold text-status-red"
+                      row.on_hand > 0
+                        ? "font-semibold text-status-green"
+                        : "font-semibold text-status-red"
                     }
                   >
                     {row.on_hand > 0 ? `${row.on_hand} units` : "out of stock"}
@@ -130,7 +161,7 @@ export function MedicineSearch({
               </li>
             ))}
           </ul>
-          <p className="mt-2 flex items-center gap-1.5 text-[10px] text-navy/50">
+          <p className="mt-2 flex items-center gap-1.5 text-[10px] text-ink-subtle">
             Stock levels are modelled <ProvenanceBadge provenance="estimated" />
           </p>
         </>

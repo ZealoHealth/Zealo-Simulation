@@ -5,6 +5,7 @@ import {
   getFacilityRun,
   getMedicineRun,
   getMedicines,
+  getRedistribution,
   getSources,
   simulate,
 } from "./client";
@@ -30,11 +31,25 @@ export const useFacilityRun = (
   facilityId: string | null,
   mode: Mode,
   day: number,
+  /** Ask for one medicine's whole history, for the dashboard chart. */
+  series?: string | null,
 ) =>
   useQuery({
-    queryKey: ["facility-run", runId, facilityId, mode, day],
-    queryFn: () => getFacilityRun(runId!, facilityId!, mode, day),
+    queryKey: ["facility-run", runId, facilityId, mode, day, series ?? null],
+    queryFn: () => getFacilityRun(runId!, facilityId!, mode, day, series ?? undefined),
     enabled: Boolean(runId && facilityId),
+  });
+
+export const useRedistribution = (
+  runId: string | null,
+  mode: Mode,
+  day: number,
+  medicineId?: string | null,
+) =>
+  useQuery({
+    queryKey: ["redistribution", runId, mode, day, medicineId ?? null],
+    queryFn: () => getRedistribution(runId!, mode, day, medicineId ?? undefined),
+    enabled: Boolean(runId),
   });
 
 export const useMedicineRun = (

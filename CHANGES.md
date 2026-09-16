@@ -4,6 +4,58 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Milestone 9 — Facility dashboard, network view, and a design-system pass — 2026-09-16
+
+**Status:** complete. Both pages render; their simulated content needs R1 and R5. Nothing
+committed.
+
+### Backend
+- The engine now records **next expiry day** per facility, medicine and day, replacing two
+  `None` placeholders left in Milestone 7.
+- `GET /runs/{id}/facilities/{fid}` gained **expiry alerts** bucketed at 30/60/90 days and an
+  opt-in `?series=<medicine_id>` returning that medicine's whole history for the chart. It is
+  opt-in because returning every series would dwarf the day view.
+- New `GET /runs/{id}/redistribution` — transfers over time, medicines moved most, and
+  surplus/shortage positions. Aggregated from the cached run, so changing day or medicine is
+  free.
+- **11 new API tests** (48 in that file; 192 backend total).
+
+### Frontend
+- `react-router` added; three routes behind a shared `AppShell` that owns the brand, navigation,
+  mode toggle and the disclaimer — so a page added later cannot forget it.
+- `useRun` turns the simulation into a **query keyed on the scenario**, so all three pages share
+  one cached run instead of each firing its own. Network membership and approval decisions are
+  part of that key, because changing either must produce a new run.
+- **Facility dashboard** — sortable, filterable medicine table; a stock/demand/forecast chart;
+  30/60/90-day expiry alerts; refill and transfer log; approval queue with approve/reject; a
+  network-membership toggle.
+- **Network redistribution view** — cumulative transfers, medicines moved most split by relief
+  vs near-expiry rebalancing, and a surplus/shortage table.
+
+### The design-system pass
+Done now rather than at Milestone 12, because building two more pages in the old language and
+retrofitting three later costs more than establishing the system once.
+
+- `src/ui/index.tsx` — Card, Button, Field, TextInput, Select, Checkbox, StatTile, StatusPill,
+  EmptyState, Table. All pages now build from these.
+- Inter with tabular figures, so numbers do not reflow during playback.
+- Tokens extended with `ink` / `surface` / `hairline` tints and two shadow levels. **Separation
+  is now elevation and spacing rather than a border on every edge.**
+- Restyled the range slider and replaced the `<select size=6>` medicine picker with a proper
+  listbox — the two loudest unpolished elements.
+- `shortMedicineName` trims the indent's compositional prose for display; the full name stays in
+  the data and on hover.
+- Recharts is lazily loaded, keeping it off the map page: 516 kB main chunk (157 kB gzipped),
+  343 kB chart chunk loaded only on the two chart pages.
+
+### Verified in the browser
+Fixed two things found that way: the missing-inputs notice said "the map below" on pages with no
+map, and it replaced the whole dashboard instead of sitting above a still-usable facility card.
+
+**45 frontend tests, 192 backend tests, lint and typecheck clean.**
+
+---
+
 ## Milestone 8 — Inventory map — 2026-09-16
 
 **Status:** complete and verified in a real browser against the live backend. Nothing committed.

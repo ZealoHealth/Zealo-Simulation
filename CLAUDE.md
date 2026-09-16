@@ -222,6 +222,23 @@ Direct equivalents:
 - Verified in a real browser against the live backend: tiles, boundary, clustering, legend,
   medicine list and the 422 state all render, with no console errors beyond the expected 422.
 
+## Design system (added in Milestone 9)
+
+- **`frontend/src/ui/index.tsx` is the only place visual styling is defined.** Card, CardTitle,
+  Button, Field, TextInput, Select, Checkbox, StatTile, StatusPill, EmptyState, Table/Th/Td.
+  Build new UI from these; do not hand-roll a styled `div`.
+- Tokens live in `@theme` in `src/index.css`: brand colours plus `ink` / `surface` /
+  `hairline` tints and two shadow levels. **Separation is elevation and spacing, not a border on
+  every edge** — borders everywhere was what made the first pass read as a wireframe.
+- Inter, with `.tabular` for any number that changes during playback so columns do not reflow.
+- **Native form controls were the loudest unpolished element.** The range track and thumb are
+  restyled in CSS; the medicine picker is a `role="listbox"` of buttons, not a `<select
+  size=6>`, which cannot be styled.
+- `shortMedicineName` in `api/format.ts` trims the indent's compositional prose for display
+  only. The full name stays in the data and on hover — never shorten the stored value.
+- Recharts is **lazily loaded**: the two chart pages are `React.lazy` routes so the map, the
+  page a judge lands on, does not pay for it.
+
 ## Open questions
 
 - **R7 match confirmations** — 51 of 104 survey items need a decision in
@@ -249,7 +266,7 @@ Direct equivalents:
 | 6 | Simulation core | **done — engine, both policies, metrics, 36 tests** |
 | 7 | API | **done — all endpoints; /simulate gated on R1+R5** |
 | 8 | Inventory map | **done — map, search, panel, playback, feed** |
-| 9 | Facility dashboard + redistribution view | not started |
+| 9 | Facility dashboard + redistribution view | **done — plus a design-system pass** |
 | 10 | Comparison, Settings, Data Sources, About | not started |
 | 11 | Deployment | not started |
 | 12 | Polish | not started |

@@ -155,9 +155,11 @@ class SimulationState:
                 self.forecasters[(fid, mid)] = self.make_forecaster(fid, mid)
                 self.history[(fid, mid)] = {
                     key: np.zeros(scenario.days, dtype=np.int32)
-                    for key in ("on_hand", "demand", "dispensed", "unmet")
+                    for key in ("on_hand", "demand", "dispensed", "unmet", "next_expiry")
                 }
                 self.history[(fid, mid)]["forecast"] = np.zeros(scenario.days, dtype=np.float32)
+                # -1 means "nothing on hand", which is distinct from "expires today".
+                self.history[(fid, mid)]["next_expiry"].fill(-1)
 
         self.manufacturer_arrived_units = 0
         self.dispensed_units = 0
@@ -496,6 +498,9 @@ def _serve_demand(state: SimulationState, day: int) -> None:
             record["forecast"][day] = (
                 forecaster.predict(day) if forecaster is not None else 0.0
             )
+            # Drives the 30/60/90-day expiry alerts on the facility dashboard.
+            next_expiry = inventory.next_expiry(medicine_id)
+            record["next_expiry"][day] = -1 if next_expiry is None else next_expiry
 
             state.metrics.facility_medicine_days += 1
             if record["on_hand"][day] > 0:

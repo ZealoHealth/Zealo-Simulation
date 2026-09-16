@@ -7,6 +7,7 @@
  */
 import { useEffect } from "react";
 import { useViewStore } from "../state/store";
+import { Button } from "../ui";
 
 const SPEEDS = [1, 2, 4, 8, 16];
 
@@ -32,38 +33,30 @@ export function TimeControls({ disabled }: { disabled: boolean }) {
   }, [disabled, pause]);
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-lg bg-white/95 px-3 py-2 shadow ring-1 ring-navy/10">
-      <button
-        type="button"
+    <div className="flex flex-wrap items-center gap-2.5">
+      <Button
+        variant="primary"
         onClick={togglePlay}
         disabled={disabled}
         aria-label={playing ? "Pause playback" : "Play playback"}
-        className="rounded bg-purple px-3 py-1.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-16"
       >
         {playing ? "Pause" : "Play"}
-      </button>
+      </Button>
 
-      <button
-        type="button"
-        onClick={() => stepDay(-1)}
-        disabled={disabled || day === 0}
-        aria-label="Previous day"
-        className="rounded border border-navy/20 px-2 py-1 text-sm disabled:opacity-40"
-      >
+      <Button onClick={() => stepDay(-1)} disabled={disabled || day === 0} aria-label="Previous day">
         &larr;
-      </button>
-      <button
-        type="button"
+      </Button>
+      <Button
         onClick={() => stepDay(1)}
         disabled={disabled || day >= totalDays - 1}
         aria-label="Next day"
-        className="rounded border border-navy/20 px-2 py-1 text-sm disabled:opacity-40"
       >
         &rarr;
-      </button>
+      </Button>
 
-      <label className="flex flex-1 items-center gap-2 text-xs text-navy/70">
-        <span className="whitespace-nowrap font-medium">
+      <label className="flex flex-1 items-center gap-2 text-xs text-ink-muted">
+        <span className="tabular whitespace-nowrap font-semibold text-ink">
           Day {totalDays ? day + 1 : 0} / {totalDays}
         </span>
         <input
@@ -74,34 +67,27 @@ export function TimeControls({ disabled }: { disabled: boolean }) {
           disabled={disabled}
           aria-label="Simulation day"
           onChange={(e) => setDay(Number(e.target.value))}
-          className="w-full accent-purple"
+          className="w-full"
         />
       </label>
 
-      <label className="flex items-center gap-1 text-xs text-navy/70">
-        Speed
-        <select
-          value={speed}
-          disabled={disabled}
-          aria-label="Playback speed"
-          onChange={(e) => setSpeed(Number(e.target.value))}
-          className="rounded border border-navy/20 bg-white px-1 py-1 text-xs"
-        >
-          {SPEEDS.map((s) => (
-            <option key={s} value={s}>
-              {s}&times;
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <button
-        type="button"
-        onClick={reset}
-        className="rounded border border-navy/20 px-2 py-1 text-xs text-navy/70"
+      <select
+        value={speed}
+        disabled={disabled}
+        aria-label="Playback speed"
+        onChange={(e) => setSpeed(Number(e.target.value))}
+        className="rounded-lg bg-surface-sunken px-2 py-1.5 text-xs font-medium text-ink ring-1 ring-hairline"
       >
+        {SPEEDS.map((s) => (
+          <option key={s} value={s}>
+            {s}&times;
+          </option>
+        ))}
+      </select>
+
+      <Button variant="ghost" onClick={reset}>
         Reset
-      </button>
+      </Button>
     </div>
   );
 }

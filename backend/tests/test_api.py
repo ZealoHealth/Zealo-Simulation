@@ -299,3 +299,119 @@ def test_the_run_cache_evicts_the_oldest_run(simulation_inputs):
     # capacity is 4 in this fixture, so the first two are gone
     assert client.get(f"/runs/{ids[0]}/facilities/phc-01").status_code == 404
     assert client.get(f"/runs/{ids[-1]}/facilities/phc-01").status_code == 200
+
+
+# --- dashboard and redistribution data (Milestone 9) --------------------------
+
+def test_facility_detail_reports_a_real_next_expiry(simulation_inputs):
+    """Expiry was a placeholder until the engine started recording it."""
+    body = simulate()
+    detail = client.get(
+        f"/runs/{body['run_id']}/facilities/phc-01", params={"day": 2}
+    ).json()
+    with_stock = [row for row in detail["medicines"] if row["on_hand"] > 0]
+    assert with_stock, "expected some stock on hand"
+    assert any(row["next_expiry_day"] is not None for row in with_stock)
+
+
+def test_a_medicine_with_no_stock_has_no_expiry(simulation_inputs):
+    body = simulate()
+    detail = client.get(
+        f"/runs/{body['run_id']}/facilities/phc-01", params={"day": 2}
+    ).json()
+    for row in detail["medicines"]:
+        if row["on_hand"] == 0:
+            assert row["next_expiry_day"] is None
+
+
+def test_expiry_alerts_are_bucketed_and_sorted(simulation_inputs):
+    body = simulate(days=40)
+    detail = client.get(
+        f"/runs/{body['run_id']}/facilities/phc-01", params={"day": 20}
+    ).json()
+    alerts = detail["expiry_alerts"]
+    assert all(a["bucket"] in (30, 60, 90) for a in alerts)
+    assert all(a["days_until_expiry"] <= a["bucket"] for a in alerts)
+    assert [a["days_until_expiry"] for a in alerts] == sorted(
+        a["days_until_expiry"] for a in alerts
+    )
+
+
+def test_a_time_series_is_returned_only_when_asked_for(simulation_inputs):
+    body = simulate(days=25)
+    run_id = body["run_id"]
+    without = client.get(f"/runs/{run_id}/facilities/phc-01").json()
+    assert without["series"] is None
+
+    medicine_id = without["medicines"][0]["medicine_id"]
+    with_series = client.get(
+        f"/runs/{run_id}/facilities/phc-01", params={"series": medicine_id}
+    ).json()
+    series = with_series["series"]
+    assert series["medicine_id"] == medicine_id
+    for key in ("days", "on_hand", "demand", "dispensed", "unmet", "forecast"):
+        assert len(series[key]) == 25
+
+
+def test_asking_for_a_series_of_an_uncarried_medicine_is_rejected(simulation_inputs):
+    body = simulate()
+    response = client.get(
+        f"/runs/{body['run_id']}/facilities/phc-01", params={"series": "not-a-medicine"}
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"]["error"] == "medicine_not_carried"
+
+
+def test_redistribution_reports_transfers_over_time(simulation_inputs):
+    body = simulate(days=30)
+    data = client.get(
+        f"/runs/{body['run_id']}/redistribution", params={"mode": "with_zealo"}
+    ).json()
+    assert len(data["transfers_over_time"]) == 30
+    assert all(p["transfers"] >= 0 for p in data["transfers_over_time"])
+    assert data["totals"]["transfers"] >= 0
+
+
+def test_redistribution_classifies_surplus_and_shortage(simulation_inputs):
+    body = simulate(days=30)
+    data = client.get(
+        f"/runs/{body['run_id']}/redistribution", params={"day": 10}
+    ).json()
+    assert data["balances"]
+    assert {b["position"] for b in data["balances"]} <= {"surplus", "short", "balanced"}
+    assert data["totals"]["surplus_positions"] + data["totals"]["short_positions"] >= 0
+
+
+def test_redistribution_can_be_narrowed_to_one_medicine(simulation_inputs):
+    body = simulate(days=20)
+    run_id = body["run_id"]
+    everything = client.get(f"/runs/{run_id}/redistribution").json()
+    medicine_id = everything["balances"][0]["medicine_id"]
+    narrowed = client.get(
+        f"/runs/{run_id}/redistribution", params={"medicine_id": medicine_id}
+    ).json()
+    assert {b["medicine_id"] for b in narrowed["balances"]} == {medicine_id}
+    assert len(narrowed["balances"]) < len(everything["balances"])
+
+
+def test_the_baseline_makes_no_transfers_in_the_redistribution_view(simulation_inputs):
+    """Without Zealo there is no network, so there is nothing to redistribute."""
+    body = simulate(days=30)
+    data = client.get(
+        f"/runs/{body['run_id']}/redistribution", params={"mode": "without_zealo"}
+    ).json()
+    assert data["totals"]["transfers"] == 0
+    assert data["top_medicines"] == []
+
+
+def test_redistribution_withholds_value_and_says_why(simulation_inputs):
+    body = simulate(days=20)
+    data = client.get(f"/runs/{body['run_id']}/redistribution").json()
+    assert data["totals"]["transfer_value"] is None
+    assert any("price" in c for c in data["caveats"])
+
+
+def test_redistribution_needs_a_cached_run():
+    response = client.get("/runs/nosuchrun/redistribution")
+    assert response.status_code == 404
+    assert response.json()["detail"]["error"] == "run_not_found"

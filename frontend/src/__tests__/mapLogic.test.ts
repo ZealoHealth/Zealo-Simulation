@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { shortMedicineName } from "../api/format";
 import type { Facility, MedicineDayRow, SimulationEvent } from "../api/types";
 import {
   distanceKm,
@@ -230,5 +231,29 @@ describe("eventsForDay", () => {
 
   it("returns nothing when there is no run", () => {
     expect(eventsForDay(undefined, 5)).toEqual([]);
+  });
+});
+
+describe("shortMedicineName", () => {
+  it("cuts the indent's compositional prose", () => {
+    expect(
+      shortMedicineName(
+        "Theophylline and Etophylline Tablet Each Tablet Contains: Theophylline 23 mg",
+      ),
+    ).toBe("Theophylline and Etophylline Tablet");
+  });
+
+  it("drops a trailing pack size", () => {
+    expect(shortMedicineName("Atenolol Tablet IP 50 mg 1x1")).toBe("Atenolol Tablet IP 50 mg");
+  });
+
+  it("truncates anything still too long", () => {
+    const result = shortMedicineName("A".repeat(80));
+    expect(result.length).toBeLessThanOrEqual(46);
+    expect(result.endsWith("\u2026")).toBe(true);
+  });
+
+  it("never returns an empty label", () => {
+    expect(shortMedicineName("Each tablet contains something")).toBeTruthy();
   });
 });

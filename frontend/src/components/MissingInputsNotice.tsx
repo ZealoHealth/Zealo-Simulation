@@ -10,24 +10,25 @@ import type { ApiErrorDetail } from "../api/types";
 export function MissingInputsNotice({ detail }: { detail: ApiErrorDetail }) {
   return (
     <section
-      className="rounded-lg border border-coral/40 bg-coral/5 px-4 py-3"
+      className="rounded-xl bg-coral/6 px-4 py-3 ring-1 ring-coral/25"
       data-testid="missing-inputs"
     >
-      <h3 className="text-sm font-bold text-navy">Simulation not available yet</h3>
-      <p className="mt-1 text-xs text-navy/75">
-        The map below shows <strong>real facility locations</strong> from OpenStreetMap. The
-        stock simulation needs two inputs that have to come from official sources, and this
-        project will not substitute estimates for them.
+      <h3 className="text-sm font-bold text-ink">Simulation not available yet</h3>
+      <p className="mt-1 text-xs leading-relaxed text-ink-muted">
+        <strong className="text-ink">Real facility locations and the medicine list are
+        loaded</strong> and can be explored. The stock simulation additionally needs inputs
+        that have to come from official sources, and this project will not substitute
+        estimates for them.
       </p>
       {detail.missing && (
-        <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-navy/75">
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-ink-muted">
           {detail.missing.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
       )}
       {detail.requests && detail.requests.length > 0 && (
-        <p className="mt-2 text-[11px] text-navy/60">
+        <p className="mt-2 text-[11px] text-ink-subtle">
           Tracked as {detail.requests.join(" and ")} in <code>data/manual/REQUESTS.md</code>.
         </p>
       )}

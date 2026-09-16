@@ -30,6 +30,10 @@ export interface ViewState {
   /** Facility the "nearest first" medicine search measures distance from. */
   originFacilityId: string | null;
   filters: MapFilters;
+  /** Facilities opted out of the Zealo network. Part of the scenario, so it re-runs. */
+  excludedFacilityIds: string[];
+  /** "<day>:<facility>:<medicine>" -> approve | reject. Also part of the scenario. */
+  approvalDecisions: Record<string, "approve" | "reject">;
 
   setMode: (mode: Mode) => void;
   setDay: (day: number) => void;
@@ -46,6 +50,8 @@ export interface ViewState {
   toggleLayer: (layer: LayerKey) => void;
   setNetworkOnly: (value: boolean) => void;
   setRadiusKm: (km: number | null) => void;
+  toggleNetworkMembership: (facilityId: string) => void;
+  decideApproval: (key: string, decision: "approve" | "reject") => void;
   reset: () => void;
 }
 
@@ -68,6 +74,8 @@ export const useViewStore = create<ViewState>((set) => ({
   selectedMedicineId: null,
   originFacilityId: null,
   filters: INITIAL_FILTERS,
+  excludedFacilityIds: [],
+  approvalDecisions: {},
 
   setMode: (mode) => set({ mode }),
   setDay: (day) => set((s) => ({ day: clampDay(day, s.totalDays) })),
@@ -92,6 +100,14 @@ export const useViewStore = create<ViewState>((set) => ({
   setNetworkOnly: (networkOnly) =>
     set((s) => ({ filters: { ...s.filters, networkOnly } })),
   setRadiusKm: (radiusKm) => set((s) => ({ filters: { ...s.filters, radiusKm } })),
+  toggleNetworkMembership: (facilityId) =>
+    set((s) => ({
+      excludedFacilityIds: s.excludedFacilityIds.includes(facilityId)
+        ? s.excludedFacilityIds.filter((id) => id !== facilityId)
+        : [...s.excludedFacilityIds, facilityId],
+    })),
+  decideApproval: (key, decision) =>
+    set((s) => ({ approvalDecisions: { ...s.approvalDecisions, [key]: decision } })),
   reset: () =>
     set({
       day: 0,
@@ -101,6 +117,8 @@ export const useViewStore = create<ViewState>((set) => ({
       selectedMedicineId: null,
       originFacilityId: null,
       filters: INITIAL_FILTERS,
+      excludedFacilityIds: [],
+      approvalDecisions: {},
     }),
 }));
 
