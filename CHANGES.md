@@ -4,6 +4,67 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Milestone 3 — Medicine master list and indent matching — 2026-09-16
+
+**Status:** complete. 51 matches await your confirmation before they enter the build.
+Nothing committed.
+
+### Added
+- `backend/zealo/pipeline/indent.py` — extracts all 890 rows of the KSMSCL Annual Indent.
+- `backend/zealo/pipeline/matching.py` — matches survey items to indent rows on base name,
+  dosage form and per-family strength.
+- `backend/zealo/pipeline/pdf_tables.py` — shared row assembly, extracted from `survey.py`
+  (which now uses it; its 25 tests still pass unchanged).
+- `data/pipeline/02_extract_indent_and_match.py` — runnable, and **never overwrites a decision
+  you have already recorded**.
+- `backend/tests/test_indent_extraction.py` + `test_matching.py` — 39 tests.
+
+### Output
+- `data/processed/medicines.csv` — 890 medicines with therapeutic group, PHC/CHC/TLH/DLH flags,
+  statewide indent quantity, provenance `real`
+- `data/processed/survey_item_matches.csv` — 104 survey items with their indent link and
+  `match_status` (`auto` / `confirmed` / `confirmed_no_match` / `pending_review`)
+- `data/manual/indent_match_review.csv` — **51 items needing your decision**
+- `data/interim/indent_match_report.json`
+
+### Verified
+890 rows (matching the document's own claim) · contiguous serials 1–890 · unique codes · all
+four facility-level flags parsed on every row · a quantity on every row · **levels nest**
+(384 PHC ⊂ 657 CHC ⊂ 879 TLH ⊂ 890 DLH).
+
+### Three extraction defects found and fixed
+1. **Content leaked between rows.** Row heights vary enormously, so a 5-line drug name's outer
+   lines sat nearer a *neighbouring* row's serial number than their own. Nearest-anchor
+   assignment moved them; at worst 36 rows were wrong (`"ampoules Disposable Mask…"`,
+   `"Ampicillin Capsules… Antacid Suspension…"`). Fixed by using **the table's own shading
+   rectangles** as row boundaries — every band holds exactly one serial number. Now 0 leaks;
+   the 2 remaining odd-looking names are printed that way in the source.
+2. **A category glued to the next column.** `'AntioxytocicsAvailable'` is a single token, so
+   four rows lost their PHC availability. Fixed by splitting straddling words at the column
+   boundary using character positions.
+3. **A quantity split across two tokens.** `'1'` + `'3,84,87,350'` parsed as nothing.
+
+### Two matching defects found and fixed
+1. **A shared volume excused a differing dose.** `250mg/5ml` matched `125mg/5ml` because both
+   contain `5ml`. Strengths are now compared **family by family** (mass / volume / activity /
+   concentration).
+2. **Unrelated units counted as "no contradiction".** `Vitamin A 25000 IU` auto-accepted against
+   `Vitamin-E 400mg`. Both sides carrying strengths that share no family is now a disagreement.
+
+Also added: two survey items may not claim the same indent row (the survey lists "Disposable
+mask" and "Triple layer mask"; the indent has one such row), and a near-tie between the top two
+candidates blocks auto-acceptance.
+
+### Result
+**53 of 104 auto-accepted, 51 held for review.** Every auto-accepted match was read by hand.
+Unconfirmed matches produce no indent code anywhere in the build — enforced by test.
+
+### Confirmed, not assumed
+The indent's 7 dotted EDL-style codes share **no** values with the survey's 103, so there is
+genuinely no code-level join and text matching is unavoidable.
+
+---
+
 ## Milestone 2 (part 1) — Survey table extraction — 2026-09-16
 
 **Status:** Tables 1, 2 and 3 extracted and verified. The derived availability matrix is the

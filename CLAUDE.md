@@ -112,6 +112,22 @@ Direct equivalents:
 - **Item 49 (Lignocaine inj 2 % w/v) is printed as 83.33% = 12.5/15**, impossible for 15 binary
   observations. Every other value is an exact multiple of 1/15. The paper's inconsistency, not
   ours; its column total is rounded to 12 and the choice is documented in METHODS.md.
+- **Three row-assembly rules exist in `pdf_tables.py`; pick by layout.** `max_row_dy`
+  (nearest anchor) suits the survey, whose cells are centred on their anchor.
+  `row_boundaries` (the table's own shading rectangles) is what the indent needs: its row
+  heights vary so much that a 5-line drug name's outer lines land nearer a *neighbouring*
+  row's serial number, which silently moved content between rows (36 rows affected at worst).
+  Every shading band holds exactly one serial number, so the document's own rules are exact.
+  `band_up_tolerance` exists but neither PDF uses it now.
+- **Indent extraction gotchas, all fixed and pinned by tests:** the PDF's text layer splits a
+  long quantity into two tokens (`'1'` + `'3,84,87,350'`), and glues a category to the next
+  column (`'AntioxytocicsAvailable'`) which needs char-level splitting. No word legitimately
+  starts between x=158.3 and x=178.9, so the category/PHC split at 178.0 is unambiguous.
+- **Indent codes have three forms:** `D#####` (761), `M#####` (122 consumables), and 7 dotted
+  EDL-style codes. The dotted ones share no values with the survey, so there is still no join.
+- **Matching needs three signals, not one score.** Name similarity alone matched syrup to
+  capsules at 81 and a wrong drug at 50. Base name + dosage form + per-family strength, all
+  three required, plus no near-tie and no two items claiming the same indent row.
 - Tables 2 and 3 must be parsed from **word coordinates, not text**: the tables are striped, so
   `extract_tables()` only resolves alternating rows, and cells wrap vertically across up to
   three lines. Column left edges: Table 2 `[70, 105, 305, 430]`, Table 3 `[70, 105, 317, 444,
@@ -131,6 +147,8 @@ Direct equivalents:
 
 ## Open questions
 
+- **R7 match confirmations** — 51 of 104 survey items need a decision in
+  `data/manual/indent_match_review.csv`. They are excluded from the build until then.
 - **R5 population figures** — blocks the demand formula; must be official and cited.
 - **Unit prices** — no source identified yet; ask before using illustrative prices.
 - **HMIS availability** — determines whether the demand split is `derived` or `estimated`.
@@ -144,7 +162,7 @@ Direct equivalents:
 |---|---|---|
 | 1 | Plan and scaffold | **done** |
 | 2 | Survey data | **tables 1–3 extracted + verified; matrix blocked on R1** |
-| 3 | Medicine master list | not started |
+| 3 | Medicine master list | **done — 51 matches await your confirmation (R7)** |
 | 4 | Facilities | blocked on R2, R3 |
 | 5 | Demand and starting inventory | blocked on R4, R5 |
 | 6 | Simulation core | not started |

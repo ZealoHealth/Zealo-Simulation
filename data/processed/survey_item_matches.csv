@@ -1,0 +1,105 @@
+survey_sl_no,survey_drug_name,survey_strength,survey_dosage_form,survey_essentiality,survey_availability_pct,indent_drug_code,indent_drug_name,indent_category,at_phc,at_chc,at_tlh,at_dlh,indent_qty,match_status,provenance,source_id
+1,Absorbent cotton wool,500gm,NA,most_essential,93.33,M00004,Absorbent cotton wool 500 GM 1x500gm,Medical Devices,True,True,True,True,424253,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+2,Adrenaline bitartrate,1mg/ml injection,Injection,most_essential,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+3,Albendazole,400mg tab,Tablet,essential,100.0,D00175,Albendazole Tablet IP 400 mg Each chewable tablet contains albendazole 400 mg 1x1,Anti-infective Medicines,True,True,True,True,28346538,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+4,Ambroxol,30mg/5ml syrup,Syrup,essential,80.0,D00827,Ambroxol Hydrochloride Syrup 30mg/5ml 1x100 ml Bottle,Medicines acting on the respiratory tract,True,True,True,True,1229215,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+5,Amikacin,100mg/2ml syrup,Injection,essential,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+6,Amitriptyline,25mg tablet,Tablet,very_essential,66.67,D00349,Amitriptyline Tablet IP 25 mg 1x1,Pain and Palliative Care Medicines,True,True,True,True,11678280,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+7,Amlodipine,5mg tablet,Tablet,very_essential,100.0,D00460,Amlodipine Tablet IP 5 mg 1x1,Cardiovascular medicines,True,True,True,True,127702288,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+8,Amoxicillin + clavulanic acid,200mg +28.5mg/5ml powder,Powder for suspension,most_essential,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+9,Amoxycillin,250mg/5ml syrup,Oral Liquid,essential,80.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+10,Amoxycillin,125mg/5ml powder,Suspension,most_essential,86.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+11,Amoxycillin + clavulanic acid,625mg tablet,Tablet,most_essential,60.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+12,Anti-D immunoglobin,300mcg injection,Injection,most_essential,0.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+13,Antisnake venom,NA,Powder for Infusion,most_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+14,Atenolol,50mg tablet,Tablet,most_essential,93.33,D00448,Atenolol Tablet IP 50 mg 1x1,Cardiovascular medicines,True,True,True,True,138487350,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+15,Atropine sulfate,1mg/ml injection,Injection,most_essential,53.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+16,Calcium + vit D,500 mg,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+17,Calcium gluconate,10 % W/V/ 10ml Inj,,,13.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+18,Cefixime,50mg/5ml syrup,Powder,essential,60.0,D00216,Cefixime Oral Suspension IP 50 mg/5 ml 1x30 ml bottle,Anti-infective Medicines,True,True,True,True,767116,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+19,Chlorpheniramine maleate,4mg tablet,Tablet,very_essential,100.0,D00091,Chlorpheniramine Tablet IP 4mg 1x1,Antiallergics and Medicines used in Anaphylaxis,True,True,True,True,298407360,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+20,Chlortalidone,12.5mg tablet,,,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+21,Ciprofloxacin hydrochloride,500mg tablet,Tablet,most_essential,100.0,D00242,Ciprofloxacin Tablet IP 500 mg 1x1,Anti-infective Medicines,True,True,True,True,40135440,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+22,Ciprofloxacin hydrochloride eye/ear,0.3%w/v drops,Drops,most_essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+23,Co-trimoxazole (trimethoprim + sulfamethoxazole),40+200mg/5ml syrup,Suspension,very_essential,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+24,Dexamethasone,4mg/ml injection,Injection,most_essential,93.33,D00094,Dexamethasone Injection IP 4 mg/ml 1x2ml ampoule,Antiallergics and Medicines used in Anaphylaxis,True,True,True,True,3735304,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+25,Dextrose,5% injection,,,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+26,Dextrose with sodium chloride,5% + 0.9% infusion,Infusion,most_essential,80.0,D00837,Sodium chloride and Dextrose Injection IP (Sodium chloride 0.9% and Dextrose 5% ) 1x500 ml bottle,"Solutions correcting water, electrolyte and acid-base disturbances",True,True,True,True,3906745,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+27,Diclofenac,25mg/ml injection,Injection,essential,100.0,D00037,Diclofenac Injection IP 25mg/ml 1x3 ml ampoule,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",True,True,True,True,30466840,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+28,Diclofenac,50mg tablet,Tablet,essential,100.0,D00036,Diclofenac Gastro-resistant Tablets IP 50 mg 1x1,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",True,True,True,True,373356120,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+29,Diclofenac,75mg/ml injection,Injection,most_essential,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+30,Dicyclomine hydrochloride,10mg/ml injection,Injection,most_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+31,Dicyclomine hydrochloride,10mg tablet,Tablet,very_essential,100.0,D00636,Dicyclomine Tablet IP 10 mg 1x1,Gastrointestinal medicines,True,True,True,True,42309240,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+32,Disposable mask,NA,NA,essential,100.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+33,Domperidone,1mg/ml syrup,Syrup,essential,53.33,D00635,Domperidone Suspension IP 1 mg/ml 1x30 ml bottle,Gastrointestinal medicines,True,True,True,True,488580,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+34,Domperidone,10mg tablet,Tablet,essential,93.33,D00634,Domperidone Tablet IP 10 mg 1x1,Gastrointestinal medicines,True,True,True,True,36985440,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+35,DPT vaccine,0.5ml injection,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+36,Fluoxetine hydrochloride,60mg capsules,Capsule,very_essential,33.33,D00357,Fluoxetine Capsules IP 60 mg 1x1,Pain and Palliative Care Medicines,False,False,True,True,79048,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+37,Folic acid tabs,500 mcg,,,100.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+38,Glibenclamide,5 mg tablet,,,93.33,D00683,Glibenclamide Tablet IP 5 mg 1x1,"Hormones, other endocrine medicines and contraceptives",True,True,True,True,29501293,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+39,Glimepiride,2mg tablet,Tablet,most_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+40,Glimepiride,1mg tablet,Tablet,very_essential,93.33,D00680,Glimepiride Tablet IP 1 mg 1x1,"Hormones, other endocrine medicines and contraceptives",True,True,True,True,81442790,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+41,Glyceryl trinitrate,0.5mg sublingual,Tablet,most_essential,0.0,D00442,Glyceryl Trinitrate Tablet IP 0.5 mg (Sublingual use) 1x1,Cardiovascular medicines,False,True,True,True,240239,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+42,Hydrocortisone sodium succinate,100mg injection,Injection,most_essential,86.67,D00086,Hydrocortisone Sodium Succinate Injection IP 100 mg / vial 1x1 vial,Antiallergics and Medicines used in Anaphylaxis,True,True,True,True,1283971,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+43,Ibuprofen,200mg tablet,Tablet,essential,93.33,D00043,Ibuprofen Tablet IP 200 mg 1x1,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",True,True,True,True,20320920,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+44,Ibuprofen,400mg tablet,Tablet,very_essential,46.67,D00044,Ibuprofen Tablet IP 400 mg 1x1,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",True,True,True,True,43948440,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+45,Iron-folic acid tab,100mg/500mcg,,,100.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+46,Iron-folic acid tab,20mg/100mcg,,,73.33,D00404,Iron and Folic Acid Tablet IP Each coated tablet contains 45 mg of Elemental Iron with 100 mcg of Folic Acid. 1x1,Medicines affecting the blood,True,True,True,True,20765637,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+47,Iron sucrose,100 mg/5ml Inj,Injection,most_essential,80.0,D00409,Iron Sucrose Injection USP 100 mg/ 5 ml 1x5 ml ampoule,Medicines affecting the blood,True,True,True,True,2438584,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+48,Levocetirizine,5mg tablet,,,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+49,Lignocaine inj,2 % w/v,,,83.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+50,Magnesium sulfate,500mg/ml injection,Injection,most_essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+51,Metformin,1000mg tablet,,,100.0,D00690,Metformin Hydrocloride Prolonged-Release Tablets IP 1000 mg 1x1,"Hormones, other endocrine medicines and contraceptives",True,True,True,True,74132353,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+52,Metformin,500mg tablet,,,100.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+53,Metronidazole,200mg/5ml syrup,Syrup,most_essential,6.67,D00265,Metronidazole Benzoate Oral Suspension IP 200 mg/5 ml Each 5 ml should contain Metronidazole Benzoate equivalent to 200 mg of metronindazole 1x60ml bottle,Anti-infective Medicines,True,True,True,True,774698,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+54,Metronidazole,400mg tablet,Tablet,most_essential,100.0,D00262,Metronidazole Tablet IP 400 mg 1x1,Anti-infective Medicines,True,True,True,True,48634680,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+55,Ondansetron,2mg/ml injection,Injection,most_essential,46.67,D00365,Ondansetron Injection IP 2 mg/ml 1x2ml ampoule,Pain and Palliative Care Medicines,True,True,True,True,3268102,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+56,Oral rehydration salts,WHO standard,,,100.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+57,Oxytocin,5IU/ml injection,Injection,most_essential,60.0,D00765,Oxytocin Injection IP 5IU/ml 1x1 ml vial/ampoule,Oxytocics and Antioxytocics,True,True,True,True,3147625,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+58,Pantoprazole,40mg tablet,Tablet,essential,93.33,D00625,Pantoprazole Gastro-resistant Tablets IP 40mg 1x1,Gastrointestinal medicines,True,True,True,True,57223870,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+59,Paracetamol,125mg/5ml syrup,Syrup,most_essential,100.0,D00054,Paracetamol Pediatric Syrup IP 125 mg/5ml 1x60ml bottle,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",True,True,True,True,4283488,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+60,Paracetamol,500mg tablet,Tablet,most_essential,100.0,D00048,Paracetamol Tablet IP 500 mg 1x1,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",True,True,True,True,481946520,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+61,Pheniramine maleate,22.75 mg/ml injection,Injection,most_essential,93.33,D00126,Pheniramine Maleate Injection IP 22.75 mg/ml 1x2ml ampoule,Antiallergics and Medicines used in Anaphylaxis,True,True,True,True,6691857,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+62,Phenobarbitone,30mg tablet,Tablet,essential,86.67,D00784,Phenobarbitone Tablet IP 30 mg 1x1,Psychotherapeutic Medicines,True,True,True,True,17139784,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+63,Phenobarbitone,60mg tablet,Tablet,essential,60.0,D00785,Phenobarbitone Tablet IP 60 mg 1x1,Psychotherapeutic Medicines,True,True,True,True,26781064,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+64,Phenytoin sodium,100mg tablet,Tablet,essential,93.33,D00162,Phenytoin Tablet IP 100 mg 1x1,Anticonvulsants/ Antiepileptics,True,True,True,True,19070355,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+65,Povidone iodine ointment,5 W/W,Ointment,essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+66,Pralidoxime chloride,1gm,Injection,most_essential,66.67,D00137,Pralidoxime Chloride Injection IP 1 gm 1x1 vial,Antidotes and Other Substances used in Poisonings,True,True,True,True,74905,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+67,Premix insulin 30:70,40IU/ml injection,Injection,very_essential,46.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+68,Rabies vaccine,2.5IU injection,Injection,most_essential,86.67,D00716,"Rabies Vaccine, Human IP 2.5 IU/ml Single dose vial with diluent and syringe with needle",Immunologicals,True,True,True,True,711867,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+69,Ranitidine,25mg/ml injection,Injection,most_essential,80.0,D00620,Ranitidine Injection IP 25 mg/ml 1x2ml vial /ampoule,Gastrointestinal medicines,True,True,True,True,10639674,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+70,Ranitidine,150mg tablet,Tablet,very_essential,100.0,D00619,Ranitidine Tablet IP 150mg 1x1,Gastrointestinal medicines,True,True,True,True,247650840,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+71,Ringer lactate,Injection,,,93.33,D00849,Compound Sodium lactate Injection IP (Ringer- Lactate Solution ) 1x500 ml bottle,"Solutions correcting water, electrolyte and acid-base disturbances",True,True,True,True,4784632,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+72,Risperidone,2mg tablet,Tablet,essential,93.33,D00779,Risperidone Tablet IP 2 mg 1x1,Psychotherapeutic Medicines,False,True,True,True,7260815,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+73,Risperidone,4mg tablet,Tablet,essential,6.67,D00780,Risperidone Tablet IP 4 mg 1x1,Psychotherapeutic Medicines,False,True,True,True,1675718,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+74,Salbutamol,5mg/ml inhalation,,,80.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+75,Salbutamol sulfate,2mg/5ml syrup,Syrup,very_essential,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+76,Salbutamol sulfate,4mg tablet,Tablet,very_essential,46.67,D00819,Salbutamol Tablet IP 4mg 1x1,Medicines acting on the respiratory tract,True,True,True,True,44115581,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+77,Silver sulfadiazine,125g cream,Cream,essential,46.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+78,Sodium chloride 100ml,0.9%w/v,Injection FFS,most_essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+79,Sodium chloride 500ml,0.9%w/v,Injection FFS,most_essential,86.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+80,Sterile blood lancets,NA,,,80.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+81,Sterile disposable IV cannula with inj port,18G,NA,essential,53.33,M00087,Sterile disposable IV cannula with injection port 18G 1x1,Medical Devices,True,True,True,True,987111,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+82,Sterile disposable IV cannula with inj port,22G,NA,essential,80.0,M00089,Sterile disposable IV cannula with injection port 22G 1x1,Medical Devices,True,True,True,True,1738347,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+83,Sterile disposable IV cannula with inj port,20G,NA,essential,46.67,M00088,Sterile disposable IV cannula with injection port 20G 1x1,Medical Devices,True,True,True,True,2044690,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+84,Sterile disposable perfusion (infusion) sets with filter,NA,NA,most_essential,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+85,Sterile disposable syringe with hypodermic needle,2ml-23G syringe,NA,most_essential,100.0,M00122,Sterile disposable syringe with hypodermic needle 2ml-23G 1x1,Medical Devices,True,True,True,True,82475327,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+86,Sterile disposable syringe with hypodermic needle,5ml-23G syringe,NA,most_essential,93.33,M00123,Sterile disposable syringe with hypodermic needle 5ml-23G 1x1,Medical Devices,True,True,True,True,61239360,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+87,Sterile disposable umbilical cord clamp,NA,NA,most_essential,100.0,M00099,Sterile Disposable Umbilical Cord Clamp NA 1x1,Medical Devices,True,True,True,True,811371,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+88,Sterile surgical gloves (latex),7.5in,NA,essential,46.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+89,Sterile surgical gloves (latex),6.5in,NA,essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+90,Sterile surgical gloves (latex),7in,NA,essential,100.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+91,Sterile surgical gloves (latex),6in,NA,essential,46.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+92,Telmisartan,40mg tablet,Tablet,very_essential,73.33,D00482,Telmisartan Tablet IP 40 mg 1x1,Cardiovascular medicines,True,True,True,True,76267909,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+93,Theophylline + etophylline,50.6mg+169.4mg/2ml injection,Injection,very_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+94,Theophylline + etophylline,23mg+77mg syrup,Syrup,very_essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+95,Theophylline + etophylline,23mg+77mg tablet,Syrup,very_essential,93.33,D00821,Theophylline and Etophylline Tablet Each Tablet Contains: Theophylline 23 mg + Etophylline 77 mg 1x1,Medicines acting on the respiratory tract,False,False,True,True,7824950,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+96,Trihexyphenidyl hydrochloride,2mg tablet,Tablet,essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+97,Triple layer mask,NA,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+98,Vitamin A capsules,25000 IU,,,13.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+99,Vitamin A solution,1 lakh IU/ml 100 ml bottle,,,80.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+100,Vitamin C chewable tab,500 ml tab,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+101,Vitamin K,10 mg/ml Inj,,,53.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+102,Zinc drops,20mg/ml drops,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+103,Zinc sulfate,100 mg tab,,,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+104,Zinc syrup,60 ml,,,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023

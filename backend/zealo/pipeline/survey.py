@@ -11,9 +11,8 @@ also wrap vertically -- an essentiality class renders as "Most" / "essential" /
 "drug list" on three lines centred on its data row, and long drug names wrap
 above and below theirs.
 
-So rows are rebuilt from word coordinates instead. Each row is anchored by the
-word in its first column (a serial number or a drug code); every other word is
-attached to the nearest anchor by vertical distance. Rows sit ~28.8pt apart and
+So rows are rebuilt from word coordinates instead, by
+``zealo.pipeline.pdf_tables.assemble_rows``. Rows here sit ~28.8pt apart and
 wrapped lines ~10.8pt from their anchor, so the nearest anchor is unambiguous.
 
 Nothing here interprets or adjusts a published number. Values are transcribed as
@@ -29,6 +28,8 @@ from pathlib import Path
 from typing import Any
 
 import pdfplumber
+
+from zealo.pipeline.pdf_tables import assemble_rows
 
 # --- What the paper states in its own text. Used to verify extraction, never to patch it. ---
 PUBLISHED_OVERALL_AVAILABILITY = 74.20
@@ -100,65 +101,6 @@ class ExtractionReport:
         return not self.problems
 
 
-def _column_of(x0: float, columns: list[tuple[str, float]]) -> str | None:
-    """Return the column a word starting at ``x0`` belongs to."""
-    found = None
-    for name, left in columns:
-        if x0 >= left - 1.0:
-            found = name
-    return found
-
-
-def _assemble_rows(
-    words: list[dict[str, Any]],
-    columns: list[tuple[str, float]],
-    anchor_pattern: re.Pattern[str],
-) -> list[dict[str, str]]:
-    """Rebuild logical rows from positioned words.
-
-    Anchors are words in the first column matching ``anchor_pattern``. Every other
-    word joins the anchor nearest to it vertically, provided it is within
-    ``_MAX_ROW_DY``; anything further away (page headers, footers, captions) is
-    dropped.
-    """
-    first_col, second_col_left = columns[0][0], columns[1][1]
-    anchors = [
-        w
-        for w in words
-        if w["x0"] < second_col_left and anchor_pattern.match(w["text"])
-    ]
-    if not anchors:
-        return []
-    anchors.sort(key=lambda w: w["top"])
-
-    buckets: list[dict[str, list[tuple[float, float, str]]]] = [
-        {name: [] for name, _ in columns} for _ in anchors
-    ]
-    anchor_tops = [a["top"] for a in anchors]
-
-    for w in words:
-        col = _column_of(w["x0"], columns)
-        if col is None:
-            continue
-        # nearest anchor by vertical distance
-        idx = min(range(len(anchors)), key=lambda i: abs(anchor_tops[i] - w["top"]))
-        if abs(anchor_tops[idx] - w["top"]) > _MAX_ROW_DY:
-            continue
-        # the anchor word itself is the row's first-column value
-        if w is anchors[idx] and col != first_col:
-            col = first_col
-        buckets[idx][col].append((w["top"], w["x0"], w["text"]))
-
-    rows = []
-    for bucket in buckets:
-        row = {}
-        for name, _ in columns:
-            parts = sorted(bucket[name])
-            row[name] = " ".join(p[2] for p in parts).strip()
-        rows.append(row)
-    return rows
-
-
 def _words_on(pdf: pdfplumber.PDF, page_index: int) -> list[dict[str, Any]]:
     return pdf.pages[page_index].extract_words()
 
@@ -204,7 +146,7 @@ def extract_table2(pdf_path: Path) -> list[dict[str, Any]]:
     with pdfplumber.open(pdf_path) as pdf:
         for pno in _TABLE2_PAGES:
             words = _words_on(pdf, pno)
-            for raw in _assemble_rows(words, _TABLE2_COLUMNS, _SERIAL):
+            for raw in assemble_rows(words, _TABLE2_COLUMNS, _SERIAL, _MAX_ROW_DY):
                 avail = raw["availability"]
                 if not re.fullmatch(r"\d{1,3}\.\d{2}", avail):
                     continue
@@ -241,7 +183,7 @@ def extract_table3(pdf_path: Path) -> list[dict[str, Any]]:
     with pdfplumber.open(pdf_path) as pdf:
         for pno in _TABLE3_PAGES:
             words = _words_on(pdf, pno)
-            for raw in _assemble_rows(words, _TABLE3_COLUMNS, _CODE):
+            for raw in assemble_rows(words, _TABLE3_COLUMNS, _CODE, _MAX_ROW_DY):
                 name = " ".join(raw["drug_name"].split())
                 if not name:
                     continue

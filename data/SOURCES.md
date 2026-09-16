@@ -93,10 +93,26 @@ the statewide quantity that taluk demand is scaled down from.
 - Covers government supply only. Private facilities are outside it entirely.
 - Row text wraps across lines in the PDF; extraction needs column-position clustering.
 
-**Join risk:** survey Table 3 codes (`6.3.2`) and indent codes (`D00303`) are different
-schemes, so the 104 survey items must be matched to indent rows by **name + strength + dosage
-form**, not by code. Uncertain matches go to `data/manual/indent_match_review.csv` for human
-confirmation and are excluded until confirmed.
+**Join risk — confirmed:** survey Table 3 codes (`6.3.2`) and indent codes are different
+schemes, so the 104 survey items must be matched by **name + strength + dosage form**, not by
+code. Uncertain matches go to `data/manual/indent_match_review.csv` and are excluded until
+confirmed. 53 of 104 matched automatically; 51 await confirmation.
+
+**Extraction findings (verified against the printed PDF):**
+- Row count confirmed at **890**, matching the document's own claim.
+- Codes come in **three** forms, not one: `D#####` (761 drugs), `M#####` (122 medical devices
+  and consumables), and **7 dotted EDL-style codes** for blood-factor products. Those 7 share
+  no values with the survey's 103, so they do not create a join.
+- Facility levels **nest**: every item stocked at PHC is stocked at CHC, TLH and DLH.
+  384 PHC / 657 CHC / 879 TLH / 890 DLH. Checked, because a break would mean a misread column.
+- Split by type: 539 Essential, 351 Desirable.
+- Two names are printed oddly in the source itself and are **not** extraction errors:
+  `"surgical gloves 6 1x1"` (lowercase in the PDF) and `"lndacaterol"` (a capital-I rendered as
+  a lowercase L).
+
+**Extraction notes:** rows had to be rebuilt from the table's own shading rectangles rather than
+from text or word distance — see `methods:survey_tables` and `methods:indent_matching` in
+`data/METHODS.md` for why.
 
 ---
 

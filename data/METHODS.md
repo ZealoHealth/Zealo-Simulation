@@ -100,17 +100,47 @@ Two items — **glyceryl trinitrate** and **anti-D immunoglobin** — are at 0.0
 
 ---
 
-## `methods:indent_matching` — Matching survey items to indent rows *(Milestone 3)*
+## `methods:indent_matching` — Matching survey items to indent rows *(Milestone 3 — implemented)*
 
-The survey's drug codes (Karnataka EDL numbering, e.g. `6.3.2`) and the KSMSCL indent's codes
-(e.g. `D00303`) are **different schemes**, so there is no code-level join. Items are matched on
-normalised **name + strength + dosage form** using token-set fuzzy matching.
+**Script:** `data/pipeline/02_extract_indent_and_match.py`. **Code:**
+`backend/zealo/pipeline/{indent,matching}.py`. **Tests:** `backend/tests/test_{indent_extraction,matching}.py`.
 
-- Scores above the accept threshold → auto-accepted, tagged `derived`.
-- Everything else → written to `data/manual/indent_match_review.csv` for human confirmation.
-- **Unconfirmed uncertain matches are excluded from the build**, enforced by a test.
+**There is no code join.** The survey uses Karnataka EDL numbering (`6.3.2`); the indent uses
+`D#####` (761 drugs) and `M#####` (122 consumables). The indent does contain 7 EDL-style dotted
+codes, but they are blood-factor products and share **none** of the survey's 103 values —
+checked, not assumed. So all 104 items must be matched from text.
 
-Thresholds are recorded here once tuned against real output rather than guessed in advance.
+**One fuzzy score is not safe enough.** Measured on the real data, `"Amoxycillin 250mg/5ml
+syrup"` scores 81 against `"Amoxycillin Capsules IP 250 mg 1x1"` — right drug, right strength,
+wrong form — and `"Zinc syrup 60 ml"` scores 50 against a paracetamol syrup whose 60ml pack
+looks like an agreeing strength. Building stock levels on that would be inventing data.
+
+**So each label is parsed into three comparable parts** and all three must agree:
+
+| Part | How it is derived |
+|---|---|
+| base name | form words, pharmacopoeia markers (IP/BP/USP), pack sizes (`1x10ml`) and strengths stripped; trailing compositional prose ("Each tablet contains …") cut |
+| dosage form | canonicalised (`tab`→`tablet`); syrup/suspension/solution/drops treated as equivalent, as are powder/granules/sachet, injection/infusion, ointment/cream/gel |
+| strengths | normalised (g→mg, mcg→mg, lakh→IU) and **grouped by what they measure** — mass, volume, activity, concentration |
+
+**Strengths are compared family by family.** Comparing the sets wholesale let
+`250mg/5ml` match `125mg/5ml` because both contain `5ml`. Every family present on *both* sides
+must agree. If both labels carry strengths but share no family at all — `Vitamin A 25000 IU`
+against `Vitamin-E 400mg` — that counts as disagreement, because it let a wrong drug through.
+
+**Auto-accept requires all of:** base-name similarity ≥ **88** (tuned against the real output,
+not guessed), compatible form, compatible strength, **no near-tie** with the runner-up (within
+2 points), and **no other survey item claiming the same indent row**. That last rule exists
+because the survey lists both "Disposable mask" and "Triple layer mask" while the indent has one
+"Disposable Mask Triple Layer Elastic type"; at least one must be wrong, so both go to a human.
+
+**Result on the real data: 53 of 104 auto-accepted, 51 held for review.** Held items are
+written to `data/manual/indent_match_review.csv` with their top 3 candidates and the reason,
+and are **excluded from the build until a decision is recorded** — enforced by test. Decisions
+already in the file are read back on every re-run and never overwritten.
+
+Accepted links are tagged `derived` (the link is inferred); the availability figure each item
+carries stays `real`.
 
 ---
 

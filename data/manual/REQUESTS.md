@@ -79,9 +79,30 @@ your say-so.
 
 ---
 
+## Now waiting on you
+
+### R7 — Confirm 51 uncertain medicine matches  →  `data/manual/indent_match_review.csv`
+
+**Why manual:** the survey and the indent use different drug-code schemes, so the 104 survey
+items have to be matched to indent rows by name, strength and dosage form. 53 matched cleanly
+on their own. The other **51 are genuinely ambiguous** and I will not guess them — a wrong match
+would attach the wrong therapeutic group, facility levels and demand quantity to a medicine.
+
+**What to do:** open the file. Each row has the survey item, **why** it needs review, and the
+top 3 candidate indent rows with their scores. Put one of these in the `decision` column:
+- an **indent drug code** (e.g. `D00461`) — that candidate, or any other code you know is right
+- `none` — no indent row corresponds to this survey item
+
+Leave a row blank and it simply stays excluded. Re-running the pipeline never overwrites a
+decision you have recorded, so you can do this in several sittings.
+
+**Typical reasons you will see:** *dosage form disagrees* (syrup vs capsule), *strength
+disagrees*, *name similarity only 74.5*, *top two candidates are too close to separate*, and one
+case where two survey items both claim the single "Disposable Mask Triple Layer" indent row.
+
+---
+
 ## Confirmations I will ask for later
 
-- **Milestone 3:** `data/manual/indent_match_review.csv` — survey items whose match to an indent
-  row is uncertain. Unconfirmed rows stay excluded from the build.
 - **Milestone 4:** `data/manual/facility_verification.csv` — every candidate facility with a map
   link, for your team to eyeball before the list is used.

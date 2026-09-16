@@ -1,0 +1,891 @@
+sl_no,drug_code,drug_type,category,drug_name,indent_qty,mode_of_procurement,quarantine_required,at_phc,at_chc,at_tlh,at_dlh,source_id,provenance
+1,D00303,Essential,Anti-infective Medicines,Aciclovir Tablet IP 200 mg 1x1,764610,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+2,D00461,Essential,Cardiovascular medicines,Amlodipine Tablet IP 10 mg 1x1,27719810,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+3,D00147,Essential,Anticonvulsants/ Antiepileptics,Carbamazepine Prolonged-Release Tablets IP (Extended Release/ Sustained Release) 200 mg 1x1,1300690,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+4,D00149,Essential,Anticonvulsants/ Antiepileptics,Carbamazepine Prolonged-Release Tablets IP 400 mg 1x1,545744,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+5,D00773,Essential,Psychotherapeutic Medicines,Chlorpromazine Tablet IP 100 mg 1x1,1796976,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+6,D00284,Essential,Anti-infective Medicines,Clotrimazole Pessaries IP 100mg 1x1,836564,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+7,D00392,Essential,Medicines affecting the blood,Erythropoietin for Injection IP 10000 IU/1ml 1ml Injection in Pre Filled Syringe,72734,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+8,D00793,Essential,Psychotherapeutic Medicines,Escitalopram Tablet IP 5 mg 1x1,1357222,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+9,D00355,Essential,Pain and Palliative Care Medicines,Fluoxetine Capsules IP 20 mg 1x1,2819900,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+10,D00406,Essential,Medicines affecting the blood,Folic Acid Tablet IP 0.4 mg 1x1,26046286,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+11,D00398,Essential,Medicines affecting the blood,Iron and Folic Acid Tablet IP Each coated tablet contains 45mg of Elemental Iron with 400 mcg of Folic Acid.(PINK color Tablet) 1x1,19599994,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+12,D00662,Essential,"Hormones, other endocrine medicines and contraceptives",Methylprednisolone Tablet IP 8mg 1x1,930409,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+13,D00760,Essential,Oxytocics and Antioxytocics,Misoprostol Tablet IP 200mcg 1x1,5225161,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+14,D00791,Essential,Psychotherapeutic Medicines,Olanzapine Tablet IP 10 mg 1x1,2724735,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+15,D00101,Essential,Antiallergics and Medicines used in Anaphylaxis,Prednisolone Tablet IP 10 mg 1x1,5359498,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+16,D00779,Essential,Psychotherapeutic Medicines,Risperidone Tablet IP 2 mg 1x1,7260815,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+17,D00821,Essential,Medicines acting on the respiratory tract,Theophylline and Etophylline Tablet Each Tablet Contains: Theophylline 23 mg + Etophylline 77 mg 1x1,7824950,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+18,D00258,Essential,Anti-infective Medicines,Trimethoprim and Sulphamethoxazole Tablet IP (Cotrimoxazole tablets) Each tablet contains Trimethoprim 160 mg Sulphamethoxazole 800mg 1x1,4174117,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+19,D00860,Essential,Vitamins and Minerals,Vitamin C Chewable Tablet 500 mg Each uncoated chewable Tablet contains Ascorbic Acid IP 100 mg Sodium Ascorbate IP 450 mg equivalent to 400 mg of Ascorbic Acid 1x1,13973160,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+20,D00647,Essential,Gastrointestinal medicines,Zinc Sulphate Dispersible Tablets IP 20 mg Each dispersible tablet should contain elemental zinc 20 mg 1x1,31678605,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+21,D00175,Essential,Anti-infective Medicines,Albendazole Tablet IP 400 mg Each chewable tablet contains albendazole 400 mg 1x1,28346538,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+22,D00711,Essential,Immunologicals,Anti-D Immunoglobulin IP 300 mcg 1x1 ml Vial,30483,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+23,D00448,Essential,Cardiovascular medicines,Atenolol Tablet IP 50 mg 1x1,138487350,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+24,D00204,Essential,Anti-infective Medicines,Benzathine Penicillin Injection IP 900 mg (12 lakh unit) 1x1 vial,164905,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+25,D00605,Essential,Ear Nose and Throat Medicines,Ciprofloxacin Eye Drops IP 0.3 % w/v 1x5 ml Squeeze Vial,2987602,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+26,D00816,Essential,Medicines acting on the respiratory tract,Etofylline and Theophylline Injection Etofylline (169.4mg) + Theophylline (50.6mg) / 2ml 1x2ml vial,3073723,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+27,D00105,Essential,Antiallergics and Medicines used in Anaphylaxis,Methylprednisolone Sodium Succinate for Injection USP 40 mg /vial 1x1 vial,126097,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+28,D00765,Essential,Oxytocics and Antioxytocics,Oxytocin Injection IP 5IU/ml 1x1 ml vial/ampoule,3147625,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+29,D00784,Essential,Psychotherapeutic Medicines,Phenobarbitone Tablet IP 30 mg 1x1,17139784,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+30,D00785,Essential,Psychotherapeutic Medicines,Phenobarbitone Tablet IP 60 mg 1x1,26781064,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+31,D00162,Essential,Anticonvulsants/ Antiepileptics,Phenytoin Tablet IP 100 mg 1x1,19070355,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+32,D00819,Essential,Medicines acting on the respiratory tract,Salbutamol Tablet IP 4mg 1x1,44115581,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+33,M00122,Essential,Medical Devices,Sterile disposable syringe with hypodermic needle 2ml-23G 1x1,82475327,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+34,M00125,Essential,Medical Devices,Sterile surgical gloves latex 6.5 (Powder free) 1x1,18483591,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+35,D00133,Essential,Antidotes and Other Substances used in Poisonings,Acetylcysteine Injection BP/USP 200mg/ml 1x5ml vial,32298,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+36,D00304,Essential,Anti-infective Medicines,Aciclovir Tablet IP 400 mg 1x1,2820120,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+37,D00084,Essential,Antiallergics and Medicines used in Anaphylaxis,Adrenaline Injection IP 1 mg/ml 1x1 ml ampoule,614252,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+38,D00176,Essential,Anti-infective Medicines,Albendazole oral suspension 200 mg/5 ml 1x10 ml bottle,647676,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+39,D00276,Essential,Anti-infective Medicines,Amikacin Injection IP 100 mg/2ml 1x2ml vial,841690,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+40,D00277,Essential,Anti-infective Medicines,Amikacin Injection IP 250 mg/2ml 1x2ml vial,713223,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+41,D00278,Essential,Anti-infective Medicines,Amikacin Injection IP 500 mg/2ml 1x2ml vial,1575237,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+42,D00349,Essential,Pain and Palliative Care Medicines,Amitriptyline Tablet IP 25 mg 1x1,11678280,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+43,D00193,Essential,Anti-infective Medicines,Amoxycillin and Potassium Clavulanate Injection IP 1200 mg Each vial contains Amoxycillin 1 g + Clavulanic Acid 200 mg 1x1 ml Vial,397870,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+44,D00192,Essential,Anti-infective Medicines,Amoxycillin and Potassium Clavulanate Injection IP 600 mg Each vial contains Amoxycillin 500 mg + Clavulanic Acid 100 mg 1x1 ml Vial,171164,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+45,D00190,Essential,Anti-infective Medicines,Amoxycillin and Potassium Clavulanate Tablet IP 625 mg Each tablet contains Amoxycillin 500 mg + Clavulanic Acid 125 mg 1x1,24242280,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+46,D00185,Essential,Anti-infective Medicines,Amoxycillin Capsules IP 250 mg 1x1,20493000,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+47,D00186,Essential,Anti-infective Medicines,Amoxycillin Capsules IP 500 mg 1x1,47786640,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+48,D00187,Essential,Anti-infective Medicines,Amoxycillin oral suspension 125 mg/5ml 1x60ml bottle,1448928,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+49,D00195,Essential,Anti-infective Medicines,Ampicillin Capsules IP 500 mg 1x1,4070280,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+50,D00198,Essential,Anti-infective Medicines,Ampicillin Injection IP 500 mg/vial 1x1 vial,194991,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+51,D00078,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Aspirin Gastro-resistant Tablets IP 150 mg 1x1,3684360,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+52,D00077,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Aspirin Gastro-resistant Tablets IP 75 mg 1x1,5139480,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+53,D00500,Essential,Cardiovascular medicines,Atorvastatin Tablet IP 10 mg 1x1,8436000,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+54,D00502,Essential,Cardiovascular medicines,Atorvastatin Tablet IP 20 mg 1x1,5325840,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+55,D00127,Essential,Antidotes and Other Substances used in Poisonings,Atropine Injection IP 0.6 mg/ml 1x1 ml ampoule,676185,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+56,D00128,Essential,Antidotes and Other Substances used in Poisonings,Atropine Injection IP 1 mg/ml 1x1 ml ampoule,1096515,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+57,D00237,Essential,Anti-infective Medicines,Azithromycin Oral Suspension IP 200mg / 5ml 1x30 ml bottle,274755,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+58,D00235,Essential,Anti-infective Medicines,Azithromycin Tablet IP 250 mg 1x1,14441640,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+59,D00236,Essential,Anti-infective Medicines,Azithromycin Tablet IP 500 mg 1x1,24298920,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+60,D00727,Essential,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Baclofen Tablet IP 20 mg 1x1,394560,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+61,D00523,Essential,Dermatological medicines (Topical),Betamethasone Injection 4 mg/ml 1x1 ml ampoule,1717328,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+62,D00521,Essential,Dermatological medicines (Topical),Betamethasone Ointment IP 0.05% w/w 1x15gm tube,334741,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+63,D00522,Essential,Dermatological medicines (Topical),Betamethasone Ointment IP 0.1% w/w 1x15gm tube,320826,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+64,D00644,Essential,Gastrointestinal medicines,Bisacodyl Gastro-resistant Tablets IP 5 mg 1x1,5575920,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+65,D00804,Essential,Medicines acting on the respiratory tract,Budesonide Inhaler 100 mcg/puff 200 metered dose,124558,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+66,D00729,Essential,Medicines for Neonatal Care,Caffeine Citrate Injection USP 20mg/ml 1x3 ml vial,8601,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+67,D00728,Essential,Medicines for Neonatal Care,Caffeine Citrate Oral Solution IP 20mg/ml 1x3 ml bottle,5570,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+68,D00863,Essential,Vitamins and Minerals,Calcium and Vitamin D3 Tablet IP Each tablet contains Calcium 500MG Vitamin D3 250 IU 1x1,217150680,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+69,D00145,Essential,Anticonvulsants/ Antiepileptics,Carbamazepine Tablet IP 100 mg 1x1,1746600,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+70,D00755,Essential,Ophthalmological Preparations,Carboxymethyl Cellulose Eye Drops IP 0.5% w/v 1x5ml bottle,95647,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+71,D00214,Essential,Anti-infective Medicines,Cefadroxil Tablet IP 500 mg 1x1,24099840,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+72,D00216,Essential,Anti-infective Medicines,Cefixime Oral Suspension IP 50 mg/5 ml 1x30 ml bottle,767116,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+73,D00215,Essential,Anti-infective Medicines,Cefixime Tablet IP 200 mg 1x1,15044436,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+74,D00218,Essential,Anti-infective Medicines,Cefotaxime Sodium Injection IP 1000 mg 1x1 vial,4344728,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+75,D00221,Essential,Anti-infective Medicines,Cefotaxime Sodium Injection IP 250 mg 1x1 vial,360183,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+76,D00227,Essential,Anti-infective Medicines,Ceftriaxone Injection IP 1000 mg 1x1 vial,4642687,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+77,D00224,Essential,Anti-infective Medicines,Ceftriaxone Injection IP 250 mg 1x1 vial,273771,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+78,D00225,Essential,Anti-infective Medicines,Ceftriaxone Injection IP 500 mg 1x1 vial,888133,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+79,D00091,Essential,Antiallergics and Medicines used in Anaphylaxis,Chlorpheniramine Tablet IP 4mg 1x1,298407360,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+80,D00243,Essential,Anti-infective Medicines,Ciprofloxacin Injection IP 2mg/ml 1x100 ml Bottle,721830,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+81,D00242,Essential,Anti-infective Medicines,Ciprofloxacin Tablet IP 500 mg 1x1,40135440,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+82,D00241,Essential,Anti-infective Medicines,Ciprofloxacin Tablet IP NA 1x1,9158280,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+83,D00798,Essential,Psychotherapeutic Medicines,Clonazepam Tablet IP 0.5 mg 1x1,5209080,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+84,D00436,Essential,Cardiovascular medicines,Clopidogrel Tablet IP 75 mg 1x1,2889240,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+85,D00849,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Compound Sodium lactate Injection IP (Ringer- Lactate Solution ) 1x500 ml bottle,4784632,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+86,D00587,Essential,Cardiovascular medicines,Dabigatran Etexilate Capsule 110 mg 1x1,182640,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+87,D00094,Essential,Antiallergics and Medicines used in Anaphylaxis,Dexamethasone Injection IP 4 mg/ml 1x2ml ampoule,3735304,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+88,D00093,Essential,Antiallergics and Medicines used in Anaphylaxis,Dexamethasone Tablet IP 0.5 mg 1x1,12750360,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+89,D00835,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Dextrose Injection IP 10% w/v 1x500 ml bottle,98076,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+90,D00836,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Dextrose Injection IP 25% w/v 1x100 ml Bottle,258526,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+91,D00834,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Dextrose Injection IP 5% w/v 1x500 ml bottle,1794694,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+92,D00351,Essential,Pain and Palliative Care Medicines,Diazepam Injection IP 5 mg/ml 1x2ml ampoule,392754,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+93,D00353,Essential,Pain and Palliative Care Medicines,Diazepam Tablet IP 5 mg 1x1,5861160,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+94,D00036,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac Gastro-resistant Tablets IP 50 mg 1x1,373356120,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+95,D00037,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac Injection IP 25mg/ml 1x3 ml ampoule,30466840,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+96,D00638,Essential,Gastrointestinal medicines,Dicyclomine Injection IP 10 mg/ml 1x2ml ampoule,2001307,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+97,D00636,Essential,Gastrointestinal medicines,Dicyclomine Tablet IP 10 mg 1x1,42309240,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+98,D00713,Essential,Immunologicals,Diphtheria + Tetanus Vaccine (adsorbed) for adults and adolescents IP Each 0.5 ml contains Diphtheria toxoid = 2IU Tetanus Toxoid = 5Lf to = 25 Lf or = 20 IU Absorbed on Aluminum Phosphate 1x0.5 ml vial/ampoule,648553,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+99,D00635,Essential,Gastrointestinal medicines,Domperidone Suspension IP 1 mg/ml 1x30 ml bottle,488580,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+100,D00634,Essential,Gastrointestinal medicines,Domperidone Tablet IP 10 mg 1x1,36985440,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+101,D00260,Essential,Anti-infective Medicines,Doxycycline Capsules IP 100 mg 1x1,26463600,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+102,D00493,Essential,Cardiovascular medicines,Enoxaparin Injection IP 40mg/ 0.4 ml (with Pre-filled syringes) 1x1 prefilled syringe,174031,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+103,D00494,Essential,Cardiovascular medicines,Enoxaparin Injection IP 60mg/ 0.4 ml (with Pre-filled syringes) 1x1 prefilled syringe,67027,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+104,D00391,Essential,Medicines affecting the blood,Erythropoietin for Injection IP 2000 IU/1ml 1ml Injection in Pre Filled Syringe,45790,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+105,D00396,Essential,Medicines affecting the blood,Ferrous Sulphate Tablet IP 200 mg equivalent to 60 mg of elemental Iron 1x1,24309600,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+106,D00293,Essential,Anti-infective Medicines,Fluconazole Tablet IP 150 mg 1x1,9275400,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+107,D00294,Essential,Anti-infective Medicines,Fluconazole Tablet IP 200 mg 1x1,443088,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+108,D00567,Essential,Diuretics,Frusemide Injection IP 10 mg/ml 1x2ml ampoule,598986,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+109,D00566,Essential,Diuretics,Frusemide Tablet IP 40 mg 1x1,4766880,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+110,D00744,Essential,Ophthalmological Preparations,Gentamicin Eye Drops IP 0.3% w/v 1x5ml bottle,893860,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+111,D00745,Essential,Ophthalmological Preparations,Gentamicin Injection IP 40 mg/ml 1x2ml vial,2229223,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+112,D00681,Essential,"Hormones, other endocrine medicines and contraceptives",Glimepiride Tablet IP 2 mg 1x1,68303160,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+113,D00559,Essential,Disinfectants and antiseptics,Glutaraldehyde Solutions IP 34% 1x5 liter bottle,7610,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+114,D00412,Essential,Medicines affecting the blood,"Heparin Injection IP 1,000IU/ml 1x5ml vial",38370,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+115,D00413,Essential,Medicines affecting the blood,Heparin Injection IP 5000 IU/ml 1x5ml vial,143779,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+116,D00086,Essential,Antiallergics and Medicines used in Anaphylaxis,Hydrocortisone Sodium Succinate Injection IP 100 mg / vial 1x1 vial,1283971,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+117,D00551,Essential,Disinfectants and antiseptics,Hydrogen Peroxide Solution IP 20 Vol (6%) 1x100 ml Bottle,646002,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+118,D00043,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Ibuprofen Tablet IP 200 mg 1x1,20320920,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+119,D00044,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Ibuprofen Tablet IP 400 mg 1x1,43948440,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+120,D00672,Essential,"Hormones, other endocrine medicines and contraceptives",Insulin (Soluble) Injection 40 I.U/ml 1x10ml vial,106627,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+121,D00400,Essential,Medicines affecting the blood,Iron and Folic Acid Tablet IP Each coated tablet contains 60mg of Elemental Iron with 500 mcg of Folic Acid. (Iron Red color) 1x1,154816090,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+122,D00409,Essential,Medicines affecting the blood,Iron Sucrose Injection USP 100 mg/ 5 ml 1x5 ml ampoule,2438584,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+123,D00002,Essential,Anesthesia,Isoflurane Liquid for Inhalation USP NA 1x250 ml,1012,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+124,D00003,Essential,Anesthesia,Ketamine Injection IP 10 mg/ml 1x10ml vial,28262,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+125,D00465,Essential,Cardiovascular medicines,Labetalol Tablet IP 100 mg 1x1,1819440,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+126,D00651,Essential,Gastrointestinal medicines,Lactulose Solutions IP 10g/15 ml 1x100 ml Bottle,100514,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+127,D00021,Essential,Anesthesia,Lignocaine Gel IP 2% 1x30gm tube,304569,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+128,D00023,Essential,Anesthesia,Lignocaine Injection IP 2% 1x30ml/Vial,308869,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+129,D00160,Essential,Anticonvulsants/ Antiepileptics,Magnesium Sulphate Injection IP 500 mg/ml 1x2ml vial,505674,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+130,D00575,Essential,Diuretics,Mannitol Injection IP 20% w/v 1x100 ml Bottle,196722,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+131,D00473,Essential,Cardiovascular medicines,Methyldopa Tablet IP 250 mg 1x1,462240,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+132,D00757,Essential,Oxytocics and Antioxytocics,Methylergometrine Injection IP 0.2 mg/ml 1x1 ml vial/ampoule,318580,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+133,D00106,Essential,Antiallergics and Medicines used in Anaphylaxis,Methylprednisolone Sodium Succinate for Injection USP 500 mg /vial 1x1 vial,22682,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+134,D00359,Essential,Pain and Palliative Care Medicines,Metoclopramide Tablet IP 10 mg 1x1,3790680,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+135,D00265,Essential,Anti-infective Medicines,Metronidazole Benzoate Oral Suspension IP 200 mg/5 ml Each 5 ml should contain Metronidazole Benzoate equivalent to 200 mg of metronindazole 1x60ml bottle,774698,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+136,D00264,Essential,Anti-infective Medicines,Metronidazole Injection IP 5mg/ml 1x100 ml Bottle,2524443,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+137,D00262,Essential,Anti-infective Medicines,Metronidazole Tablet IP 400 mg 1x1,48634680,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+138,D00759,Essential,Oxytocics and Antioxytocics,Mifepristone Tablet IP 200 mg 1x1,110503,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+139,D00829,Essential,Medicines acting on the respiratory tract,Montelukast Tablet IP 5 mg 1x1,12588240,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+140,D00239,Essential,Anti-infective Medicines,Norfloxacin Tablet IP 400 mg 1x1,14740800,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+141,D00250,Essential,Anti-infective Medicines,Ofloxacin Tablet IP 200 mg 1x1,22018800,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+142,D00618,Essential,Gastrointestinal medicines,Omeprazole Gastro-Resistant Capsules IP 20mg 1x1,127339560,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+143,D00365,Essential,Pain and Palliative Care Medicines,Ondansetron Injection IP 2 mg/ml 1x2ml ampoule,3268102,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+144,D00364,Essential,Pain and Palliative Care Medicines,Ondansetron Oral Solution 2 mg/5ml 1x30 ml bottle,312162,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+145,D00362,Essential,Pain and Palliative Care Medicines,Ondansetron Tablet IP 4 mg 1x1,14417920,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+146,D00846,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Oral Rehydration Powder 20.5 gm WHO Formula 1x1 sachet,16388432,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+147,D00054,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Pediatric Syrup IP 125 mg/5ml 1x60ml bottle,4283488,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+148,D00048,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Tablet IP 500 mg 1x1,481946520,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+149,D00049,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Tablet IP 650 mg 1x1,104664480,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+150,D00011,Essential,Anesthesia,Pentazocine Injection IP 30mg/ml 1x1 ml ampoule,377316,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+151,D00531,Essential,Dermatological medicines (Topical),Permethrin Cream 5% w/v 1x30gm tube,183552,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+152,D00530,Essential,Dermatological medicines (Topical),Permethrin Lotion 1% 1x30 ml bottle,83690,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+153,D00126,Essential,Antiallergics and Medicines used in Anaphylaxis,Pheniramine Maleate Injection IP 22.75 mg/ml 1x2ml ampoule,6691857,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+154,D00411,Essential,Medicines affecting the blood,Phytomenadione Injection IP 1 mg/ 0.5ml (Vitamin K) 1x1 ampoule,532974,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+155,D00232,Essential,Anti-infective Medicines,Piperacillin and Tazobactam Injection IP 1.125 g Each vial should contains Piperacillin 1 gm Tazobactam 125 mg 1x1 vial,94526,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+156,D00233,Essential,Anti-infective Medicines,Piperacillin and Tazobactam Injection IP 2. 25 g Each vial should contains Piperacillin 2 gm Tazobactam 250 mg 1x1 vial,83136,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+157,D00234,Essential,Anti-infective Medicines,Piperacillin and Tazobactam Injection IP 4. 5 g Each vial should contains Piperacillin 4 gm Tazobactam 500 mg 1x1 vial,846781,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+158,D00557,Essential,Disinfectants and antiseptics,Povidone Iodine Cleansing Solution USP 7.5% W/V(Scrub) 1x500 ml bottle,69025,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+159,D00553,Essential,Disinfectants and antiseptics,Povidone Iodine Solution IP 10% w/v 1x500 ml bottle,130084,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+160,D00552,Essential,Disinfectants and antiseptics,Povidone Iodine Solutions IP 5% w/v 1x500 ml bottle,243988,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+161,D00103,Essential,Antiallergics and Medicines used in Anaphylaxis,Prednisolone Tablet IP 20 mg 1x1,2251080,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+162,D00006,Essential,Anesthesia,Propofol Injection IP 10mg/ml 1x10ml vial,38067,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+163,D00716,Essential,Immunologicals,"Rabies Vaccine, Human IP 2.5 IU/ml Single dose vial with diluent and syringe with needle",711867,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+164,D00620,Essential,Gastrointestinal medicines,Ranitidine Injection IP 25 mg/ml 1x2ml vial /ampoule,10639674,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+165,D00619,Essential,Gastrointestinal medicines,Ranitidine Tablet IP 150mg 1x1,247650840,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+166,D00810,Essential,Medicines acting on the respiratory tract,Salbutamol Inhalation IP 100 mcg/dose 200 metered doses x 1 Inhaler,114889,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+167,D00811,Essential,Medicines acting on the respiratory tract,Salbutamol Nebulizer Solution BP 5mg/ml 1x15ml vial,425353,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+168,D00820,Essential,Medicines acting on the respiratory tract,Salbutamol Syrup IP 2 mg/5 ml 1x100 ml Bottle,2988831,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+169,D00818,Essential,Medicines acting on the respiratory tract,Salbutamol Tablet IP 2mg 1x1,26090160,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+170,D00528,Essential,Dermatological medicines (Topical),Salicylic Acid Ointment IP 6% w/w 1x20 gm tube,251296,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+171,D00007,Essential,Anesthesia,Sevoflurane Liquid for Inhalation USP Inhalation 1x250 ml bottle,483,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+172,D00517,Essential,Dermatological medicines (Topical),Silver Sulphadiazine Cream 1% 1x125 g tube,302330,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+173,D00138,Essential,Antidotes and Other Substances used in Poisonings,Snake Venom Antiserum IP NA 1x1 vial,100344,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+174,D00851,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sodium Bicarbonate Injection IP 8.4 % w/v 1x50 ml ampoule,38018,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+175,D00838,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sodium chloride and Dextrose Injection IP (Sodium chloride 0.45% and Dextrose 5% ) 1x500 ml bottle,969183,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+176,D00837,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sodium chloride and Dextrose Injection IP (Sodium chloride 0.9% and Dextrose 5% ) 1x500 ml bottle,3906745,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+177,D00853,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sodium Chloride Injection IP (normal saline) 0.45% w/v 1x500 ml bottle,127464,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+178,D00854,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sodium Chloride Injection IP (normal saline) 0.9% w/v 1x100 ml Bottle,3553660,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+179,D00852,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sodium Chloride Injection IP (normal saline) 0.9% w/v 1x500 ml bottle,4848504,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+180,D00612,Essential,Ear Nose and Throat Medicines,Sodium Choride Nasal Drops 0.65% 1x10 ml bottle,139840,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+181,M00087,Essential,Medical Devices,Sterile disposable IV cannula with injection port 18G 1x1,987111,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+182,M00088,Essential,Medical Devices,Sterile disposable IV cannula with injection port 20G 1x1,2044690,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+183,M00089,Essential,Medical Devices,Sterile disposable IV cannula with injection port 22G 1x1,1738347,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+184,M00092,Essential,Medical Devices,Sterile disposable perfusion (infusion) sets with filter Adult 1x1,10858432,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+185,M00093,Essential,Medical Devices,Sterile disposable perfusion (infusion) sets with filter Pediatric 1x1,532288,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+186,M00123,Essential,Medical Devices,Sterile disposable syringe with hypodermic needle 5ml-23G 1x1,61239360,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+187,D00857,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sterile Water for Injection IP NA 1x10ml vial,2008269,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+188,D00855,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Sterile Water for Injection IP NA 1x5ml vial,1820198,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+189,D00544,Essential,Disinfectants and antiseptics,Strong Cetrimide Solutions BP (concentrate for dilution) 1x500 ml bottle,44987,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+190,D00881,Essential,Vitamins and Minerals,Thiamine Injection IP 100 mg/ml 1x10ml vial,69800,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+191,D00880,Essential,Vitamins and Minerals,Thiamine Tablet IP 100mg 1x1,1749960,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+192,D00369,Essential,Pain and Palliative Care Medicines,Tramadol Capsules IP 50 mg 1x1,3465480,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+193,D00370,Essential,Pain and Palliative Care Medicines,Tramadol Injection 50 mg/ml 1x2ml vial /ampoule,1234438,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+194,D00420,Essential,Medicines affecting the blood,Tranexamic Acid Injection IP 100 mg/ml 1x5ml Ampoule,254994,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+195,D00259,Essential,Anti-infective Medicines,Trimethoprim and Sulphamethoxazole Oral Suspension IP (Cotrimoxazole Oral suspension) Each 5 ml contains Trimethoprim 40mg Sulphamethoxazole 200mg 1x60ml bottle,674418,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+196,M00117,Essential,Medical Devices,VDRL KIT NA 1x1,1406887,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+197,D00722,Essential,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Vecuronium Bromide Injection IP 4mg/2ml 1x2ml vial,47454,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+198,D00882,Essential,Vitamins and Minerals,"Vitamin A Paediatric Oral Solution 1,00,000 I.U / 1ml 1x100 ml Bottle",211847,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+199,D00615,Essential,Ear Nose and Throat Medicines,"Wax dissolving Solution Contains: parachloro benzene 2%w/v, benzocaine 2.7 %w/v chlorbutol 5%w/v turpentine oil BP 15%w/v 1x10 ml bottle",118723,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+200,D00648,Essential,Gastrointestinal medicines,Zinc Sulphate Oral Solution IP 20mg/5ml 1x30 ml bottle,603744,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+201,D00191,Essential,Anti-infective Medicines,Amoxycillin and Potassium Clavulanate Tablet IP 1000 mg Each tablet contains Amoxycillin 875 mg + Clavulanic Acid 125 mg 1x1,5154630,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+202,D00460,Essential,Cardiovascular medicines,Amlodipine Tablet IP 5 mg 1x1,127702288,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+203,D00690,Essential,"Hormones, other endocrine medicines and contraceptives",Metformin Hydrocloride Prolonged-Release Tablets IP 1000 mg 1x1,74132353,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+204,D00692,Essential,"Hormones, other endocrine medicines and contraceptives",Metformin Hydrocloride Prolonged-Release Tablets IP 500 mg 1x1,157955851,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+205,D00507,Essential,Cardiovascular medicines,Alteplase for Injection 50 mg 1x1 vial,1894,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+206,D00071,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Gabapentin Tablet IP 400 mg 1x1,710989,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+207,D00482,Essential,Cardiovascular medicines,Telmisartan Tablet IP 40 mg 1x1,76267909,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+208,D00251,Essential,Anti-infective Medicines,Ofloxacin Tablet IP 400 mg 1x1,13045405,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+209,D00524,Essential,Dermatological medicines (Topical),Calamine Lotion IP NA 1x100 ml Bottle,3197860,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+210,D00830,Essential,Medicines acting on the respiratory tract,Montelukast Tablet IP 10 mg 1x1,31546081,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+211,D00706,Essential,Immunologicals,Rabies Antiserum IP-(Equine) 300 IU/ml 1x5ml vial,162262,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+212,D00861,Essential,Vitamins and Minerals,Calcium carbonate with Vitamin D3 Syrup Each 5 ml contains Elemental Calcium 250 mg + Vitamin D3 125IU 1x100 ml Bottle,3293841,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+213,D00285,Essential,Anti-infective Medicines,Clotrimazole dusting powder 1% w/w 1x100 gm bottle,2228947,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+214,D00529,Essential,Dermatological medicines (Topical),Lindane Lotion USP 1% w/v (Gamma Benzene Hexachloride Solution ) 1x30 ml bottle,1579434,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+215,D00402,Essential,Medicines affecting the blood,Iron and Folic Acid Tablet IP Each coated tablet contains 60mg of Elemental Iron with 500 mcg of Folic Acid. (Iron Blue color) 1x1,32801396,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+216,D00714,Essential,Immunologicals,Hepatitis B Immunoglobulin IP 100 IU/vial 1x1 vial/ampoule,9918,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+217,D00806,Essential,Medicines acting on the respiratory tract,Budesonide Inhalation Suspension 0.5 mg/2ml (for use in nebulizer 1x5 respule,908413,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+218,D00516,Essential,Dermatological medicines (Topical),Fusidic Acid Cream IP 2% 1x10gm tube,852174,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+219,D00168,Essential,Anticonvulsants/ Antiepileptics,Sodium Valproate Tablet IP 500 mg 1x1,5001714,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+220,D00677,Essential,"Hormones, other endocrine medicines and contraceptives",Insulin Glargine Injection IP 100 units/ml 1x10ml vial,21153,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+221,D00297,Essential,Anti-infective Medicines,Itraconazole Capsule BP 200 mg 1x1,1385917,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+222,D00712,Essential,Immunologicals,Diphtheria Antitoxin IP 1000 IU/ml 1x10ml vial,7394,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+223,D00680,Essential,"Hormones, other endocrine medicines and contraceptives",Glimepiride Tablet IP 1 mg 1x1,81442790,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+224,D00859,Essential,Vitamins and Minerals,Ascorbic Acid Tablet IP 100 mg (Vitamin C) 1x1,22700634,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+225,D00438,Essential,Cardiovascular medicines,Diltiazem Tablet IP 60 mg 1x1,361742,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+226,D00483,Essential,Cardiovascular medicines,Telmisartan Tablet IP 20 mg 1x1,23237361,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+227,D00405,Essential,Medicines affecting the blood,Folic Acid Tablet IP 5 mg 1x1,36315883,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+228,D00275,Essential,Anti-infective Medicines,Vancomycin Capsules IP 250 mg 1x1,481328,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+229,D00146,Essential,Anticonvulsants/ Antiepileptics,Carbamazepine Tablet IP 200 mg 1x1,5545036,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+230,D00805,Essential,Medicines acting on the respiratory tract,Budesonide Inhaler IP 200 mcg/puff 200 metered dose,57898,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+231,D00873,Essential,Vitamins and Minerals,Pyridoxine Tablet IP 100 mg 1x1,3413718,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+232,D00459,Essential,Cardiovascular medicines,Amlodipine Tablet IP 2.5 mg 1x1,12236586,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+233,D00096,Essential,Antiallergics and Medicines used in Anaphylaxis,Hydroxyzine Oral Solution IP 10 mg/5 ml 1x100 ml Bottle,247390,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+234,D00151,Essential,Anticonvulsants/ Antiepileptics,Levetiracetam Tablet IP 500 mg 1x1,2159130,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+235,D00845,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Hydroxyethyl Starch Infusion 6% 1x500 ml bottle,27036,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+236,D00607,Essential,Ear Nose and Throat Medicines,Xylometazoline Nasal Drops IP 0.1% w/v 1x5ml bottle,761039,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+237,D00868,Essential,Vitamins and Minerals,Cholecalciferol Soft gelatin capsule 60000 IU 1x1,4173800,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+238,D00764,Essential,Oxytocics and Antioxytocics,Mifepristone and Misoprostol Tablet Each combipack contains: 1 tablet Mifepristone 200mg + 4 tablets Misoprostol 200mcg 1x1,73120,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+239,D00808,Essential,Medicines acting on the respiratory tract,Ipratropium Nebulizer Solutions BP Each respule contains Ipratropium equivalent to 500 mcg 1x5 respule,403726,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+240,D00872,Essential,Vitamins and Minerals,Pyridoxine Tablet IP 50 mg 1x1,3678020,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+241,D00074,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Pregabalin Capsules IP 75 mg 1x1,3156132,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+242,D00676,Essential,"Hormones, other endocrine medicines and contraceptives",Biphasic Isophane Insulin Injection IP 40 units/ml COMPOSITION Insulin Isophane (50%) + Human insulin (50%) 1x10ml vial,45515,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+243,D00163,Essential,Anticonvulsants/ Antiepileptics,Phenytoin Tablet IP 300 mg 1x1,1197503,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+244,D00100,Essential,Antiallergics and Medicines used in Anaphylaxis,Prednisolone Tablet IP 5 mg 1x1,9421544,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+245,D00052,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Injection 150mg/ml 1x2ml vial,1774579,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+246,D00683,Essential,"Hormones, other endocrine medicines and contraceptives",Glibenclamide Tablet IP 5 mg 1x1,29501293,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+247,D00407,Essential,Medicines affecting the blood,Folic Acid Injection USP 5 mg/ml 1x10ml vial,24480,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+248,D00372,Essential,Pain and Palliative Care Medicines,Hyoscine Butyl- Bromide Tablet IP 10 mg Each Patch 10 Patch's/Box,1408610,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+249,D00848,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Potassium Chloride Oral Solution 10% -w/v 1x500 ml bottle,93787,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+250,D00273,Essential,Anti-infective Medicines,Vancomycin Intravenous Infusion IP 500 mg 1x1 vial,39056,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+251,D00199,Essential,Anti-infective Medicines,Phenoxymethyl Penicillin Potassium Tablet IP 250 mg 1x1,766411,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+252,D00296,Essential,Anti-infective Medicines,Itraconazole Capsule BP 100 mg 1x1,677316,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+253,D00134,Essential,Antidotes and Other Substances used in Poisonings,Acetylcysteine Effervescent Tablets 600 mg 1x1,421736,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+254,D00501,Essential,Cardiovascular medicines,Atorvastatin Tablet IP 40 mg 1x1,1616756,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+255,D00475,Essential,Cardiovascular medicines,Enalapril Maleate Tablet IP 5 mg 1x1,5902699,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+256,D00348,Essential,Pain and Palliative Care Medicines,Amitriptyline Tablet IP 10 mg 1x1,2701776,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+257,D00682,Essential,"Hormones, other endocrine medicines and contraceptives",Gliclazide Tablet IP 40 mg 1x1,2272390,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+258,D00150,Essential,Anticonvulsants/ Antiepileptics,Levetiracetam Tablet IP 250 mg 1x1,760306,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+259,D00340,Essential,Immunosuppressive Medicines,Cyclosporine Oral Solution IP 100 mg/ml 1x50 ml bottle,1494,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+260,D00463,Essential,Cardiovascular medicines,Hydrochlorothiazide Tablet IP 25 mg 1x1,3843323,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+261,D00312,Essential,Anti-infective Medicines,Valganciclovir Tablet IP 450 mg 1x1,8096,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+262,D00027,Essential,Anesthesia,Lignocaine and Adrenaline Injection IP Lignocaine and Adrenaline 2% + 1:200000 (5 mcg/ml) 1x30ml/Vial,112778,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+263,D00691,Essential,"Hormones, other endocrine medicines and contraceptives",Metformin Hydrocloride Prolonged Release Tablets IP 750 mg 1x1,2441652,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+264,D00015,Essential,Anesthesia,Bupivacaine Injection IP 0.25% 1x20ml vial,28001,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+265,D00742,Essential,Ophthalmological Preparations,Lignocaine Eye Drop 0.002 1x10 ml bottle,157332,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+266,D00484,Essential,Cardiovascular medicines,Telmisartan Tablet IP 80 mg 1x1,12021658,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+267,D00092,Essential,Antiallergics and Medicines used in Anaphylaxis,Chlorpheniramine Maleate Syrup USP 2 mg/5 ml 1x60ml bottle,2995527,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+268,D00098,Essential,Antiallergics and Medicines used in Anaphylaxis,Hydrocortisone sodium succinate Injection IP 200 mg 1x1 vial,864401,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+269,D00102,Essential,Antiallergics and Medicines used in Anaphylaxis,Prednisolone Oral Solution USP 15mg/5ml 1x60ml bottle,345247,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+270,D00231,Essential,Anti-infective Medicines,Cloxacillin Injection IP 250 mg 1x1 vial,244401,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+271,D00360,Essential,Pain and Palliative Care Medicines,Metoclopramide Syrup IP 5 mg/5 ml 1x60ml bottle,376499,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+272,D00526,Essential,Dermatological medicines (Topical),Benzoyl Peroxide Gel IP 5% 1x20 gm tube,93290,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+273,D00576,Essential,Diuretics,Mannitol Injection IP 10% w/v 1x100 ml Bottle,210868,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+274,D00617,Essential,Ear Nose and Throat Medicines,Combo Ear Drops Chloramphenicol 5% w/v Beclomethasone 0.025%w/v Clotrimazole 1% Lignocaine Hydrochloride 2% 1x10 ml bottle,542137,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+275,D00627,Essential,Gastrointestinal medicines,Sucralfate Tablet IP 1 g 1x1,2131016,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+276,M00057,Desirable,Medical Devices,NON Absorbable Surgical Poly propylene Mesh 10cm x 6cm 1x1,27596,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+277,D00173,Desirable,Anticonvulsants/ Antiepileptics,Sodium Valproate and Valproic Acid Control Release Tablets 500 mg Each CR tablet contains Sodium Valproate and Valproic Acid equivalent to 500 mg sodium valproate 1x1,1372760,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+278,D00822,Desirable,Medicines acting on the respiratory tract,Theophylline + Etophylline Syrup Each 5 ml contains Etophyllin 46.5 mg Theophyllin equivalent to 12.73 mg 1x200 ml bottle,262635,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+279,D00883,Desirable,Vitamins and Minerals,Vitamin A and D Capsules IP Each Capsule contains Vitamin A (6000 IU) Vitamin D (1000 IU) 1x1,3564078,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+280,D00016,Desirable,Anesthesia,Bupivacaine Hydrochloride in dextrose Injection USP Each ml contains Bupivacaine hydrochloride equivalent to anhydrous bupivacaine hydrochloride 5 mg and dextrose anhydrous 80 mg 1x4 ml ampoules,258507,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+281,M00167,Desirable,Medical Devices,Disposable Mask Triple Layer Elastic type 1x1,22382613,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+282,D00157,Desirable,Anticonvulsants/ Antiepileptics,Lorazepam Tablet IP 2 mg 1x1,5678871,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+283,M00126,Desirable,Medical Devices,Surgical gloves latex 7 1x1,17622878,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+284,M00060,Desirable,Medical Devices,"Absorbable Surgical Sutures antibacterial coated Polyglactin 1/2 Circle RB CC/Taper point 30MM Needle,Length 90 CM , 2-0 1x12 foils",11884,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+285,M00061,Desirable,Medical Devices,"Absorbable Surgical SUTURES Antibacterial Coated Polyglactin 1/2 Circle RB CC/Taper Point 36MM Needle, length 90 cm , 1/0 1x12 foils",10169,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+286,M00062,Desirable,Medical Devices,"Absorbable Surgical SUTURES Antibacterial coated Polyglactin 1/2 Circle RB,CC/Taper Point 30MM Needle, length 90 cm , 1/0 1x12 foils",9027,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+287,M00063,Desirable,Medical Devices,"Absorbable Surgical SUTURES Antibacterial coated Polyglactin 1/2 Circle RB,CC/Taper Point 40 MM Needle,Length 70 Cm , SIZE 1-0 1x12 foils",17349,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+288,M00064,Desirable,Medical Devices,"ABSORBABLE SURGICAL SUTURES ANTIBACTERIAL COATED POLYGLACTIN 1/2 CIRCLE RB,CC/TAPER POINT 40MM NEEDLE, LENGTH 90CM, SIZE 1 1x12 foils",32151,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+289,M00069,Desirable,Medical Devices,"ABSORBABLE SURGICAL SUTURES CHROMIC CATGUT SIZE 1-0(1/2 CIRCLE ROUND BODY NEEDLE 45MM,LENGTH 100CM)(4229) , SIZE 1-0 1x12 foils",48623,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+290,M00070,Desirable,Medical Devices,"ABSORBABLE SURGICAL SUTURES CHROMIC CATGUT SIZE 2(1/2 CIRCLE ROUND BODY NEEDLE 45MM)LENGTH 100CM(4228) , SIZE 2 1x12 foils",22966,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+291,M00004,Desirable,Medical Devices,Absorbent cotton wool 500 GM 1x500gm,424253,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+292,D00046,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Aceclofenac Tablet 100 mg 1x1,101487760,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+293,M00042,Desirable,Medical Devices,Adhesive Tape (10 cm x 10 meter) 1x1,290664,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+294,D00826,Desirable,Medicines acting on the respiratory tract,Ambroxol Hydrochloride and N-Acetyl-L-Cysteine Tablet Each Tablet Contains: Ambroxol Hydrochloride 200mg and N-Acetyl-L-Cysteine 30mg 1x1,4242590,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+295,D00827,Desirable,Medicines acting on the respiratory tract,Ambroxol Hydrochloride Syrup 30mg/5ml 1x100 ml Bottle,1229215,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+296,D00194,Desirable,Anti-infective Medicines,Amoxycillin and Potassium Clavulanate Oral Suspension IP 228.5 mg Each 5 ml contains Amoxycillin 200 mg + Clavulanic Acid 28.5 mg 1x30 ml bottle,708794,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+297,D00197,Desirable,Anti-infective Medicines,Ampicillin Capsules IP 250 mg 1x1,1566840,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+298,D00631,Desirable,Gastrointestinal medicines,Antacid Suspension Each 10 ml Contains Activated diamithecon 50mg Magnesium Hydroxide 250mg Aluminum Hydroxide 250mg 1x200 ml bottle,442407,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+299,D00449,Desirable,Cardiovascular medicines,Atenolol Tablet IP 25 mg 1x1,42838180,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+300,D00813,Desirable,Medicines acting on the respiratory tract,Beclomethasone Dipropionate Inhaler IP 200 mcg/metered dose 200 metered doses x 1 Inhaler,26516,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+301,D00537,Desirable,Dermatological medicines (Topical),Benzyl benzoate Application IP 25% w/w 1x100 ml Bottle,533388,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+302,D00679,Desirable,"Hormones, other endocrine medicines and contraceptives",Biphasic Isophane Insulin Injection IP 100 units/ml COMPOSITION Insulin Isophane (70%) + Human insulin (30%) 1x10ml vial,386261,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+303,M00162,Desirable,Medical Devices,Black Braided silk 3/8 circle cutting 60mm needle 90 cm length SIZE 1 1x12 foils,5930,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+304,M00165,Desirable,Medical Devices,Blood Transfusion Set with Filter 170 Micron 1x1,264786,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+305,D00737,Desirable,Medicines for Neonatal Care,Bovine Lipid Extract Surfactant Suspension Each ML Contains Phospholipid Surfactant Suspension 27mg 1x5ml vial,1496,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+306,D00828,Desirable,Medicines acting on the respiratory tract,Bromhexine Syrup 4mg/5ml 1x100 ml Bottle,455263,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+307,D00123,Desirable,Antiallergics and Medicines used in Anaphylaxis,"Calcium Dobesilte , Lignocaine , Hydrocortisone and Zinc Cream Composition: Lidocaine (3% w/w) + Calcium Dobesilate (0.25% w/w) + Hydrocortisone (0.25% w/w) + Zinc (5% w/w) 1x30gm tube",20157,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+308,D00762,Desirable,Oxytocics and Antioxytocics,Carboprost Tromethamine Injection IP 125mcg/0.5ml 1x1 ml vial/ampoule,87049,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+309,D00217,Desirable,Anti-infective Medicines,Cefixime Oral Suspension IP 100 mg/5 ml 1x30 ml bottle,346665,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+310,D00208,Desirable,Anti-infective Medicines,Cefoperazone + Salbactum Injection 1000 mg Each vial should contains Cefoperazone 500 mg Salbactum 500 mg 1x1 vial,156986,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+311,D00207,Desirable,Anti-infective Medicines,Cefoperazone + Salbactum Injection 1500 mg Each vial should contains Cefoperazone 1gm Salbactum 500mg 1x1 vial,329796,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+312,D00220,Desirable,Anti-infective Medicines,Cefotaxime Sodium Injection IP 125 mg 1x1 vial,122301,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+313,D00219,Desirable,Anti-infective Medicines,Cefotaxime Sodium Injection IP 500 mg 1x1 vial,754894,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+314,D00209,Desirable,Anti-infective Medicines,Cephalexin Capsules IP 250 mg 1x1,4404070,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+315,D00210,Desirable,Anti-infective Medicines,Cephalexin Capsules IP 500 mg 1x1,7136800,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+316,D00287,Desirable,Anti-infective Medicines,Clotrimazole Cream IP 1% W/W 1x15gm tube,2110109,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+317,D00286,Desirable,Anti-infective Medicines,Clotrimazole Vaginal Gel 2%w/w 1x15gm tube,439316,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+318,D00535,Desirable,Dermatological medicines (Topical),Compound Benzoic Acid Ointment IP ( Benzoic Acid and Salicylic Acid) Composition: Benzoic Acid 6% w/w Salicylic Acid 3% w/w 1x30 gm,971818,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+319,D00536,Desirable,Dermatological medicines (Topical),Compound Benzoin Tincture IP (Friars Balsam) 1x500 ml bottle,30646,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+320,D00686,Desirable,"Hormones, other endocrine medicines and contraceptives",Dapagliflozin Tablet 10mg 1x1,72710,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+321,D00041,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac Gel IP 1% 1x30gm tube,2426579,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+322,D00038,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac Injection IP 75mg/ml 1x1ml ampoule,5069919,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+323,D00039,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac Sodium Suppository 100mg 1x1,210276,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+324,D00040,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac+virgin Linseed oil+methyl Salicylate + +menthol Gel Diclofenac diethylamine 1.16% w/w + Linseed Oil (3% w/w) + Methyl Salicylate (10% w/w) + Menthol (5% w/w) 1x30gm tube,1229309,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+325,D00639,Desirable,Gastrointestinal medicines,Dicyclomine Oral Solution IP 10mg/5ml 1x10ml vial,194220,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+326,D00763,Desirable,Oxytocics and Antioxytocics,Dinoprostone Gel 0.5 mg in Syringe 1x3 gm syringe,47031,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+327,M00169,Desirable,Medical Devices,ECG Gel NA 1x250 ml bottle/tube,64511,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+328,D00292,Desirable,Anti-infective Medicines,Fluconazole Tablet IP 100 mg 1x1,1390620,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+329,M00156,Desirable,Medical Devices,"FOLEYS CATHETER WITH BULB 16 F, THREE WAY 1x1",412570,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+330,M00151,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 18 F 1x1,139942,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+331,D00558,Desirable,Disinfectants and antiseptics,Formaldehyde Solutions IP 0.34 1x500 ml,32269,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+332,D00394,Desirable,Medicines affecting the blood,Human Albumin IP 20% 1x100 ml Bottle,2410,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+333,D00395,Desirable,Medicines affecting the blood,Human Albumin IP 5% 1x100 ml Bottle,1839,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+334,M00044,Desirable,Medical Devices,Hypo allergenic tape micropore 1 cmx9.1 mts 1x1,625310,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+335,M00045,Desirable,Medical Devices,Hypo allergenic tape micropore 2.5 cmx9.1 mts 1x1,451268,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+336,M00043,Desirable,Medical Devices,Hypo allergenic tape micropore 7.5 cmx9.1 mts 1x1,176220,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+337,D00045,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Ibuprofen Oral Suspension BP/USP 100mg/5ml 1x60ml bottle,357209,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+338,D00842,Desirable,"Solutions correcting water, electrolyte and acid-base disturbances","IV Amino Acid Infusion (IV Fluid Bottle Contains Essential Amino Acid, Glycine, Sorbetole) 1x200 ml bottle",11521,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+339,D00298,Desirable,Anti-infective Medicines,Ketoconazole Tablet IP 200mg 1x1,2401960,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+340,D00085,Desirable,Antiallergics and Medicines used in Anaphylaxis,Levo Cetirizine Tablet IP 5 mg 1x1,51664360,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+341,D00281,Desirable,Anti-infective Medicines,Linezolid Infusion 2 mg/mL 1x300 ml bottle,15428,KSMSCL Procurement,YES,False,False,False,True,ksmscl_indent_2025_26,real
+342,D00887,Desirable,Vitamins and Minerals,Methylcobalamin Injection 1500mcg 1x1ml ampoule,944750,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+343,D00886,Desirable,Vitamins and Minerals,Methylcobalamin Tablet 1500mcg 1x1,10078530,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+344,D00108,Desirable,Antiallergics and Medicines used in Anaphylaxis,Methylprednisolone Sodium Succinate for Injection USP 1 g /vial 1x1 vial,5215,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+345,D00263,Desirable,Anti-infective Medicines,Metronidazole Gel IP 2% w/w 1x30gm tube,252266,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+346,D00840,Desirable,"Solutions correcting water, electrolyte and acid-base disturbances",Multiple Electrolytes and Dextrose Injection Type I IP NA 1x500 ml bottle,97344,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+347,D00839,Desirable,"Solutions correcting water, electrolyte and acid-base disturbances",Multiple Electrolytes and Dextrose Injection Type III IP NA 1x500 ml bottle,46508,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+348,D00870,Desirable,Vitamins and Minerals,Multivitamins Injection Each ml contains : Vit. A- 1000IU + Vit. B1-5mg + Vit B2-1.4mg + Vit. B3 10mg + Vit. B5 2.5mg + Vit. B6 1.5mg + Vit. D 100IU + Vit. E 0.5mg 1x10ml Vial/ampoule,299798,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+349,D00894,Desirable,Anti-infective Medicines,Mupirocin Ointment IP 2% w/w 1x5gm tube,386395,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+350,M00051,Desirable,Medical Devices,Natural Non-Absorbale Black Braided Silk SUTURES Size 1 With 60Mm 3/8 Circle Cutting Needle Suture Length 76 Cm(5062) Size 1-0 1x12 foils,12278,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+351,D00895,Desirable,Anti-infective Medicines,Neomycin and Bacitracin Ointment Each gram ointment contains: Neomycin 5mg Bacitracin 250 IU 1x30gm tube,278652,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+352,M00055,Desirable,Medical Devices,NON - ABSORBABLE SURGICAL SUTURES POLYPROPYLENE SIZE 1 (1/2 CIRCLE ROUNDBODY 40MM NEEDLE LENGTH 76CM 12FOILS (843) SIZE 1- 0 1x12 foils,8048,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+353,M00056,Desirable,Medical Devices,NON - ABSORBABLE SURGICAL SUTURES POLYPROPYLENE SIZE 2-0 (1/2 CIRCLE ROUNDBODY 30MM NEEDLE LENGTH 70CM) 12FOILS (841) 2/0 1x12 foils,5402,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+354,M00058,Desirable,Medical Devices,NON Absorbable Surgical Poly propylene Mesh 15cm x 15cm 1x1,12540,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+355,D00248,Desirable,Anti-infective Medicines,Ofloxacin Infusion IP 2mg/ml 1x100 ml Bottle,109175,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+356,D00249,Desirable,Anti-infective Medicines,Ofloxacin Oral Suspension IP 50mg/5ml 1x60ml bottle,226266,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+357,D00308,Desirable,Anti-infective Medicines,Oseltamivir Capsules IP 30mg 1x1,309320,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+358,D00309,Desirable,Anti-infective Medicines,Oseltamivir Capsules IP 45 mg 1x1,311300,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+359,D00310,Desirable,Anti-infective Medicines,Oseltamivir Capsules IP 75 mg 1x1,945560,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+360,D00311,Desirable,Anti-infective Medicines,Oseltamivir Oral Suspension IP 12 mg/ml 1x60ml bottle,10003,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+361,D00625,Desirable,Gastrointestinal medicines,Pantoprazole Gastro-resistant Tablets IP 40mg 1x1,57223870,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+362,D00622,Desirable,Gastrointestinal medicines,Pantoprazole Injection IP 40mg 1x1 vial,2616551,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+363,D00056,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Infusion IP 10mg/ml 1gm/100ml 1x100 ml Bottle,493834,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+364,D00057,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Infusion IP 10mg/ml 500mg /50ml 1x50 ml bottle,40117,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+365,D00055,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Pediatric Oral Suspension IP (Drops) 100 mg/ml 1x15ml bottle,759079,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+366,D00051,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Pediatric Oral Suspension IP 250mg/5ml 1x60ml bottle,1314237,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+367,D00165,Desirable,Anticonvulsants/ Antiepileptics,Phenytoin Injection IP 50 mg/ml 1x2ml ampoule,188100,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+368,D00058,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Piroxicam Dispersible Tablets 20 mg 1x1,3172620,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+369,D00843,Desirable,"Solutions correcting water, electrolyte and acid-base disturbances",Plasma Expander Injection 6% 1x500 ml bottle,18541,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+370,M00006,Desirable,Medical Devices,"Plaster of Paris Bandage (Casting Tape / Splint Roll, 4 inch) Calcium content not less than 85%, 10cm x 2.7 meter 1x1",276222,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+371,M00007,Desirable,Medical Devices,"Plaster of Paris Bandage (Casting Tape / Splint Roll, 6 inch) Calcium content not less than 85%, 15cm x 2.7 meter 1x1",212166,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+372,M00072,Desirable,Medical Devices,POLYDIAXANONE SUTURES SIZE 1 (1/2 CIRCLE RC 40MM orthopedic Surgery (OS)NEEDLE Suture LENGTH of 90CM(9221)) 1x12 foils,3041,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+373,D00550,Desirable,Dermatological medicines (Topical),Potassium permanganate Crystals IP 100 gm ( for topical solution) 1 packet of 100 gms of crystals,6301,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+374,D00555,Desirable,Disinfectants and antiseptics,Povidone Iodine Ointment USP 5% w/w 1x15gm tube,1587430,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+375,D00137,Desirable,Antidotes and Other Substances used in Poisonings,Pralidoxime Chloride Injection IP 1 gm 1x1 vial,74905,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+376,D00657,Desirable,Gastrointestinal medicines,"Pre and Probiotic Granules for oral suspension Each 5ml of the reconstituted suspension contains Streptococcus Faecalis T 110 JPC 30 Million, Clostridium Butyricum TO-A 2 Million, Bacillus Mesentericus TO-A JPC 1 Million, Lactic acid bacillus- 50 Million Lactobacillus 1x50 ml bottle",59749,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+377,D00656,Desirable,Gastrointestinal medicines,Probiotic Capsule 60 Million 1x1,1228590,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+378,D00169,Desirable,Anticonvulsants/ Antiepileptics,Sodium Valproate Tablet IP 200 mg 1x1,2158090,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+379,M00090,Desirable,Medical Devices,Sterile Disposable (Single Use) PTFE I.V. Cannula with integrated 3 Way stop cock. Size 24G 1x1,645241,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+380,M00091,Desirable,Medical Devices,Sterile Disposable (Single Use) PTFE I.V. Cannula with integrated 3 Way stop cock. Size 26G 1x1,150429,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+381,M00094,Desirable,Medical Devices,"Sterile disposable Syringes with hypodermic needle , 10ml-20G 1x1",1521957,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+382,M00095,Desirable,Medical Devices,Sterile disposable Syringes with hypodermic needle |1ml -26G| 1/2 needle 1ml-26G 1x1,1640810,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+383,M00097,Desirable,Medical Devices,Sterile disposable Syringes with hypodermic needle 2ml-22G 1x1,15837470,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+384,M00098,Desirable,Medical Devices,Sterile disposable Syringes with hypodermic needle 5ml-22G 1x1,15528590,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+385,M00099,Desirable,Medical Devices,Sterile Disposable Umbilical Cord Clamp NA 1x1,811371,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+386,M00086,Desirable,Medical Devices,Sterile Single-Use Insulin Syringes (100 unit) With Needle(26 G ) 1x1,9212709,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+387,M00124,Desirable,Medical Devices,Sterile surgical gloves latex 6 (Powder free) 1x1,6051111,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+388,M00102,Desirable,Medical Devices,Sterile surgical gloves latex 7.5 1x1,9104590,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+389,D00856,Desirable,"Solutions correcting water, electrolyte and acid-base disturbances",Sterile Water for Injection IP NA 1x100 ml Bottle,429469,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+390,M00109,Desirable,Medical Devices,Surgical Blade 11 1x1,724460,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+391,M00110,Desirable,Medical Devices,Surgical Blade 15 1x1,664070,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+392,M00111,Desirable,Medical Devices,Surgical blade 22 1x1,1149060,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+393,M00112,Desirable,Medical Devices,Surgical Blade 23 1x1,868670,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+394,M00143,Desirable,Medical Devices,surgical gloves 6 1x1,2618088,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+395,M00113,Desirable,Medical Devices,Ultrasound Gel NA 1x250 ml,80011,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+396,M00114,Desirable,Medical Devices,Urine collection bag with valve out-let. 1.5 liters capacity 1x1,617196,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+397,D00379,Desirable,Pain and Palliative Care Medicines,Valethamate Bromide Injection 8mg/ml 1x1 ml ampoule,724160,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+398,D00877,Desirable,Vitamins and Minerals,Vitamin-E Capsules USP 400mg 1x1,1080970,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+399,D00685,Desirable,"Hormones, other endocrine medicines and contraceptives",Sitagliptin Tablet IP 50MG 1x1,4302308,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+400,D00503,Desirable,Cardiovascular medicines,Tenecteplase (TNANAtPA) for injection Kit 30 mg 1x1 kit,3816,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+401,D00504,Desirable,Cardiovascular medicines,Tenecteplase (TNANAtPA) for injection Kit 40 mg 1x1 kit,3661,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+402,D00928,Desirable,Gastrointestinal medicines,Omeprazole Capsules IP 20 mg+Domperidone 10 mg 1x1,34538507,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+403,M00185,Desirable,Medical Devices,N 95 Mask NA 1x1,2067634,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+404,D00111,Desirable,Antiallergics and Medicines used in Anaphylaxis,Deflazacort Tablet 12 mg 1x1,469150,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+405,D00674,Desirable,"Hormones, other endocrine medicines and contraceptives",Degludec insulin Injection IP 100IU/ml 1 penfill of 3 ml,22433,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+406,D00730,Desirable,Vitamins and Minerals,Multivitamin Drops Each ml contains: Vit A 3000 IU Vit D3 300 IU Vit B1 1mg Riboflavine Phosphate Sodium 2mg D-Panthenol 2.5mg Niacinamide 10mg Pyridoxine HCL 1mg Cyanocobalamin 1mcg Lysine HCL 10mg 1x15 ml bottle,2728540,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+407,M00144,Desirable,Medical Devices,Nitrile examination sterile gloves 7 1x1,5692441,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+408,D00761,Desirable,Oxytocics and Antioxytocics,Dinoprostone Vaginal Pessaries 10mg 1x1 Ampoule,89862,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+409,D00910,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Diclofenac Injection 75 mg/ ml (IV Bolus) 1x1 ampoule,1890500,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+410,D00642,Desirable,Gastrointestinal medicines,Drotaverine HCl and Aceclofenac Tablet Each Tablet contains Drotaverine HCl 80mg and Aceclofenac 100mg 1x1,1542784,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+411,D00862,Desirable,Vitamins and Minerals,Calcium Carbonate Tablet IP 150mg 1x1,2653996,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+412,D00920,Desirable,Medicines acting on the respiratory tract,Montelukast and Levocetrizine Tablet IP (Montelukast 4 mg + Levocetrizine 2.5 mg ) 1x1,21356177,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+413,D00688,Desirable,"Hormones, other endocrine medicines and contraceptives",Empagliflozin Tablet 25mg 1x1,124288,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+414,M00032,Desirable,Medical Devices,"Epidural Minipack 18G, 80mm-90mm, Metal Stylet For Single Use only, Sterile 1x1",18988,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+415,D00746,Desirable,Anti-infective Medicines,Gentamicin Injection IP 10 mg/ml 1x2ml vial,3223868,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+416,M00115,Desirable,Medical Devices,Urine collection- bag with valve out-let 2 liters Capacity 1x1,342192,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+417,D00437,Desirable,Cardiovascular medicines,Clopidogrel Tablet IP 150 mg 1x1,1994824,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+418,D00743,Desirable,Ophthalmological Preparations,Ofloxacin and dexamethasone Ear Drops 0.20% 1x5ml bottle,885683,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+419,M00150,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 14 F 1x1,167929,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+420,M00168,Desirable,Medical Devices,Sterile hypodermic needle for single use 23G 1x1,7141606,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+421,D00399,Desirable,Medicines affecting the blood,Ferric Carboxymaltose Solution for Injection 50 mg/ml Each ml contains Ferric Carboxymaltose equivalent to Elemental Iron 50 mg 1x2ml vial,846190,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+422,D00770,Desirable,Psychotherapeutic Medicines,Dexmedetomidine Injection USP 100mcg/ml 1x1ml ampoule,54033,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+423,D00623,Desirable,Gastrointestinal medicines,Rabeprazole Gastro-Resistant Tablets 20 mg IP 1x1,7792708,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+424,D00809,Desirable,Medicines acting on the respiratory tract,Formoterol Fumarate and Budesonide Inhaler Each actuation delivers Formoterol Fumarate equivalent to Formoterol 6 mcg Budesonide equivalent to 200 mcg 120 metered dose x 1 inhaler,46893,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+425,D00807,Essential,Medicines acting on the respiratory tract,Formoterol Fumarate and Budesonide powder for Inhalation IP Each respule contains Formoterol 6mcg Budesonide 400mcg 1x30 respules,84726,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+426,D00095,Desirable,Antiallergics and Medicines used in Anaphylaxis,Dexamethasone Tablet IP 4 mg 1x1,9286809,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+427,D00404,Desirable,Medicines affecting the blood,Iron and Folic Acid Tablet IP Each coated tablet contains 45 mg of Elemental Iron with 100 mcg of Folic Acid. 1x1,20765637,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+428,D00715,Desirable,Immunologicals,Hepatitis-B Vaccine (rDNA) IP 20mcg/ml 1x1 ml Vial,47817,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+429,D00446,Desirable,Cardiovascular medicines,Isosorbide mononitrate Tablet IP 5 mg 1x1,1360994,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+430,D00109,Desirable,Antiallergics and Medicines used in Anaphylaxis,Methylprednisolone Sodium Succinate for Injection USP 125 mg /vial 1x1 vial,26223,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+431,D00708,Desirable,Immunologicals,Human Normal Immunoglobulin IP 5% (5g per 100 ml) 1x100 bottle,2640,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+432,M00146,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 6 F 1x1,30280,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+433,D00924,Desirable,Anti-infective Medicines,Imipenem and Cilastatin Injection IP (Imipenem 500 mg + Cilastatin 500 mg ) 1x1 vial,26786,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+434,D00673,Desirable,"Hormones, other endocrine medicines and contraceptives",Insulin Aspart Injection 100 unit/ml 1x10ml vial,25222,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+435,D00675,Desirable,"Hormones, other endocrine medicines and contraceptives",Insulin Lispro Injection IP 100 units/ml 1x10ml vial,10638,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+436,M00149,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 12 F 1x1,39750,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+437,D00073,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Gabapentin Tablet IP 300 mg 1x1,1332803,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+438,D00678,Essential,"Hormones, other endocrine medicines and contraceptives",Isophane Insulin Injection IP (NPH) 40 units/ml 1x10ml vial,25851,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+439,D00452,Desirable,Cardiovascular medicines,Metoprolol Injection 1 mg/mL 1x5 ml Vial/ ampoule,66347,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+440,D00170,Desirable,Anticonvulsants/ Antiepileptics,Sodium Valproate and Valproic Acid Control Release Tablets 200 mg Each CR tablet contains Sodium Valproate and Valproic Acid equivalent to 200 mg sodium valproate 1x1,419928,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+441,M00128,Desirable,Medical Devices,Urethral catheter 3 FR 70 Cm Open End 1x1,14565,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+442,D00159,Desirable,Anticonvulsants/ Antiepileptics,Lorazepam Injection IP 4 mg/ml 1x10ml vial,56883,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+443,D00817,Essential,Medicines acting on the respiratory tract,Levosalbutamol and Ipratropium Inhaler Each actuation delivers Ipratopium equivalent to 40 mcg Levosalbutamol equivalent to 50 mcg 200 metered doses x 1 Inhaler,68489,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+444,D00539,Essential,Dermatological medicines (Topical),"Liquid Paraffin Emulsion IP 100 ml, (Oral) 1x100 ml Bottle",270840,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+445,D00914,Desirable,Cardiovascular medicines,Losartan Potassium and Hydro Chlorothiazide Tablet IP Losartan Potassium 50 mg + Hydro Chlorothiazide 12.5 mg 1x1,1170784,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+446,D00270,Desirable,Anti-infective Medicines,Meropenem Injection IP 500 mg 1x1 vial,306391,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+447,D00917,Desirable,"Hormones, other endocrine medicines and contraceptives",Metformin Hydrochloride and Glimepiride Tablet IP Metformin Hydrochloride 500 mg + Glimepiride 2 mg 1x1,16455021,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+448,D00122,Desirable,Antiallergics and Medicines used in Anaphylaxis,Mometasone Ointment IP 0.1% w/w 1x10gm tube,353722,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+449,D00611,Desirable,Ear Nose and Throat Medicines,Ofloxacin ophthalmic solution 0.30% 1x5ml bottle,1348563,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+450,D00888,Desirable,Enzymes,Pancreatin Minimicrospheres Capsule Each capsule contains Pancreatin Minimicrospheres equivalent to Pancreatin IP 300 mg 1x1,65664,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+451,D00125,Desirable,Antiallergics and Medicines used in Anaphylaxis,Pheniramine Maleate Syrup 15mg/5ml 1x100 ml Bottle,1984475,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+452,D00075,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Pregabalin and Methyl Cobalamin Capsules IP Pregabalin and Methyl Cobalamin 75 mg + 750 mcg 1x1,19659803,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+453,M00157,Desirable,Medical Devices,"FOLEYS CATHETER WITH BULB 18 F ,THREE WAY 1x1",39763,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+454,D00289,Desirable,Anti-infective Medicines,Clotrimazole Lotion IP 1%W/V 1x15ml vial,1138793,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+455,D00466,Desirable,Cardiovascular medicines,Labetalol Tablet IP 50 mg 1x1,584040,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+456,M00096,Desirable,Medical Devices,Sterile disposable Syringes with hypodermic needle WITH 1.5 INCH LUER LOCK 2.5ML-26g 1x1,9010904,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+457,D00033,Desirable,Anesthesia,Midazolam nasal spray 0.5 mg/ 0.1 ml (50 meter doses) 1x5ml bottle,36446,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+458,D00034,Desirable,Anesthesia,Midazolam nasal spray 1.25 mg/0.1 ml (25 meter doses) 1X2.5 ml bottle,23904,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+459,D00087,Desirable,Antiallergics and Medicines used in Anaphylaxis,Levo cetirizine Syrup 2.5 mg/5ml 1x60ml bottle,3991561,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+460,D00099,Desirable,Antiallergics and Medicines used in Anaphylaxis,Hydrocortisone Tablets USP 10 mg 1x1,688178,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+461,D00172,Desirable,Anticonvulsants/ Antiepileptics,Sodium Valproate and Valproic Acid Control Release Tablets 300 mg Each CR tablet contains Sodium Valproate and Valproic Acid equivalent to 300 mg sodium valproate 1x1,199936,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+462,D00629,Essential,Gastrointestinal medicines,Sucralphate oral suspension Each 5ml contains Sucralphate 500mg 1x200 ml bottle,746770,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+463,D00738,Desirable,Medicines for Neonatal Care,Surfactant bovine Surfactant for intratrecheal instillation (natural bovine lung surfactant) 1x5ml vial,9972,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+464,D00508,Desirable,Dermatological medicines (Topical),Tacrolimus Ointment 0.1% w/w 1x20 gm tube,26257,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+465,D00397,Desirable,Medicines affecting the blood,Iron Dextran Injection IP 50 mg/ml 1x2ml vial,86653,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+466,D00301,Desirable,Anti-infective Medicines,Terbinafine Tablet IP 250 mg 1x1,366650,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+467,D00710,Essential,Immunologicals,Tetanus Immunoglobulin IP 500IU/Vial 1x1 vial,35960,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+468,D00702,Essential,"Hormones, other endocrine medicines and contraceptives",Thyroxine Tablet IP 100mcg 1x1,3830033,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+469,D00115,Desirable,Antiallergics and Medicines used in Anaphylaxis,Triamcinolone Injection IP 40 mg 1x1 ml Vial,25674,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+470,D00935,Essential,Vitamins and Minerals,Vitamin B Complex Capsule Vit.B1=5mg B2=5mg B6=2mg Niacinamide 50mg Calcium Pantothenate 5mg 1x1,37737088,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+471,D00700,Desirable,"Hormones, other endocrine medicines and contraceptives",Carbimazole Tablet IP 20 mg 1x1,310586,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+472,D00831,Desirable,Medicines acting on the respiratory tract,Montelukast Sodium Chewable Tablets USP 4mg 1x1,2911514,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+473,D00778,Essential,Psychotherapeutic Medicines,Fluphenazine Decanoate Injection IP 25 mg/ml 1x1 ml vial/ampoule,30278,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+474,D00267,Essential,Anti-infective Medicines,Tinidazole Tablet IP 300 mg 1x1,2002654,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+475,M00163,Essential,Medical Devices,Blood Grouping Kit (ABD Grouping 7 RH Typing) KIT 10ml 1x1,44372,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+476,M00164,Essential,Medical Devices,Blood Sugar test strips NA 1x50,228002,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+477,D00223,Essential,Anti-infective Medicines,Ceftazidime for Injection IP 1000 mg 1x1 vial,146679,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+478,D00088,Essential,Antiallergics and Medicines used in Anaphylaxis,Cetirizine Syrup IP 5 mg/5 ml 1x60ml bottle,2048037,KSMSCL Procurement,YES,True,True,True,True,ksmscl_indent_2025_26,real
+479,D00865,Essential,Vitamins and Minerals,Cholecalciferol Drops 400 IU/ml 1x30 ml bottle,115981,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+480,M00041,Essential,Medical Devices,HBSAG KIT NA 1x1,1767717,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+481,D00694,Essential,"Hormones, other endocrine medicines and contraceptives",Medroxyprogesterone Tablet IP 5mg 1x1,375960,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+482,D00578,Essential,Cardiovascular medicines,Mephentermine Injection IP 30mg/ml 1x10ml vial,28504,KSMSCL Procurement,YES,False,False,True,True,ksmscl_indent_2025_26,real
+483,D00596,Essential,Dental Restorative Materials and Medicines,Sodium Hypochlorite Solution 10% 1x1liter bottle,137695,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+484,M00116,Essential,Medical Devices,Urine Pregnancy Test Kit NA 1x1,2380378,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+485,D00540,Essential,Dermatological medicines (Topical),White Petroleum Jelly IP 50 gm 1x50 gm,250563,KSMSCL Procurement,YES,False,True,True,True,ksmscl_indent_2025_26,real
+486,M00118,Essential,Medical Devices,WIDAL KIT NA 1x1,831512,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+487,D00252,Essential,Anti-infective Medicines,Moxifloxacin Tablet 400 mg 1x1,1524588,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+488,D00509,Essential,Dermatological medicines (Topical),Framycetin Sulphate Cream 1% w/w 1x30gm tube,431732,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+489,D00246,Essential,Anti-infective Medicines,Levofloxacin Tablet IP 500 mg 1x1,4164900,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+490,D00532,Essential,Dermatological medicines (Topical),Glycerin Oral Solution IP 25 g 1x25 g bottle,152541,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+491,D00083,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Nortriptyline Tablet IP 10 mg 1x1,299898,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+492,D00255,Essential,Anti-infective Medicines,Clarithromycin Tablet IP 500 mg 1x1,530984,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+493,D00597,Essential,Dental Restorative Materials and Medicines,"Bondent Standard Gutta Percha Points (4%) , color coded 60 point",10385,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+494,D00245,Essential,Anti-infective Medicines,Levofloxacin Tablet IP 250 mg 1x1,2479568,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+495,D00556,Essential,Disinfectants and antiseptics,Povidone Iodine Germicide Gargle 2% w/v 1x100 ml Bottle,95203,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+496,D00247,Essential,Anti-infective Medicines,Levofloxacin Tablet IP 750 mg 1x1,899456,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+497,D00812,Essential,Medicines acting on the respiratory tract,Tiotropium Bromide Monohydrate Inhaler IP 9 mcg/dose 120 metered dose x 1 inhaler,17987,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+498,D00069,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Naproxen Tablet IP 500 mg 1x1,913097,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+499,D00866,Essential,Vitamins and Minerals,Cholecalciferol Injection IP 600000 IU/ml 1x1 ml ampoule,81109,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+500,D00268,Essential,Anti-infective Medicines,Tinidazole Tablet IP 500 mg 1x1,1170445,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+501,D00322,Essential,Antimigraine medicines,Sumatriptan Tablet IP 25 mg 1x1,29092,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+502,D00254,Essential,Anti-infective Medicines,Clarithromycin Tablet IP 250 mg 1x1,158045,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+503,D00563,Essential,Disinfectants and antiseptics,Chloroxylenol Solutions IP 5% 1x1 liter,64532,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+504,D00031,Essential,Anesthesia,Midazolam Tablet 7.5 mg 1x1,145138,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+505,D00565,Essential,Disinfectants and antiseptics,Bleaching Powder containing not less than 30% w/w of available chlorine 1x25 kgs packet,120191,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+506,D00593,Essential,Dental Restorative Materials and Medicines,Glass Ionomer Cement (GIC) Contains powder and liquid with accessories 20 g 1x20 gm,7313,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+507,D00598,Essential,Dental Restorative Materials and Medicines,Silver diamine fluoride NA 38% 1x8 ml bottle,5511,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+508,D00599,Essential,Dental Restorative Materials and Medicines,"Restorative Material Filling Material Light Cure Composite Kit 7 Syringe,1 Bond And 1 Etchant 7 Syringe,1 Bond And 1 Etchant",3393,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+509,D00616,Essential,Ear Nose and Throat Medicines,Boric Acid in spirit Ear Drops 2% 1x10 ml bottle,180304,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+510,D00659,Essential,Gastrointestinal medicines,Senna Tablet IP 7.5mg 1x1,377648,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+511,D00696,Essential,"Hormones, other endocrine medicines and contraceptives",Medroxyprogesterone Injection IP 150 mg 1 ml prefilled syringe,400448,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+512,M00001,Essential,Medical Devices,Dressing Bandage and Gauze with Band-Aid 1x1,3250758,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+513,D00832,Desirable,Medicines acting on the respiratory tract,Montelukast and Levocetirizine Syrup Each 5ml contains Montelukast 4mg Levocetirizine 2.5 mg 1x60ml bottle,2910826,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+514,D00814,Essential,Medicines acting on the respiratory tract,Formoterol Fumarate and Beclomethasone dipropionate Inhaler Each actuation delivers Formoterol Fumarate equivalent to Formoterol 6 mcg Beclomethasone dipropionate equivalent to 100 mcg 120 metered dose x 1 inhaler,17224,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+515,D00121,Desirable,Antiallergics and Medicines used in Anaphylaxis,Desonide Cream 0.05% w/w 1x10gm tube,51047,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+516,D00079,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Mefenamic acid Capsules IP 250 mg 1x1,1597777,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+517,D00653,Essential,Gastrointestinal medicines,Ispaghula Husk Granules BP Each 5 gram contains Ispaghula Husk 4.8 gram 1x140 gm bottle,285987,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+518,D00152,Essential,Anticonvulsants/ Antiepileptics,Levetiracetam Oral Solution IP 100 mg/ml 1x100 ml Bottle,25807,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+519,D00869,Essential,Vitamins and Minerals,Multivitamin Tablet (Sugar coated ) Composition: Vit A 2500 IU Vit B1-2mg Vit-B6-0.5mg Vit-C-50mg Calcium Pantothenate-1mg Vit-D3-200IU Vit-B2- 2mg Niacinamide-25mg Folic Acid-0.2 mg 1x1,42812541,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+520,D00603,Essential,Dental Restorative Materials and Medicines,Potassium Nitrate medicated Topical Solution USP 5% Composition Potassium Nitrate 5% w/w Sodium Monofluorophosphate 0.7% 1x50 gm tube,113080,KSMSCL Procurement,NO,False,True,True,True,ksmscl_indent_2025_26,real
+521,D00240,Desirable,Anti-infective Medicines,Metronidazole and Norfloxacin oral suspension Each 5 ml Contains Metronindazole Benzoate equivalent to Metronindazole 100 mg Norfloxacin 100 mg 1x60ml bottle,2688856,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+522,D00592,Essential,Dental Restorative Materials and Medicines,Zinc Oxide Cream IP NA 1x30gm tube,196401,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+523,D00747,Desirable,Ophthalmological Preparations,Sodium Cromoglycate Eye Drop 2% w/v 1x5ml bottle,146124,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+524,D00876,Desirable,Vitamins and Minerals,Riboflavin Tablet IP 10 mg 1x1,2453071,KSMSCL Procurement,NO,True,True,True,True,ksmscl_indent_2025_26,real
+525,D00435,Desirable,Medicines affecting the blood,Activated Prothrombin Complex Concentrate 500 IU / 1000 IU 1x1 vial,87927,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+526,D00428,Desirable,Medicines affecting the blood,Human Coagulation Factor VII Injection IP 1mg/ml 1x1 vial,457,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+527,D00431,Desirable,Medicines affecting the blood,Human Coagulation Factor VIII Injection IP (rDNA) 500 IU 1x1 vial with diluent,6366,KSMSCL Procurement,NO,False,False,True,True,ksmscl_indent_2025_26,real
+528,10.1.16,Desirable,Medicines affecting the blood,Extended Half-Life Recombinant Factor 8,7142858,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+529,10.1.21,Desirable,Medicines affecting the blood,Plasma Derived Inj Factor 8 Von Willebrand factor,1991018,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+530,10.1.22,Desirable,Medicines affecting the blood,Non-Factor Therapy – Factor8 mimic hemlibra,111734,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+531,10.1.23,Desirable,Medicines affecting the blood,Extended Half Life Factor -9,467496,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+532,10.1.27,Desirable,Medicines affecting the blood,Plasma Derived 9,2176278,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+533,10.1.5,Desirable,Medicines affecting the blood,"Activated, Human recombinant coagulation factor VII",754,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+534,10.1.28,Desirable,Medicines affecting the blood,Activated Prothrombin Complex Concentrate (Feiba Factor),915418,KSMSCL Procurement,No,False,False,True,True,ksmscl_indent_2025_26,real
+535,D00749,Essential,Ophthalmological Preparations,Acetazolamide Tablet IP 250 mg 1x1,289742,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+536,D00346,Essential,Pain and Palliative Care Medicines,Allopurinol Tablet IP 100 mg 1x1,96610,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+537,D00457,Essential,Cardiovascular medicines,Amiodarone Tablet IP 200 mg 1x1,42672,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+538,D00389,Essential,Antiparkinsonism medicines,Benzhexol Tablet IP 2 mg (Trihexyphenidyl) 1x1,2732303,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+539,D00179,Essential,Anti-infective Medicines,Diethylcarbamazine Tablet IP 50 mg 1x1,142720,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+540,D00485,Essential,Cardiovascular medicines,Digoxin Tablet IP 0.25 mg 1x1,167166,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+541,D00441,Essential,Cardiovascular medicines,Diltiazem Tablet IP 30 mg 1x1,109882,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+542,D00327,Essential,Antimigraine medicines,Flunarizine Tablet IP 10 mg 1x1,618232,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+543,D00326,Essential,Antimigraine medicines,Flunarizine Tablet IP 5 mg 1x1,376606,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+544,D00442,Essential,Cardiovascular medicines,Glyceryl Trinitrate Tablet IP 0.5 mg (Sublingual use) 1x1,240239,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+545,D00768,Essential,Psychotherapeutic Medicines,Haloperidol Tablet IP 5mg 1x1,324726,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+546,D00794,Essential,Psychotherapeutic Medicines,Imipramine Tablet IP 25 mg 1x1,573430,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+547,D00444,Essential,Cardiovascular medicines,Isosorbide mononitrate Tablet IP 10 mg 1x1,536230,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+548,D00024,Essential,Anesthesia,Lignocaine Injection IP 4% 1x30ml/Vial,43276,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+549,D00317,Essential,Anti-infective Medicines,Primaquine Tablet IP 2.5 mg 1x1,171025,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+550,D00318,Essential,Anti-infective Medicines,Primaquine Tablet IP 7.5 mg 1x1,180763,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+551,D00573,Essential,Diuretics,Spironolactone Tablet IP 50 mg 1x1,466834,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+552,D00004,Essential,Anesthesia,Ketamine Injection IP 50 mg/ml 1x10ml vial,29197,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+553,D00458,Essential,Cardiovascular medicines,Adenosine Injection IP 3mg/ml 1x2ml vial /ampoule,5089,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+554,D00347,Essential,Pain and Palliative Care Medicines,Allopurinol Tablet IP 300 mg 1x1,38640,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+555,D00456,Essential,Cardiovascular medicines,Amiodarone Intravenous Infusion IP 50mg/ml 1x3 ml ampoule/vial,3637,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+556,D00455,Essential,Cardiovascular medicines,Amiodarone Tablet IP 100 mg 1x1,76320,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+557,D00717,Essential,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Atracurium Injection IP 10 mg/ml 1x2.5 ml Ampoule,17899,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+558,D00129,Essential,Antidotes and Other Substances used in Poisonings,Atropine Sulfate Ophthalmic Solution USP 1% w/v 1x5ml bottle,10892,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+559,D00061,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Azathioprine Tablet IP 50 mg 1x1,27480,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+560,D00238,Essential,Anti-infective Medicines,Azithromycin for Injection USP 500 mg 1x1 vial,13048,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+561,D00202,Essential,Anti-infective Medicines,Benzathine Penicillin Injection IP 450mg (6 lakh unit) 1x1 vial,41490,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+562,D00525,Essential,Dermatological medicines (Topical),Benzoyl Peroxide Gel IP 2.50% 1x20 gm tube,40822,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+563,D00200,Essential,Anti-infective Medicines,Benzylpenicillin Injection IP 600 mg (10 lakh unit) 1x1 vial,96291,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+564,D00645,Essential,Gastrointestinal medicines,Bisacodyl Suppository IP 5mg 1x1,89496,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+565,D00014,Essential,Anesthesia,Bupivacaine Injection IP 0.50% 1x20ml vial,41494,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+566,D00833,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Calcium Gluconate Injection IP 100 mg/ml 1x10ml vial,204500,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+567,D00148,Essential,Anticonvulsants/ Antiepileptics,Carbamazepine oral suspension 100mg/5ml 1x100 ml Bottle,5234,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+568,D00699,Essential,"Hormones, other endocrine medicines and contraceptives",Carbimazole Tablet IP 10 mg 1x1,44760,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+569,D00698,Essential,"Hormones, other endocrine medicines and contraceptives",Carbimazole Tablet IP 5 mg 1x1,17520,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+570,D00756,Essential,Ophthalmological Preparations,Carboxymethyl Cellulose Eye Drops IP 1% w/v 1x10 ml bottle,87612,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+571,D00205,Essential,Anti-infective Medicines,Cefazolin Sodium Injection IP 1000 mg 1x1 vial,21735,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+572,D00206,Essential,Anti-infective Medicines,Cefazolin Sodium Injection IP 500 mg 1x1 vial,4677,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+573,D00222,Essential,Anti-infective Medicines,Ceftazidime for Injection IP 250 mg 1x1 vial,3180,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+574,D00777,Essential,Psychotherapeutic Medicines,Clozapine Tablet IP 100 mg 1x1,111360,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+575,D00775,Essential,Psychotherapeutic Medicines,Clozapine Tablet IP 25 mg 1x1,85440,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+576,D00180,Essential,Anti-infective Medicines,Diethylcarbamazine Citrate Syrup 120mg/5ml 1x100 ml Bottle,2971,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+577,D00178,Essential,Anti-infective Medicines,Diethylcarbamazine Tablet IP 100 mg 1x1,1636380,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+578,D00486,Essential,Cardiovascular medicines,Digoxin Injection 0.25mg/ml 1x2ml ampoule,1177,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+579,D00440,Essential,Cardiovascular medicines,Diltiazem Injection IP 25 mg/5ml 1x5ml vial,3108,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+580,D00489,Essential,Cardiovascular medicines,Dobutamine Hydrochloride for Injection IP 50 mg/ml 1x5ml vial,24469,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+581,D00490,Essential,Cardiovascular medicines,Dopamine Injection IP 40 mg/ml 1x5ml vial,57585,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+582,D00313,Essential,Anti-infective Medicines,Entecavir Tablet IP 0.5 mg 1x1,12000,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+583,D00792,Essential,Psychotherapeutic Medicines,Escitalopram Tablet IP 10 mg 1x1,1479600,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+584,D00454,Essential,Cardiovascular medicines,Esmolol Injection 10 mg/ml 1x10ml vial,1347,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+585,D00378,Essential,Pain and Palliative Care Medicines,Fentanyl Injection IP 50 mcg/ml 1x2ml ampoule,31950,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+586,D00028,Essential,Anesthesia,Glycopyrrolate Injection IP 0.2 mg/ml 1x1 ml Vial,58711,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+587,D00769,Essential,Psychotherapeutic Medicines,Haloperidol Injection IP 5 mg/ ml 1x1 ml ampoule,32395,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+588,D00001,Essential,Anesthesia,Halothane Inhalation BP/USP NA 1x250 ml,837,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+589,D00754,Essential,Ophthalmological Preparations,Homatropine Eye Drops IP 2% w/v 1x5ml bottle,11253,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+590,D00462,Essential,Cardiovascular medicines,Hydrochlorothiazide Tablet IP 12.5 mg 1x1,2056200,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+591,D00062,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Hydroxy Chloroquine Tablet IP 200 mg 1x1,129120,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+592,D00640,Essential,Gastrointestinal medicines,Hyoscine Butylbromide Injection 20mg/ml 1x1 ml vial/ampoule,87895,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+593,D00467,Essential,Cardiovascular medicines,Labetalol Injection IP 5 mg/ml 1x4 ml vial,98192,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+594,D00387,Essential,Antiparkinsonism medicines,Levodopa and Carbidopa Tablet IP Each tablets contains Levodopa 100 mg Carbidopa 10 mg 1x1,77040,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+595,D00283,Essential,Anti-infective Medicines,Liposomal Amphotericin B Injection IP 50mg 1x1 vial,6594,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+596,D00796,Essential,Psychotherapeutic Medicines,Lithium Carbonate Tablet IP 300 mg 1x1,1579440,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+597,D00158,Essential,Anticonvulsants/ Antiepileptics,Lorazepam Injection IP 2 mg/ml 1x2ml ampoule,118851,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+598,D00695,Essential,"Hormones, other endocrine medicines and contraceptives",Medroxyprogesterone Tablet IP 10 mg 1x1,767520,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+599,D00064,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Methotrexate Tablet IP 5 mg 1x1,28920,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+600,D00065,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Methotrexate Tablet IP 7.5 mg 1x1,45240,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+601,D00361,Essential,Pain and Palliative Care Medicines,Metoclopramide Injection IP 5 mg/ml 1x2ml ampoule,261307,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+602,D00450,Essential,Cardiovascular medicines,Metoprolol Succinate Prolonged-Release Tablets IP 25 mg 1x1,1748520,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+603,D00453,Essential,Cardiovascular medicines,Metoprolol Succinate Prolonged-Release Tablets IP 50 mg 1x1,720600,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+604,D00519,Essential,Dermatological medicines (Topical),Miconazole Cream IP 2% 1x15gm tube,141192,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+605,D00030,Essential,Anesthesia,Midazolam Injection 1 mg/ml 1x5ml vial,46171,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+606,D00374,Essential,Pain and Palliative Care Medicines,Morphine Injection IP 10 mg/ml 1x1 ml ampoule,2484,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+607,D00375,Essential,Pain and Palliative Care Medicines,Morphine Tablet IP 10 mg 1x1,23520,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+608,D00136,Essential,Antidotes and Other Substances used in Poisonings,Neostigmine Injection IP 0.5 mg/ml 1x1ml ampoule,45240,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+609,D00492,Essential,Cardiovascular medicines,Noradrenaline Bitartrate Injection IP 2 mg/ml 1x2ml ampoule,83892,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+610,D00790,Essential,Psychotherapeutic Medicines,Olanzapine Tablet IP 5 mg 1x1,1387320,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+611,D00053,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Suppository BP /USP 80 mg 1x1,61459,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+612,D00787,Essential,Psychotherapeutic Medicines,Phenobarbital Oral Solution 20 mg/5ml 1x60ml bottle,6342,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+613,D00748,Essential,Ophthalmological Preparations,Prednisolone Sodium Phosphate Eye Drops IP 1%W/V 1x5ml bottle,13872,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+614,D00008,Essential,Anesthesia,Promethazine Injection IP 25mg/ml 1x1 ml ampoule,105483,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+615,D00334,Essential,Antimigraine medicines,Propranolol Tablet IP 40 mg 1x1,629280,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+616,D00781,Essential,Psychotherapeutic Medicines,Risperidone Syrup IP 1mg/ml 1x60ml bottle,4099,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+617,D00174,Essential,Anticonvulsants/ Antiepileptics,Sodium Valproate Oral Solution IP 200mg/5ml 1x100 ml Bottle,3746,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+618,D00495,Essential,Cardiovascular medicines,Streptokinase Injection IP 7.5 lac IU 1x1 vial,658,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+619,D00719,Essential,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Succinylcholine Injection IP 50 mg/ml 1x10ml vial,15649,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+620,D00709,Essential,Immunologicals,Tetanus Immunoglobulin IP 250IU/Vial 1x1 vial,705,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+621,D00013,Essential,Anesthesia,Thiopentone Injection IP 1 gm 1x1 vial,11826,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+622,D00012,Essential,Anesthesia,Thiopentone Injection IP 500mg Injection 500 mg 1x1 vial,5344,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+623,D00701,Essential,"Hormones, other endocrine medicines and contraceptives",Thyroxine Tablet IP 50mcg 1x1,31831,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+624,D00257,Essential,Anti-infective Medicines,Trimethoprim and Sulphamethoxazole Tablet IP (Cotrimoxazole tablets) Each tablet contains Trimethoprim 80mg Sulphamethoxazole 400mg 1x1,2020320,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+625,D00542,Essential,Diagnostic agents,Tropicamide Eye Drops IP 0.5 % w/v 1x5ml bottle,19082,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+626,D00541,Essential,Diagnostic agents,Tropicamide Eye Drops IP 1% w/v 1x5ml bottle,23330,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+627,D00274,Essential,Anti-infective Medicines,Vancomycin Intravenous Infusion IP 1 g 1x1 vial,12968,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+628,D00479,Essential,Cardiovascular medicines,Verapamil Tablet IP 40 mg 1x1,33720,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+629,D00410,Essential,Medicines affecting the blood,Phytomenadione Tablet IP 10 mg (Vitamin K) 1x1,105855,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+630,D00288,Essential,Anti-infective Medicines,Clotrimazole mouth paint 1%W/V 1x15 ml bottle,98046,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+631,D00608,Essential,Ear Nose and Throat Medicines,Xylometazoline Nasal Drops IP 0.05% w/v 1x5ml bottle,144375,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+632,D00279,Essential,Anti-infective Medicines,Linezolid Tablet IP 600 mg 1x1,109523,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+633,D00847,Essential,"Solutions correcting water, electrolyte and acid-base disturbances",Potassium Chloride for Injection IP 150 mg/ml 1x10 ml ampoule,110345,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+634,D00786,Essential,Psychotherapeutic Medicines,Phenobarbitone Injection 200mg/ml 1x1 ml vial/ampoule,54338,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+635,D00358,Essential,Pain and Palliative Care Medicines,Loperamide Tablet IP 2 mg 1x1,1642265,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+636,D00097,Essential,Antiallergics and Medicines used in Anaphylaxis,Hydroxyzine Tablet IP 25 mg 1x1,668870,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+637,D00156,Essential,Anticonvulsants/ Antiepileptics,Lorazepam Tablet IP 1 mg 1x1,600948,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+638,D00661,Essential,"Hormones, other endocrine medicines and contraceptives",Chorionic Gonadotropin Injection IP 5000 IU 1x1 vial,2868,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+639,D00580,Essential,Cardiovascular medicines,Nifedipine Tablet IP 5 mg 1x1,599596,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+640,D00228,Essential,Anti-infective Medicines,Cloxacillin Capsules IP 250 mg 1x1,497780,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+641,D00072,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Gabapentin Tablet IP 100 mg 1x1,441853,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+642,D00229,Essential,Anti-infective Medicines,Cloxacillin Injection IP 500 mg 1x1 vial,35708,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+643,D00864,Essential,Vitamins and Minerals,Cholecalciferol Soft gelatin capsule 1000 IU 1x1,498732,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+644,D00568,Essential,Diuretics,Furosemide Oral Solution USP 10 mg/ml 1x60ml bottle,8211,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+645,D00641,Essential,Gastrointestinal medicines,Drotaverine Tablet IP 40 mg 1x1,490816,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+646,D00388,Essential,Antiparkinsonism medicines,Levodopa and Carbidopa Tablet IP Each tablets contains Levodopa 250 mg Carbidopa 25 mg 1x1,106846,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+647,D00419,Essential,Medicines affecting the blood,Tranexamic Acid Tablet IP 500 mg 1x1,1709553,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+648,D00726,Essential,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Baclofen Tablet IP 10 mg 1x1,366860,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+649,D00871,Essential,Vitamins and Minerals,Pyridoxine Tablet IP 40 mg 1x1,598596,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+650,D00201,Essential,Anti-infective Medicines,Benzylpenicillin Injection IP 300 mg (5 lakh unit) 1x1 vial,21228,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+651,D00439,Essential,Cardiovascular medicines,Diltiazem Tablet IP 90 mg 1x1,289373,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+652,D00476,Essential,Cardiovascular medicines,Enalapril Maleate Tablet IP 10 mg 1x1,319268,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+653,D00338,Essential,Immunosuppressive Medicines,Cyclosporine Capsules IP 50 mg 1x1,13818,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+654,D00422,Essential,Medicines affecting the blood,Warfarin Tablet IP 1 mg 1x1,61069,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+655,D00009,Essential,Anesthesia,Promethazine Injection IP 50mg/ml 1x2ml ampoule,40248,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+656,D00032,Essential,Anesthesia,Midazolam Injection IP 5 mg/ml 1x10ml vial,11467,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+657,D00577,Essential,Diuretics,Spironolactone Tablet IP 25 mg 1x1,227718,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+658,D00371,Essential,Pain and Palliative Care Medicines,Zoledronic Acid Injection IP 4 mg/ml 1x1 vial,2471,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+659,D00723,Essential,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Vecuronium Bromide Injection IP 10mg/ 10ml vial 1x10ml vial,4262,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+660,D00336,Essential,Immunosuppressive Medicines,Mycophenolate Mofetil Tablet IP 500 mg 1x1,10084,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+661,D00892,Essential,Medicines used in Dementia,Donepezil Tablet 10 mg 1x1,41640,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+662,D00354,Essential,Pain and Palliative Care Medicines,Filgrastim Injection IP 300mcg 1x1 ml ampoule,890,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+663,D00474,Essential,Cardiovascular medicines,Enalapril Maleate Tablet IP 2.5 mg 1x1,471248,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+664,D00782,Essential,Psychotherapeutic Medicines,Clomipramine Capsules IP 25 mg 1x1,54968,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+665,D00424,Essential,Medicines affecting the blood,Warfarin Tablet IP 5 mg 1x1,68418,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+666,D00063,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Methotrexate Tablet IP 2.5 mg 1x1,71688,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+667,D00891,Essential,Medicines used in Dementia,Donepezil Tablet 5 mg 1x1,36866,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+668,D00904,Essential,Nephrology,Tacrolimus Capsules IP 2 mg 1x1,3570,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+669,D00332,Essential,Antimigraine medicines,Propranolol Tablet IP 10 mg 1x1,135162,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+670,D00767,Essential,Psychotherapeutic Medicines,Haloperidol Tablet IP 1.5mg 1x1,209288,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+671,D00066,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Methotrexate Injection IP 50mg/2 ml 1x2ml vial,33876,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+672,D00487,Essential,Cardiovascular medicines,Digoxin Paediatric Solutions IP 50 mcg /ml 1x60ml bottle,2705,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+673,D00478,Essential,Cardiovascular medicines,Lisinopril Tablet IP 5 mg 1x1,34608,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+674,D00026,Essential,Anesthesia,Lignocaine Spray 10% 1x50 ml bottle,14984,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+675,D00903,Essential,Nephrology,Tacrolimus Capsules IP 1 mg 1x1,2920,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+676,D00447,Essential,Cardiovascular medicines,Isosorbide Dinitrate Tablet IP 10 mg 1x1,170915,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+677,D00815,Essential,Medicines acting on the respiratory tract,Tiotropium Powder for Inhalation IP 18 mcg Each capsule contains Tiotropium Bromide Monohydrate IP equivalent to Triotopium 18 mcg 1x1,11568,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+678,D00423,Essential,Medicines affecting the blood,Warfarin Tablet IP 2 mg 1x1,36514,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+679,D00352,Essential,Pain and Palliative Care Medicines,Diazepam Suppository 5 mg 1x1,46125,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+680,D00491,Essential,Cardiovascular medicines,Protamine Sulphate Injection IP 50 mg/5 ml 1x5ml vial,3907,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+681,D00902,Essential,Nephrology,Tacrolimus Capsules IP 0.5 mg 1x1,1054,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+682,D00261,Essential,Anti-infective Medicines,Doxycycline for Injection USP 100 mg 1x1 vial,32480,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+683,D00579,Essential,Cardiovascular medicines,Nifedipine Tablet IP 10 mg 1x1,2098384,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+684,D00076,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Acetyl Salicylic Acid Dispersible Tablets BP 50 mg 1x1,238270,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+685,D00161,Essential,Anticonvulsants/ Antiepileptics,Phenytoin Tablet IP 50 mg 1x1,2285949,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+686,D00189,Essential,Anti-infective Medicines,Amoxycillin Injection IP 250 mg 1x1 vial,181174,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+687,D00337,Essential,Immunosuppressive Medicines,Cyclosporine Capsules IP 25 mg 1x1,8484,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+688,D00339,Essential,Immunosuppressive Medicines,Cyclosporine Capsules IP 100 mg 1x1,8199,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+689,D00464,Essential,Cardiovascular medicines,Hydrochlorothiazide Tablet IP 50 mg 1x1,114568,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+690,D00130,Essential,Antidotes and Other Substances used in Poisonings,Activated Charcoal Tablet 250 mg 1x1,457490,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+691,D00131,Essential,Antidotes and Other Substances used in Poisonings,Desferrioxamine Injection IP 500mg/vial 1x1 vial,3412,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+692,D00230,Essential,Anti-infective Medicines,Cloxacillin Capsules IP 500 mg 1x1,554700,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+693,D00280,Essential,Anti-infective Medicines,Linezolid Tablet IP 300 mg 1x1,49480,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+694,D00376,Essential,Pain and Palliative Care Medicines,Morphine Tablet IP 30 mg 1x1,13558,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+695,D00506,Essential,Cardiovascular medicines,Sodium nitroprusside Injection IP 25 mg/ml 1x2ml vial /ampoule,2729,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+696,D00758,Desirable,Oxytocics and Antioxytocics,Methylergometrine Tablet IP 0.125mg 1x1,214862,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+697,M00175,Desirable,Medical Devices,Reinforced flexo metallic Endotracheal tubes with out cuff[pvc][Sterile] 5.5 1x1,5741,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+698,M00177,Desirable,Medical Devices,Reinforced flexo metallic Endotracheal tubes with out cuff[pvc][Sterile] 7 1x1,11952,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+699,M00178,Desirable,Medical Devices,Reinforced flexo metallic ENDOTRACHEAL tubes with out cuff[pvc][Sterile] 7.5 1x1,10583,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+700,M00179,Desirable,Medical Devices,Reinforced flexo metallic Endotracheal tubes with out cuff[pvc][Sterile] 8 1x1,6503,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+701,D00780,Desirable,Psychotherapeutic Medicines,Risperidone Tablet IP 4 mg 1x1,1675718,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+702,M00176,Desirable,Medical Devices,Reinforced flexo metallic Endotracheal tubes with out cuff[pvc][Sterile] 6 1x1,12797,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+703,M00066,Desirable,Medical Devices,"ABSORBABLE SURGICAL SUTURES POLYGLACTIN 910 3/8 CIRCLE CUTTING 16MM NEEDLE, LENGTH 45CM (2442) , SIZE 5-0 1x12 foils",1625,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+704,M00067,Desirable,Medical Devices,Absorbable Surgical SUTURES Polyglactin 910 Size 5- 0 (1/2 Circle round body 16mm needle length 45cm - 2303) NA SIZE 5-0 1x12foils 1x12 foils,709,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+705,M00068,Desirable,Medical Devices,"Absorbable Surgical SUTURES Polyglactin 910 Size 6- 0 (3/8 Circle cutting Ethiprime 13mm needle length 45cm - 2831), SIZE 6-0 1x12 foils",588,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+706,D00305,Desirable,Anti-infective Medicines,Aciclovir Intravenous Infusion IP 250 mg 1x1 vial,2310,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+707,D00196,Desirable,Anti-infective Medicines,Ampicillin Oral Suspension IP 125mg/5ml 1x60ml bottle,41344,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+708,D00590,Desirable,Cardiovascular medicines,Apixaban Tablet 2.5 mg 1x1,16830,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+709,D00795,Desirable,Psychotherapeutic Medicines,Aripiprazole Tablet IP 5 mg 1x1,88880,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+710,M00173,Desirable,Medical Devices,"B.B Silk (3/8 Cir RCut Needle 45mm Length 76 cm) ,size 2-0 1x12 foils",4477,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+711,D00725,Desirable,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Baclofen Oral Solution IP 5mg/5ml 1x100 ml Bottle,4519,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+712,D00119,Desirable,Antiallergics and Medicines used in Anaphylaxis,Betahistine Tablet IP 8 mg 1x1,981530,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+713,D00211,Desirable,Anti-infective Medicines,Cephalexin oral suspension 125mg/5ml 1x30 ml bottle,66424,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+714,D00434,Desirable,Medicines affecting the blood,Dried factor VIII fraction enriched with Von Willebrand factor Injection 250 IU/500 IU 1x1 vial,8982,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+715,D00687,Desirable,"Hormones, other endocrine medicines and contraceptives",Empagliflozin Tablet 10mg 1x1,6710,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+716,M00021,Desirable,Medical Devices,"Endotracheal tube Uncuffed (Sterile, Disposable), dia - 3mm 1x1",16239,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+717,M00029,Desirable,Medical Devices,"Endotracheal tube Uncuffed (Sterile, Disposable), dia - 4.5 mm 1x1",9633,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+718,M00024,Desirable,Medical Devices,"Endotracheal tube Uncuffed (Sterile, Disposable), dia - 4mm 1x1",10377,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+719,M00183,Desirable,Medical Devices,Endotracheal tubes with out cuff[pvc][Sterile] 2.5 1x1,14108,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+720,D00417,Desirable,Medicines affecting the blood,Ethamsylate Tablet 250 mg 1x1,607310,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+721,D00418,Desirable,Medicines affecting the blood,Ethamsylate Tablet 500 mg 1x1,153890,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+722,D00291,Desirable,Anti-infective Medicines,Fluconazole Tablet IP 50 mg 1x1,405790,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+723,D00614,Desirable,Medicines acting on the respiratory tract,Fluticasone Nasal Spray IP 0.05 % w/v 1x10 ml,11448,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+724,M00036,Desirable,Medical Devices,"Gigli Saw wire 12 inch - Overall length 12""(304.8mm), Standard grade stainless steel gigli saw wire for use with Gigli saw handles 1x1",2922,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+725,D00029,Desirable,Anesthesia,Glycopyrrolate Tablet IP 1 mg 1x1,101860,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+726,D00184,Desirable,Anti-infective Medicines,Griseofulvin Tablet IP 250 mg 1x1,138160,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+727,M00046,Desirable,Medical Devices,Infant feeding tube 6F 1x1,215201,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+728,M00047,Desirable,Medical Devices,Infant feeding tube 7F 1x1,88025,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+729,M00121,Desirable,Medical Devices,Infant Feeding tube Size 5FG 1x1,116442,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+730,M00049,Desirable,Medical Devices,Malecots catheter 18 Fr 1x1,2668,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+731,D00549,Desirable,Disinfectants and antiseptics,Methylrosanilinium Chloride(Gentian Violet) Topical Form 0.25% to 2% 1x30 ml bottle,1466,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+732,D00741,Desirable,Ophthalmological Preparations,Nepafenac ophthalmic Suspension 0.1% w/v 1x5ml bottle,14487,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+733,D00584,Desirable,Cardiovascular medicines,Nicoumalone Tablet IP 1 mg (Acenocoumarol ) 1x1,98450,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+734,M00052,Desirable,Medical Devices,NON - ABSORBABLE SURGICAL SUTURES POLYAMIDE SIZE 10-0 (3/8 CIRCLE SPATULATED MICROPOINT 6MM NEEDLE LENGTH 38CM) 12FOILS (3718) 1x12 foils,753,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+735,M00053,Desirable,Medical Devices,NON - ABSORBABLE SURGICAL SUTURES POLYAMIDE SIZE 3-0 (3/8 CIRCLE CUTTING 16MM NEEDLE LENGTH 70CM) 12FOILS (3321) 3/0 1x12 foils,3558,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+736,M00054,Desirable,Medical Devices,NON - ABSORBABLE SURGICAL SUTURES POLYAMIDE SIZE 8-0 (3/8 CIRCLE SPATULATED MICROPOINT 6MM NEEDLE LENGTH 38CM) 12FOILS (3322) 8/0 1x12 foils,504,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+737,M00059,Desirable,Medical Devices,Non-Absorbable Polyamide Surgical SUTURES 1/2 Circle reverse cutting 45mm needle length 100cm (3338) 1x12 foils,3139,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+738,D00697,Desirable,"Hormones, other endocrine medicines and contraceptives",Norethisterone Tablet 5mg 1x1,705430,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+739,D00050,Desirable,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Paracetamol Suppository BP /USP 170 mg 1x1,26515,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+740,D00164,Desirable,Anticonvulsants/ Antiepileptics,Phenytoin Oral Suspension IP 25mg/ml 1x100 ml Bottle,4367,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+741,D00689,Desirable,"Hormones, other endocrine medicines and contraceptives",Pioglitazone Tablet IP 15mg 1x1,1357840,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+742,M00073,Desirable,Medical Devices,Polypropylene Nonabsorbable Synthetic Surgical Mesh 7.5 cm X 15 cm 1x1,4237,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+743,D00469,Desirable,Cardiovascular medicines,Prazosin Tablet IP 2.5 mg 1x1,19041,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+744,D00470,Desirable,Cardiovascular medicines,Prazosin Tablet IP 5 mg 1x1,13134,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+745,D00010,Desirable,Anesthesia,Promethazine Syrup IP 5mg/5ml 1x60ml bottle,4724,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+746,D00874,Desirable,Vitamins and Minerals,Pyridoxine Tablet IP 10 mg 1x1,593780,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+747,D00788,Desirable,Psychotherapeutic Medicines,Quetiapine Prolonged-Release Tablets IP 100mg 1x1,215710,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+748,M00174,Desirable,Medical Devices,Reinforced flexo metallic Endotracheal tubes with out cuff[pvc][Sterile] 5 1x1,10518,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+749,M00181,Desirable,Medical Devices,Reinforced flexo metallic Endotracheal tubes with out cuff[pvc][Sterile] 6.5 1x1,13413,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+750,M00078,Desirable,Medical Devices,Ryles tube 16F 1x1,89962,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+751,M00079,Desirable,Medical Devices,Ryles tube 18F 1x1,46168,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+752,M00077,Desirable,Medical Devices,Ryles tube NA 1x1,77446,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+753,M00080,Desirable,Medical Devices,Skin Grafting Blade NA 1x1,3021,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+754,D00427,Desirable,Medicines affecting the blood,Sterile Haemocoagulase Solution 0.2cu/ml 1x10 ml bottle,3373,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+755,M00101,Desirable,Medical Devices,Sterile Hypodermic Needles 26G 1/2 Inch Needle 1x1,78618,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+756,D00858,Desirable,"Solutions correcting water, electrolyte and acid-base disturbances",Sterile Water for Injection IP NA 1x2ml vial,218945,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+757,M00103,Desirable,Medical Devices,Suction catheter 10 F 1x1,51598,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+758,M00104,Desirable,Medical Devices,Suction catheter 12 F 1x1,53012,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+759,M00105,Desirable,Medical Devices,Suction catheter 14 F 1x1,61309,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+760,M00106,Desirable,Medical Devices,Suction catheter 6F 1x1,98430,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+761,M00107,Desirable,Medical Devices,Suction catheter 8F 1x1,151780,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+762,M00108,Desirable,Medical Devices,Surgical Blade 10 1x1,365860,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+763,D00300,Desirable,Anti-infective Medicines,Terbinafine Cream IP 1%w/w 1x10gm tube,92129,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+764,D00703,Desirable,"Hormones, other endocrine medicines and contraceptives",Thyroxine Tablet IP 25mcg 1x1,19873,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+765,D00302,Desirable,Anti-infective Medicines,Tobramycin Ophthalmic Solution USP 0.3 % w/v 1x5ml bottle,44806,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+766,D00114,Desirable,Antiallergics and Medicines used in Anaphylaxis,Triamcinolone Injection IP 10 mg 1x1 ml Vial,16924,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+767,D00543,Desirable,Diagnostic agents,Tropicamide and Phenylephrine Ophthalmic Suspension Composition Phenylephrine 5% w/v Tropicamide 0.8% w/v 1x10 ml bottle,16798,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+768,D00884,Desirable,Vitamins and Minerals,"Vitamin A Capsules IP 50,000IU 1x1",1410090,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+769,D00588,Essential,Cardiovascular medicines,Dabigatran Etexilate Capsule 150 mg 1x1,33380,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+770,D00589,Desirable,Cardiovascular medicines,Dabigatran Etexilate Capsule 75 mg 1x1,6405,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+771,D00932,Desirable,Nephrology,Darbepoetin Alfa Injection 40mcg 0.4 ml in prefilled syringe,96,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+772,D00110,Desirable,Antiallergics and Medicines used in Anaphylaxis,Deflazacort Tablet 6 mg 1x1,582502,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+773,D00591,Desirable,Cardiovascular medicines,Ephedrine Injection 30 mg/ml 1x1 ml vial/ampoule,5058,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+774,D00823,Essential,Medicines acting on the respiratory tract,Etophylline and Theophylline Prolonged-Release Tablets IP Each tablet contains Etophylline 115 mg Theophylline equivalent to 35 mg 1x1,3191935,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+775,D00581,Desirable,Cardiovascular medicines,Ivabradin Tablet 5mg 1x1,33930,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+776,M00048,Desirable,Medical Devices,Intravenous Cannula (two way) 1x1,183348,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+777,D00167,Desirable,Anticonvulsants/ Antiepileptics,Clobazam Tablet IP 10mg 1x1,673980,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+778,M00130,Desirable,Medical Devices,Urethral catheter 5 FR 70 Cm Open End 1x1,13047,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+779,M00065,Desirable,Medical Devices,"Absorbable Surgical SUTURES Antibacterial Coated Polyglactin 1/2 Circle RB,CC/Taper Point 40MM Needle,Length 90 Cm, SIZE 1-0 1x12 foils",11806,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+780,M00170,Desirable,Medical Devices,ECG Electrode square shaped/dynamic 1x1,203865,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+781,D00282,Desirable,Anti-infective Medicines,Linezolid for oral suspension 100 mg/ 5 ml 1x30 ml bottle,496,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+782,D00931,Desirable,Medicines acting on the respiratory tract,lndacaterol + Glycopyrronium powder for Inhalation IP Each Capsule Contains: lndacaterol maleate 143 mcg equivalent to lndacaterol 110 mcg Glycopyrronium Bromide 63 mcg equivalent to Glycopyrronium 50 mcg 1x1,6286,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+783,M00148,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 10 F 1x1,28925,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+784,D00684,Desirable,"Hormones, other endocrine medicines and contraceptives",Linagliptin Tablet 5mg 1x1,618552,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+785,D00107,Desirable,Antiallergics and Medicines used in Anaphylaxis,Methylprednisolone Tablet IP 4 mg 1x1,1002669,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+786,M00152,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 20 F 1x1,17323,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+787,D00771,Desirable,Psychotherapeutic Medicines,Amisulpride Tablet IP 100mg 1x1,231574,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+788,D00363,Desirable,Pain and Palliative Care Medicines,Ondansetron Tablet IP 8 mg 1x1,1006008,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+789,D00633,Desirable,Gastrointestinal medicines,Mesalamine Prolonged-Release Tablets IP 1.2 gm 1x1,25800,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+790,D00144,Desirable,Antidotes and Other Substances used in Poisonings,Deferasirox Tablet IP 500 mg 1x1,40966,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+791,D00774,Desirable,Psychotherapeutic Medicines,Chlorpromazine Tablet IP 25 mg 1x1,1254868,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+792,D00799,Desirable,Psychotherapeutic Medicines,Clonazepam Tablet IP 1 mg 1x1,1370374,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+793,M00153,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 22 F 1x1,9995,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+794,M00155,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 26 F 1x1,7255,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+795,M00022,Desirable,Medical Devices,"Endotracheal tube Uncuffed (Sterile, Disposable), dia - 3.5 mm 1x1",15930,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+796,M00154,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 24 F 1x1,7878,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+797,M00129,Desirable,Medical Devices,Urethral catheter 4 FR 70 Cm Open End 1x1,18513,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+798,D00143,Desirable,Antidotes and Other Substances used in Poisonings,Deferasirox Tablet IP 400 mg 1x1,20806,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+799,D00142,Desirable,Antidotes and Other Substances used in Poisonings,Deferasirox Tablet IP 100 mg 1x1,38569,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+800,D00357,Desirable,Pain and Palliative Care Medicines,Fluoxetine Capsules IP 60 mg 1x1,79048,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+801,D00333,Desirable,Antimigraine medicines,Propranolol Tablet IP 20 mg 1x1,352009,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+802,D00141,Desirable,Antidotes and Other Substances used in Poisonings,Deferasirox Tablet IP 250 mg 1x1,28698,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+803,D00586,Desirable,Cardiovascular medicines,Apixaban Tablet 5 mg 1x1,16740,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+804,D00660,Desirable,"Hormones, other endocrine medicines and contraceptives",Chorionic Gonadotropin Injection IP 2000 IU 1x1 vial,1474,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+805,D00776,Desirable,Psychotherapeutic Medicines,Clozapine Tablet IP 50 mg 1x1,124720,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+806,D00416,Desirable,Medicines affecting the blood,Ethamsylate Tablet 100 mg 1x1,46248,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+807,D00570,Desirable,Diuretics,Torsemide Tablet IP 20 mg 1x1,138224,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+808,D00443,Desirable,Cardiovascular medicines,Nitroglycerin Injection IP 5 mg/ 1 ml 1x5ml vial,27208,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+809,M00147,Desirable,Medical Devices,FOLEYS CATHETER WITH BULB 8 F 1x1,22466,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+810,D00408,Desirable,Medicines affecting the blood,Hydroxyurea Capsules IP 500 mg 1x1,33610,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+811,D00426,Desirable,Medicines affecting the blood,Haemocoagulase Injection 1 CU 1x1 ml ampoule,43994,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+812,D00335,Desirable,Immunosuppressive Medicines,Mycophenolate Mofetil Tablet IP 250 mg 1x1,9470,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+813,D00183,Desirable,Anti-infective Medicines,Griseofulvin Tablet IP 125 mg 1x1,88901,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+814,M00158,Desirable,Medical Devices,"FOLEYS CATHETER WITH BULB 20 F ,THREE WAY 1x1",7803,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+815,M00160,Desirable,Medical Devices,"FOLEYS CATHETER WITH BULB 24 F ,THREE WAY 1x1",5111,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+816,M00159,Desirable,Medical Devices,"FOLEYS CATHETER WITH BULB 22 F,THREE WAY 1x1",4122,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+817,M00161,Desirable,Medical Devices,"FOLEYS CATHETER WITH BULB 26 F ,THREE WAY 1x1",3189,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+818,D00451,Desirable,Cardiovascular medicines,Metoprolol Succinate Prolonged-Release Tablets IP 100 mg 1x1,687002,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+819,D00316,Desirable,Anti-infective Medicines,Clindamycin Injection 150mg/ml 1x4 ml vial /ampoule,24836,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+820,D00724,Desirable,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Pyridostigmine Tablet IP 60 mg 1x1,13178,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+821,D00356,Desirable,Pain and Palliative Care Medicines,Fluoxetine Capsules IP 10 mg 1x1,187828,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+822,D00512,Desirable,Dermatological medicines (Topical),Biotin Tablets USP 5 mg 1x1,236208,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+823,D00718,Desirable,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Rocuronium Bromide Injection IP 10mg/ml 1x10ml vial,2578,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+824,D00025,Desirable,Anesthesia,Lignocaine Injection USP 2% (preservative free) for infiltration and nerve block including caudal and epidural use 1x50 ml vial,7391,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+825,D00736,Desirable,Medicines for Neonatal Care,Tadalafil Tablet IP 10 mg 1x1,3336,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+826,D00735,Desirable,Medicines for Neonatal Care,Tadalafil Tablet IP 5mg 1x1,2520,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+827,D00329,Desirable,Antimigraine medicines,Topiramate Tablet IP 100 mg 1x1,20039,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+828,D00330,Desirable,Antimigraine medicines,Topiramate Tablet IP 200 mg 1x1,10830,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+829,D00328,Desirable,Antimigraine medicines,Topiramate Tablet IP 25 mg 1x1,19216,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+830,D00600,Desirable,Dental Restorative Materials and Medicines,Ketorolac Tromethamine Tablet IP 10 mg (mouth dissolving) 1x1,256076,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+831,D00604,Desirable,Dental Restorative Materials and Medicines,Trypsin-Chymotrypsin Tablet 1 lakh AU 1x1,1174298,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+832,D00693,Desirable,"Hormones, other endocrine medicines and contraceptives",Voglibose Tablet IP 0.2 mg 1x1,1609465,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+833,D00766,Desirable,Psychotherapeutic Medicines,Haloperidol Oral Solution 2mg /ml 1x100 ml Bottle,7123,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+834,D00646,Essential,Gastrointestinal medicines,Zinc Sulphate Dispersible Tablets IP 10 mg Each dispersible tablet should contain elemental zinc 10 mg 1x1,2151594,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+835,D00649,Desirable,Gastrointestinal medicines,Zinc Sulphate Dispersible Tablets IP 50 mg Each dispersible tablet should contain elemental zinc 50 mg 1x1,703822,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+836,D00155,Desirable,Anticonvulsants/ Antiepileptics,Zonisamide Capsules IP 100 mg 1x1,24170,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+837,D00153,Desirable,Anticonvulsants/ Antiepileptics,Zonisamide Capsules IP 25 mg 1x1,21358,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+838,D00154,Desirable,Anticonvulsants/ Antiepileptics,Zonisamide Capsules IP 50 mg 1x1,30838,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+839,D00875,Essential,Vitamins and Minerals,Riboflavin Tablet IP 5 mg 1x1,591320,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+840,D00177,Essential,Anti-infective Medicines,Mebendazole Tablet IP 100 mg 1x1,261324,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+841,D00060,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Colchicine Tablet IP 0.5 mg 1x1,94560,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+842,D00393,Essential,Medicines affecting the blood,Dextran-40 Infusion IP 10% 1x500 ml bottle,3375,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+843,D00572,Essential,Diuretics,Indapamide Tablet IP 1.5 mg 1x1,25320,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+844,D00135,Essential,Antidotes and Other Substances used in Poisonings,Naloxone Injection IP 0.4mg/ml 1x1 ml ampoule,920,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+845,D00272,Essential,Anti-infective Medicines,Nitrofurantoin Oral Suspension USP/BP 25 mg/5 ml 1x100 ml Bottle,1800,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+846,D00271,Essential,Anti-infective Medicines,Nitrofurantoin Tablet IP 100 mg 1x1,607440,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+847,D00751,Essential,Ophthalmological Preparations,Pilocarpine Eye Drops IP 4% w/v 1x5ml bottle,2720,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+848,D00171,Essential,Anticonvulsants/ Antiepileptics,Sodium Valproate Injection IP 100mg/ml 1x5 ml Vial/ ampoule,4989,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+849,D00067,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Sulfasalazine Gastro-resistant Tablets IP 500 mg 1x1,24480,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+850,D00366,Essential,Pain and Palliative Care Medicines,Buprenorphine sub-lingual Tablet IP 2 mg 1x1,25864,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+851,D00477,Essential,Cardiovascular medicines,Captopril Tablet IP 25 mg 1x1,71496,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+852,D00602,Essential,Dental Restorative Materials and Medicines,"Gum Paint containing Tannic acid 2%, Cetrimide 0.1%, Zinc Chloride 1% 1x15 ml Squeeze Vial",159311,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+853,D00480,Essential,Cardiovascular medicines,Ramipril Tablet IP 2.5 mg 1x1,1639440,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+854,D00124,Essential,Antiallergics and Medicines used in Anaphylaxis,Hydrocortisone Cream IP 1% 1x15gm tube,112207,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+855,D00256,Essential,Anti-infective Medicines,Clarithromycin for Oral Suspension USP/BP 125 mg/5 ml 1x30 ml bottle,37296,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+856,D00068,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Naproxen Tablet IP 250mg 1x1,354976,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+857,D00315,Essential,Anti-infective Medicines,Clindamycin Capsules IP 300 mg 1x1,79608,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+858,D00314,Essential,Anti-infective Medicines,Clindamycin Capsules IP 150 mg 1x1,52600,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+859,D00182,Essential,Anti-infective Medicines,Ivermectin Tablet IP 12 mg 1x1,166902,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+860,D00319,Essential,Anti-infective Medicines,Quinine Tablet IP 300 mg 1x1,65419,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+861,D00496,Essential,Cardiovascular medicines,Fenofibrate Tablet IP 160 mg 1x1,82438,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+862,D00753,Essential,Ophthalmological Preparations,Atropine Eye Ointment IP 1%w/w 1x5gm tube,28216,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+863,D00390,Essential,Medicines affecting the blood,Clonidine Tablet IP 100 mcg 1x1,138490,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+864,D00445,Essential,Cardiovascular medicines,Isosorbide mononitrate Tablet IP 30 mg 1x1,58674,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+865,D00803,Essential,Psychotherapeutic Medicines,Zolpidem Tablet IP 10 mg 1x1,67404,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+866,D00181,Essential,Anti-infective Medicines,Ivermectin Tablet IP 6 mg 1x1,91986,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+867,D00070,Essential,"Analgesics, Antipyretics, Nonsteroidal Anti- inflammatory Medicines",Duloxetine GastroNAresistant Tablets IP 30 mg 1x1,133332,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+868,D00320,Essential,Anti-infective Medicines,Quinine Dihydrochloride Injection IP 300 mg/ml 1x2ml vial /ampoule,1024,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+869,D00750,Essential,Ophthalmological Preparations,Pilocarpine Eye Drops IP 2% w/v 1x5ml bottle,18726,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+870,D00266,Essential,Anti-infective Medicines,Diloxanide Tablet IP 500 mg 1x1,98684,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+871,D00343,Essential,Pain and Palliative Care Medicines,Tapentadol Tablet 25 mg 1x1,7821,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+872,D00345,Essential,Pain and Palliative Care Medicines,Tapentadol Tablet 100 mg 1x1,11660,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+873,D00368,Essential,Pain and Palliative Care Medicines,Naltrexone Tablet IP 50 mg 1x1,15549,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+874,D00377,Essential,Pain and Palliative Care Medicines,Codeine Tablet IP 15 mg 1x1,38918,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+875,D00383,Essential,Pain and Palliative Care Medicines,Methadone Tablet IP 5 mg 1x1,5256,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+876,D00385,Essential,Pain and Palliative Care Medicines,Methadone Oral Solution IP 10 mg/ml 150 ml,765,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+877,D00386,Essential,Pain and Palliative Care Medicines,Methadone Injection IP 10 mg/ml 1x20ml vial,1059,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+878,D00527,Essential,Dermatological medicines (Topical),Coal Tar Topical Solutions IP 5% 1x100 ml Bottle,16329,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+879,D00554,Essential,Disinfectants and antiseptics,Polyvinyl alcohol and Povidone ophthalmic solution Composition: Polyvinyl alcohol 1.4% and Povidone 0.6% 1x10 ml bottle,13918,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+880,D00594,Essential,Dental Restorative Materials and Medicines,"Light cured Calcium Hydroxide base , cavity liner in syringes 8g 1x8 g tube",6306,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+881,D00650,Essential,Gastrointestinal medicines,Methyl Cellulose Tablet 500mg 1x1,64844,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+882,D00867,Essential,Vitamins and Minerals,Cholecalciferol Injection IP 300000 IU/ml 1x1 ml ampoule,964,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+883,D00601,Essential,Dental Restorative Materials and Medicines,Ketorolac Tromethamine Injection 30mg/ml 1x1 ml vial/ampoule,26923,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+884,D00670,Essential,"Hormones, other endocrine medicines and contraceptives",Ormeloxifene Tablet IP 30 mg 1x1,157224,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+885,D00571,Desirable,Diuretics,Metolazone Tablet IP 2.5 mg 1x1,1564,Local Procurement Local Pu,rchase,False,False,False,True,ksmscl_indent_2025_26,real
+886,D00344,Desirable,Pain and Palliative Care Medicines,Tapentadol Tablet 50 mg 1x1,14779,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+887,D00035,Desirable,Anesthesia,Midazolam Tablet 15 mg 1x1,25772,Local Procurement Local Pu,rchase,False,True,True,True,ksmscl_indent_2025_26,real
+888,D00721,Desirable,Muscle Relaxants (Peripherally Acting) and Cholinesterase Inhibitors,Neostigmine and Glycopyrrolate Injection Composition: Neostigmine Methylsulfate 2.5 mg /5 ml Glycopyrrolate 0.5 mg/ 5ml 1x5ml vial,30777,Local Procurement Local Pu,rchase,True,True,True,True,ksmscl_indent_2025_26,real
+889,D00432,Desirable,Medicines affecting the blood,Extended half life Recombinant Factor IX Injection 500 IU/600IU/1000 IU/1200 IU 1x1 vial,3092,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
+890,D00433,Desirable,Medicines affecting the blood,"Ultrapure recombinant factor VIII plasma free, human albumin free Injection 250 IU/500 IU/1000 IU/1500 IU 1x1 vial",113060,Local Procurement Local Pu,rchase,False,False,True,True,ksmscl_indent_2025_26,real
