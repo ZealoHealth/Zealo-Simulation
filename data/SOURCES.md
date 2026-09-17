@@ -191,19 +191,42 @@ the tagged-`estimated` fallback if unavailable.
 
 ---
 
-## 7. `census_population` — Gadag taluk and Karnataka population — **needed**
+## 7. Population, Census 2011 — **obtained, machine-verified**
 
-Required for the demand formula (statewide indent × taluk share of state population). Must be
-an official Census of India figure or official projection, cited. **We will not estimate this
-ourselves** — see `data/manual/REQUESTS.md`.
+Decided by the project team (R5). Each page was fetched after checking robots.txt, saved
+unchanged to `data/raw/population/`, and the stated figure found in it.
+
+| Source id | Figure | Source | Quality |
+|---|---|---|---|
+| `karnataka_population_2011` | Karnataka **61,095,297** | https://karnataka.gov.in/new-page/SOCIETY/en | official state government |
+| `gadag_taluk_population_2011` | Gadag taluk **367,258** | https://www.censusindia2011.com/karnataka/gadag/gadag-population.html | **third-party census mirror** |
+| `gadag_district_population_2011` | Gadag district **1,064,570** (sanity check only) | https://gadag.nic.in/en/demography/ | official district site |
+
+Retrieved 2026-09-17. **Label shown on the Data Sources page:** "Gadag taluk population taken
+from a third-party mirror of Census 2011 data; the official census site could not be accessed
+securely." (censusindia.gov.in serves an incomplete TLS certificate chain.)
+
+Checks run on every build: taluk ÷ state = 0.6011% (≈ 0.601%), taluk ÷ district = 34.50% (≈ 34.5%).
+
+Limitations: 2011 populations paired with 2025-26 indent quantities (share only, no growth
+projection); the district page calls its figure provisional; Gadag district now has 7 taluks
+(5 in 2011), so the taluk boundary may have changed.
 
 ---
 
-## 8. `unit_prices` — Medicine unit prices — **open question** (Milestone 5)
+## 8. `unit_prices` — Medicine unit prices — **decided: units only**
 
-To be searched for: a government ceiling price list (e.g. NPPA) or a public generic price list.
-If found → tagged `real` and cited. If not → **ask before using illustrative prices**, and tag
-them `estimated`.
+Searched: nppa.gov.in serves an incomplete TLS chain, the Jan Aushadhi portal is a JavaScript
+application, pmbi.co.in returned 404. **Decision (R6): keep everything in units.** "Values in
+rupees are not shown because no verified public price list could be accessed." A sourced
+`data/manual/prices.csv` would switch value metrics back on with `real` tags.
+
+## 8a. `nominatim` — Village-centre geocoding — **authorised, not yet used**
+
+OpenStreetMap Nominatim, only for PHCs the team locates by village name without coordinates.
+Usage policy followed: ≤ 1 request/second, descriptive user agent, results cached in
+`data/raw/geocode/`, bounded to the Gadag taluk box. Results tagged `derived`, "approximate:
+village centre". ODbL, © OpenStreetMap contributors.
 
 ---
 

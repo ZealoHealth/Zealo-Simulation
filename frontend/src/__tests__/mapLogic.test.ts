@@ -5,7 +5,8 @@ import {
   distanceKm,
   eventsForDay,
   filterFacilities,
-  manufacturerArrowsForDay,
+  groupRoutineOrders,
+  manufacturerActivityForDay,
   rankByDistance,
   statusesByMedicine,
   statusesForDay,
@@ -27,6 +28,9 @@ function facility(overrides: Partial<Facility> & { id: string }): Facility {
     source_ids: ["osm_overpass"],
     retrieved: "2026-09-16",
     provenance: { lat: "real", lon: "real", facility_type: "derived", ownership: "derived" },
+    location_precision: "exact",
+    medicine_list: "phc",
+    level_unconfirmed: false,
     ...overrides,
   } as Facility;
 }
@@ -34,6 +38,7 @@ function facility(overrides: Partial<Facility> & { id: string }): Facility {
 const ALL_ON: MapFilters = {
   layers: { government: true, private: true, pharmacy: true },
   networkOnly: false,
+  verifiedOnly: false,
   radiusKm: null,
 };
 
@@ -74,6 +79,12 @@ describe("filterFacilities", () => {
       layers: { government: false, private: false, pharmacy: true },
     };
     expect(filterFacilities(facilities, filters).map((f) => f.id)).toEqual(["pharm-01"]);
+  });
+
+  it("filters to verified facilities only", () => {
+    const mixed = [facility({ id: "v", verified: true }), facility({ id: "u", verified: false })];
+    const filters = { ...ALL_ON, verifiedOnly: true };
+    expect(filterFacilities(mixed, filters).map((f) => f.id)).toEqual(["v"]);
   });
 
   it("filters to network members only", () => {
@@ -120,9 +131,9 @@ describe("medicine search", () => {
     facility({ id: "c", display_label: "PHC 3", lat: 15.62, lon: 75.63 }),
   ];
   const rows: MedicineDayRow[] = [
-    { facility_id: "c", display_label: "PHC 3", on_hand: 5, days_of_cover: 2, next_expiry_day: null, status: "green" },
-    { facility_id: "a", display_label: "PHC 1", on_hand: 0, days_of_cover: 0, next_expiry_day: null, status: "red" },
-    { facility_id: "b", display_label: "PHC 2", on_hand: 9, days_of_cover: 4, next_expiry_day: null, status: "green" },
+    { facility_id: "c", display_label: "PHC 3", on_hand: 5, in_stock: true, provenance: "estimated", days_of_cover: 2, next_expiry_day: null, status: "green" },
+    { facility_id: "a", display_label: "PHC 1", on_hand: 0, in_stock: false, provenance: "estimated", days_of_cover: 0, next_expiry_day: null, status: "red" },
+    { facility_id: "b", display_label: "PHC 2", on_hand: 9, in_stock: true, provenance: "estimated", days_of_cover: 4, next_expiry_day: null, status: "green" },
   ];
 
   it("sorts nearest first from the chosen origin", () => {
@@ -149,6 +160,12 @@ describe("medicine search", () => {
   it("falls back to stock order when there is no origin", () => {
     const ranked = rankByDistance(rows, facilities, null);
     expect(ranked.map((r) => r.on_hand)).toEqual([9, 5, 0]);
+  });
+
+  it("ranks availability-only rows, which have no quantity, by in/out of stock", () => {
+    const availabilityOnly: MedicineDayRow[] = rows.map((r) => ({ ...r, on_hand: null }));
+    const ranked = rankByDistance(availabilityOnly, facilities, null, { inStockOnly: true });
+    expect(ranked.map((r) => r.facility_id).sort()).toEqual(["b", "c"]);
   });
 
   it("recolours markers by the selected medicine", () => {
@@ -198,16 +215,61 @@ describe("transfer lines", () => {
     expect(transferLinesForDay([rebalance], facilities, 5)[0].kind).toBe("rebalance");
   });
 
-  it("draws manufacturer orders as off-map arrows", () => {
-    const order = event({
-      type: "manufacturer_order",
-      facility_id: "a",
-      from_facility_id: null,
-      to_facility_id: null,
-    });
-    const arrows = manufacturerArrowsForDay([order], facilities, 5);
-    expect(arrows).toHaveLength(1);
-    expect(arrows[0].express).toBe(false);
+  it("draws one line per route even when several medicines move together", () => {
+    const lines = transferLinesForDay(
+      [event({ medicine_id: "D001" }), event({ medicine_id: "D002", quantity: 10 })],
+      facilities,
+      5,
+    );
+    expect(lines).toHaveLength(1);
+    expect(lines[0].quantity).toBe(50);
+    expect(new Set(lines.map((l) => l.id)).size).toBe(lines.length);
+  });
+
+  it("summarises routine manufacturer orders and draws arrows only for express ones", () => {
+    const base = { from_facility_id: null, to_facility_id: null, facility_id: "a" };
+    const activity = manufacturerActivityForDay(
+      [
+        event({ ...base, type: "manufacturer_order", medicine_id: "D001" }),
+        event({ ...base, type: "manufacturer_order", medicine_id: "D002" }),
+        event({ ...base, type: "express_order", medicine_id: "D001" }),
+        event({ ...base, type: "express_order", medicine_id: "D001" }),
+      ],
+      facilities,
+      5,
+    );
+    expect(activity.routineOrders).toBe(2);
+    expect(activity.routineFacilities).toBe(1);
+    expect(activity.express).toHaveLength(1);
+    expect(activity.express[0].orders).toBe(2);
+  });
+});
+
+describe("groupRoutineOrders", () => {
+  const order = (medicine: string, day = 1, facility = "a"): SimulationEvent => ({
+    day, type: "manufacturer_order", medicine_id: medicine,
+    message: "PHC 1 ordered 10 units of X from Manufacturer A, arriving day 21.",
+    facility_id: facility, from_facility_id: null, to_facility_id: null,
+    quantity: 10, value: null, distance_km: null,
+  });
+
+  it("collapses a facility's routine orders on one day into a single line", () => {
+    const grouped = groupRoutineOrders([order("D1"), order("D2"), order("D3")]);
+    expect(grouped).toHaveLength(1);
+    expect(grouped[0].message).toContain("3 routine orders");
+    expect(grouped[0].quantity).toBe(30);
+  });
+
+  it("keeps different facilities and days apart, and never groups other events", () => {
+    const transfer = { ...order("D1"), type: "relief_transfer" };
+    const grouped = groupRoutineOrders([order("D1"), order("D2", 2), order("D3", 1, "b"), transfer]);
+    expect(grouped).toHaveLength(4);
+  });
+
+  it("does not modify the events it was given", () => {
+    const events = [order("D1"), order("D2")];
+    groupRoutineOrders(events);
+    expect(events[0].message).toContain("ordered 10 units");
   });
 });
 
@@ -227,6 +289,15 @@ describe("eventsForDay", () => {
 
   it("shows only what has happened by now, newest first", () => {
     expect(eventsForDay(events, 2).map((e) => e.day)).toEqual([2, 1, 0]);
+  });
+
+  it("puts transfers ahead of routine orders on the same day", () => {
+    const routine = { ...events[0], day: 5, type: "manufacturer_order", facility_id: "a" };
+    const transfer = { ...events[0], day: 5, type: "relief_transfer" };
+    expect(eventsForDay([routine, transfer], 5).map((e) => e.type)).toEqual([
+      "relief_transfer",
+      "manufacturer_order",
+    ]);
   });
 
   it("returns nothing when there is no run", () => {

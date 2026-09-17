@@ -156,7 +156,7 @@ def test_a_facility_cannot_transfer_to_itself():
 
 
 def test_transfers_only_happen_between_two_different_network_facilities():
-    result = run(build_scenario(days=150, opening_days_of_stock=8), ZealoPolicy())
+    result = run(_imbalanced_scenario(), ZealoPolicy())
     transfers = [
         e
         for e in result.events.events
@@ -178,10 +178,57 @@ def test_opting_out_of_the_network_matches_the_baseline_exactly():
     assert out.metrics.to_dict() == base.metrics.to_dict()
 
 
-def test_the_network_does_make_transfers_when_stock_is_tight():
-    result = run(build_scenario(days=150, opening_days_of_stock=8), ZealoPolicy())
-    assert result.metrics.transfers > 0
+def _imbalanced_scenario(days: int = 60):
+    """One facility well stocked, the others nearly empty: the case transfers exist for."""
+    scenario = build_scenario(days=days, opening_days_of_stock=2)
+    for (fid, _mid), batches in scenario.opening_batches.items():
+        if fid == "fac-0":
+            batches[0].quantity = 10 * 90  # 90 days of demand
+    return scenario
+
+
+def test_the_network_moves_stock_from_surplus_to_shortage():
+    result = run(_imbalanced_scenario(), ZealoPolicy())
+    relief = [e for e in result.events.events if e.type is EventType.RELIEF_TRANSFER]
+    assert relief, "a well-stocked facility next to empty ones should relieve them"
+    assert all(e.from_facility_id == "fac-0" for e in relief[:5])
     assert result.metrics.transfer_distance_km > 0
+
+
+def test_uniformly_short_facilities_do_not_trade_stock():
+    """If nobody has a surplus, moving stock around only relocates the shortage."""
+    result = run(build_scenario(days=60, opening_days_of_stock=2), ZealoPolicy())
+    assert result.metrics.transfers == 0
+
+
+def test_no_transfer_is_smaller_than_the_minimum():
+    result = run(_imbalanced_scenario(), ZealoPolicy())
+    minimum = ZealoPolicy().min_transfer_units
+    moves = [e for e in result.events.events
+             if e.type in (EventType.RELIEF_TRANSFER, EventType.REBALANCE_TRANSFER)]
+    assert moves and all(e.quantity >= minimum for e in moves)
+
+
+def test_a_donor_never_gives_itself_below_its_reorder_point():
+    """Giving below the reorder point caused cascades: each transfer triggered another."""
+    scenario = _imbalanced_scenario()
+    result = run(scenario, ZealoPolicy())
+    received_back = [
+        e for e in result.events.events
+        if e.type is EventType.RELIEF_TRANSFER and e.to_facility_id == "fac-0"
+    ]
+    assert not received_back, "the donor should never need relief from its recipients"
+
+
+def test_stock_does_not_ping_pong_between_two_facilities():
+    result = run(_imbalanced_scenario(days=90), ZealoPolicy())
+    routes = {
+        (e.from_facility_id, e.to_facility_id, e.medicine_id)
+        for e in result.events.events
+        if e.type in (EventType.RELIEF_TRANSFER, EventType.REBALANCE_TRANSFER)
+    }
+    reversed_routes = [r for r in routes if (r[1], r[0], r[2]) in routes]
+    assert not reversed_routes
 
 
 # --- minimum shelf life -------------------------------------------------------
@@ -289,13 +336,14 @@ def test_safety_days_must_be_below_target_days():
 
 def test_the_network_beats_lone_facilities_on_availability():
     """The claim the product makes, checked on identical demand and opening stock."""
-    baseline, zealo = run_both(days=150, opening_days_of_stock=10, seed=17)
+    baseline = run(_imbalanced_scenario(days=90), BaselinePolicy())
+    zealo = run(_imbalanced_scenario(days=90), ZealoPolicy())
     assert zealo.metrics.availability_rate >= baseline.metrics.availability_rate
     assert zealo.metrics.unmet_units <= baseline.metrics.unmet_units
 
 
 def test_every_transfer_event_carries_a_readable_message():
-    result = run(build_scenario(days=150, opening_days_of_stock=8), ZealoPolicy())
+    result = run(_imbalanced_scenario(), ZealoPolicy())
     for event in result.events.events:
         if event.type in (EventType.RELIEF_TRANSFER, EventType.REBALANCE_TRANSFER):
             assert "Moved" in event.message and "km" in event.message
@@ -312,7 +360,11 @@ def test_value_metrics_are_withheld_when_prices_are_unknown():
 
 
 def test_value_metrics_appear_once_prices_are_known():
-    result = run(build_scenario(price=5.0, days=150, opening_days_of_stock=8), ZealoPolicy())
+    scenario = build_scenario(price=5.0, days=60, opening_days_of_stock=2)
+    for (fid, _), batches in scenario.opening_batches.items():
+        if fid == "fac-0":
+            batches[0].quantity = 900
+    result = run(scenario, ZealoPolicy())
     assert result.metrics.to_dict()["transfer_value"] is not None
 
 
@@ -323,3 +375,10 @@ def test_the_timeline_has_one_record_per_day_with_a_status_per_facility():
     for record in result.timeline:
         assert set(record.status) == {f.id for f in scenario.facilities}
         assert set(record.status.values()) <= {"green", "amber", "red"}
+
+
+def test_an_approval_limit_works_in_units_when_prices_are_unknown():
+    """Units-only was decided; a rupee limit could then never be exceeded."""
+    tight = FacilityRules(auto_approval_limit=5)
+    result = run(build_scenario(rules=tight, days=90, price=None), ZealoPolicy())
+    assert result.metrics.approval_requests > 0

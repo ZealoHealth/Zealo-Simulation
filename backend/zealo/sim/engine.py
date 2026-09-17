@@ -247,7 +247,11 @@ class SimulationState:
         approval_delay = 0
         limit = facility.rules.auto_approval_limit
         key = f"{self.day}:{facility_id}:{medicine_id}"
-        if limit is not None and value is not None and value > limit:
+        # The limit is in rupees when prices are known. The project reports units only
+        # (no verified price list), and a rupee limit could then never be exceeded, so
+        # approvals would silently never happen; the limit is read as units instead.
+        measured = value if value is not None else quantity
+        if limit is not None and measured > limit:
             decision = self.scenario.approval_decisions.get(key, "approve")
             self.metrics.approval_requests += 1
             self.events.add(

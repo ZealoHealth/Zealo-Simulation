@@ -1,0 +1,89 @@
+{
+  "source_id": "gadag_survey_2023",
+  "provenance": "real",
+  "phcs_surveyed": 15,
+  "items_assessed": 104,
+  "period": "November 2021 to March 2022",
+  "overall_availability_pct": 74.2,
+  "highest_phc": {
+    "phc": 4,
+    "availability_pct": 94.17
+  },
+  "lowest_phc": {
+    "phc": 1,
+    "availability_pct": 45.45
+  },
+  "categories": [
+    {
+      "category": "NSAIDs",
+      "availability_pct": 86.66
+    },
+    {
+      "category": "Antibiotics",
+      "availability_pct": 73.33
+    },
+    {
+      "category": "Anti-allergic and drugs used in anaphylaxis",
+      "availability_pct": 88.0
+    },
+    {
+      "category": "Bronchodilators",
+      "availability_pct": 71.43
+    },
+    {
+      "category": "Gastro-intestinal, anti-ulcer drugs, and intestinal anthelmintics",
+      "availability_pct": 84.44
+    },
+    {
+      "category": "Cardiovascular drugs",
+      "availability_pct": 61.11
+    },
+    {
+      "category": "Anti-diabetic drugs",
+      "availability_pct": 86.88
+    },
+    {
+      "category": "Obstetrics drugs",
+      "availability_pct": 69.44
+    },
+    {
+      "category": "Tranquilizers, sedatives, psychiatric drugs",
+      "availability_pct": 59.16
+    },
+    {
+      "category": "Anesthetics",
+      "availability_pct": 83.33
+    },
+    {
+      "category": "Anti-dotes, vaccines, and sera",
+      "availability_pct": 65.56
+    },
+    {
+      "category": "IV infusions and other electrolytes",
+      "availability_pct": 76.67
+    },
+    {
+      "category": "Dermatological, ophthalmic, and ENT drugs",
+      "availability_pct": 40.0
+    },
+    {
+      "category": "Vitamins and haematinics",
+      "availability_pct": 71.79
+    },
+    {
+      "category": "Sterile and disposable items",
+      "availability_pct": 78.1
+    }
+  ],
+  "unavailable_everywhere": [
+    {
+      "sl_no": 12,
+      "name": "Anti-D immunoglobin"
+    },
+    {
+      "sl_no": 41,
+      "name": "Glyceryl trinitrate"
+    }
+  ],
+  "items_at_full_availability": 20
+}

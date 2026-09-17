@@ -3,12 +3,12 @@ survey_sl_no,survey_drug_name,survey_strength,survey_dosage_form,survey_essentia
 2,Adrenaline bitartrate,1mg/ml injection,Injection,most_essential,66.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 3,Albendazole,400mg tab,Tablet,essential,100.0,D00175,Albendazole Tablet IP 400 mg Each chewable tablet contains albendazole 400 mg 1x1,Anti-infective Medicines,True,True,True,True,28346538,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 4,Ambroxol,30mg/5ml syrup,Syrup,essential,80.0,D00827,Ambroxol Hydrochloride Syrup 30mg/5ml 1x100 ml Bottle,Medicines acting on the respiratory tract,True,True,True,True,1229215,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
-5,Amikacin,100mg/2ml syrup,Injection,essential,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+5,Amikacin,100mg/2ml syrup,Injection,essential,73.33,D00276,Amikacin Injection IP 100 mg/2ml 1x2ml vial,Anti-infective Medicines,False,True,True,True,841690,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 6,Amitriptyline,25mg tablet,Tablet,very_essential,66.67,D00349,Amitriptyline Tablet IP 25 mg 1x1,Pain and Palliative Care Medicines,True,True,True,True,11678280,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 7,Amlodipine,5mg tablet,Tablet,very_essential,100.0,D00460,Amlodipine Tablet IP 5 mg 1x1,Cardiovascular medicines,True,True,True,True,127702288,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 8,Amoxicillin + clavulanic acid,200mg +28.5mg/5ml powder,Powder for suspension,most_essential,73.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 9,Amoxycillin,250mg/5ml syrup,Oral Liquid,essential,80.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
-10,Amoxycillin,125mg/5ml powder,Suspension,most_essential,86.67,,,,,,,,,pending_review,unmatched,gadag_survey_2023
+10,Amoxycillin,125mg/5ml powder,Suspension,most_essential,86.67,D00187,Amoxycillin oral suspension 125 mg/5ml 1x60ml bottle,Anti-infective Medicines,False,True,True,True,1448928,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 11,Amoxycillin + clavulanic acid,625mg tablet,Tablet,most_essential,60.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 12,Anti-D immunoglobin,300mcg injection,Injection,most_essential,0.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 13,Antisnake venom,NA,Powder for Infusion,most_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
@@ -16,7 +16,7 @@ survey_sl_no,survey_drug_name,survey_strength,survey_dosage_form,survey_essentia
 15,Atropine sulfate,1mg/ml injection,Injection,most_essential,53.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 16,Calcium + vit D,500 mg,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 17,Calcium gluconate,10 % W/V/ 10ml Inj,,,13.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
-18,Cefixime,50mg/5ml syrup,Powder,essential,60.0,D00216,Cefixime Oral Suspension IP 50 mg/5 ml 1x30 ml bottle,Anti-infective Medicines,True,True,True,True,767116,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+18,Cefixime,50mg/5ml syrup,Powder,essential,60.0,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 19,Chlorpheniramine maleate,4mg tablet,Tablet,very_essential,100.0,D00091,Chlorpheniramine Tablet IP 4mg 1x1,Antiallergics and Medicines used in Anaphylaxis,True,True,True,True,298407360,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 20,Chlortalidone,12.5mg tablet,,,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 21,Ciprofloxacin hydrochloride,500mg tablet,Tablet,most_essential,100.0,D00242,Ciprofloxacin Tablet IP 500 mg 1x1,Anti-infective Medicines,True,True,True,True,40135440,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
@@ -93,7 +93,7 @@ survey_sl_no,survey_drug_name,survey_strength,survey_dosage_form,survey_essentia
 92,Telmisartan,40mg tablet,Tablet,very_essential,73.33,D00482,Telmisartan Tablet IP 40 mg 1x1,Cardiovascular medicines,True,True,True,True,76267909,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
 93,Theophylline + etophylline,50.6mg+169.4mg/2ml injection,Injection,very_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 94,Theophylline + etophylline,23mg+77mg syrup,Syrup,very_essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
-95,Theophylline + etophylline,23mg+77mg tablet,Syrup,very_essential,93.33,D00821,Theophylline and Etophylline Tablet Each Tablet Contains: Theophylline 23 mg + Etophylline 77 mg 1x1,Medicines acting on the respiratory tract,False,False,True,True,7824950,auto,derived,gadag_survey_2023+ksmscl_indent_2025_26
+95,Theophylline + etophylline,23mg+77mg tablet,Syrup,very_essential,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 96,Trihexyphenidyl hydrochloride,2mg tablet,Tablet,essential,33.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 97,Triple layer mask,NA,,,93.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023
 98,Vitamin A capsules,25000 IU,,,13.33,,,,,,,,,pending_review,unmatched,gadag_survey_2023

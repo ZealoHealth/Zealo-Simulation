@@ -11,12 +11,21 @@ import type { Facility, FacilityRunResponse, Medicine } from "../../api/types";
 import { ProvenanceBadge, ProvenanceRow } from "../Provenance";
 import { TYPE_LABELS } from "../map/icons";
 
+function Badge({ children, tone }: { children: React.ReactNode; tone: "amber" }) {
+  const tones = { amber: "bg-status-amber/12 text-status-amber" };
+  return (
+    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${tones[tone]}`}>
+      {children}
+    </span>
+  );
+}
+
 const GOVERNMENT_LEVEL_COLUMN: Record<string, string> = {
   phc: "phc",
   chc: "chc",
   taluk_hospital: "taluk_hospital",
   district_hospital: "district_hospital",
-  government_other: "chc",
+  government_level_unknown: "phc",
 };
 
 const STATUS_CLASS: Record<string, string> = {
@@ -100,18 +109,27 @@ export function FacilityPanel({
           </div>
         </section>
 
-        {!facility.verified && (
-          <p className="mb-3 rounded border border-coral/30 bg-coral/10 px-3 py-2 text-[11px] text-navy/80">
-            This location has not been checked by hand yet. Facility type and ownership are
-            inferred from OpenStreetMap names, which carry no operator field.
+        <div className="mb-3 flex flex-wrap gap-1.5">
+          {!facility.verified && <Badge tone="amber">Location unverified</Badge>}
+          {facility.location_precision !== "exact" && (
+            <Badge tone="amber">Approximate: village centre</Badge>
+          )}
+          {facility.level_unconfirmed && <Badge tone="amber">Level unconfirmed</Badge>}
+        </div>
+
+        {facility.level_unconfirmed && (
+          <p className="mb-3 rounded-lg bg-status-amber/8 px-3 py-2 text-[11px] leading-relaxed text-ink-muted">
+            {facility.facility_type === "other_government"
+              ? "Probably run outside the state health department, so it is kept out of the Zealo network with no state medicine list until confirmed."
+              : "Its level (PHC, CHC or taluk hospital) is not stated in our sources. It carries the PHC medicine list, the most conservative choice, until confirmed."}
           </p>
         )}
 
-        {facility.facility_type === "phc" && (
-          <p className="mb-3 rounded border border-purple/30 bg-purple/10 px-3 py-2 text-[11px] text-navy/80">
-            The 2021&ndash;22 survey anonymised its PHCs, so this location&rsquo;s stock pattern
-            is an <strong>illustrative assignment</strong> of one survey profile, not an
-            observation about this place.
+        {facility.facility_type === "phc" && run?.survey_profile != null && (
+          <p className="mb-3 rounded-lg bg-purple/8 px-3 py-2 text-[11px] leading-relaxed text-ink-muted">
+            Stock pattern from <strong className="text-ink">survey profile {run.survey_profile}</strong>,
+            an <strong className="text-ink">illustrative assignment</strong>: the 2021&ndash;22
+            survey anonymised its PHCs, so no profile is an observation about this place.
           </p>
         )}
 
@@ -164,6 +182,31 @@ export function FacilityPanel({
             <p className="mt-2 flex items-center gap-1.5 text-[10px] text-navy/50">
               Stock figures are modelled <ProvenanceBadge provenance="estimated" />
             </p>
+
+            {run.availability_only.length > 0 && (
+              <section className="mt-4">
+                <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-navy/50">
+                  Availability only ({run.availability_only.length})
+                </h3>
+                <p className="mb-1.5 text-[11px] leading-snug text-ink-subtle">
+                  Survey items not yet matched to the state indent: in or out of stock, with no
+                  quantities.
+                </p>
+                <ul className="max-h-40 space-y-0.5 overflow-y-auto text-[11px]">
+                  {run.availability_only.map((item) => (
+                    <li key={item.medicine_id} className="flex justify-between gap-2">
+                      <span className="truncate">{item.name}</span>
+                      <span className={item.in_stock ? "text-status-green" : "text-status-red"}>
+                        {item.in_stock ? "in stock" : "out"}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1 flex items-center gap-1.5 text-[10px] text-ink-subtle">
+                  From the reconstructed survey matrix <ProvenanceBadge provenance="derived" />
+                </p>
+              </section>
+            )}
 
             {level && (
               <section className="mt-4">

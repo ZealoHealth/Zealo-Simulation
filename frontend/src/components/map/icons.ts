@@ -28,7 +28,8 @@ export type MarkerShape = "square" | "circle" | "diamond" | "triangle" | "pill";
 export const SHAPE_BY_TYPE: Record<string, MarkerShape> = {
   district_hospital: "square",
   taluk_hospital: "square",
-  government_other: "square",
+  government_level_unknown: "square",
+  other_government: "square",
   chc: "diamond",
   phc: "diamond",
   private_hospital: "triangle",
@@ -39,7 +40,8 @@ export const SHAPE_BY_TYPE: Record<string, MarkerShape> = {
 export const TYPE_LABELS: Record<string, string> = {
   district_hospital: "District hospital",
   taluk_hospital: "Taluk hospital",
-  government_other: "Government hospital",
+  government_level_unknown: "Government hospital (level unconfirmed)",
+  other_government: "Other government facility",
   chc: "CHC",
   phc: "PHC",
   private_hospital: "Private hospital",
@@ -65,7 +67,7 @@ function shapePath(shape: MarkerShape): string {
 export function facilityIcon(
   facilityType: string,
   status: FacilityStatus | null,
-  options: { selected?: boolean; dimmed?: boolean } = {},
+  options: { selected?: boolean; dimmed?: boolean; approximate?: boolean } = {},
 ): L.DivIcon {
   const shape = SHAPE_BY_TYPE[facilityType] ?? "circle";
   const fill = status ? STATUS_COLOURS[status] : UNKNOWN_COLOUR;
@@ -77,9 +79,10 @@ export function facilityIcon(
     <svg viewBox="0 0 24 24" width="${size}" height="${size}"
          style="opacity:${opacity};filter:drop-shadow(0 1px 2px rgba(35,28,68,.35))"
          aria-hidden="true">
-      <path d="${shapePath(shape)}" fill="${fill}"
-            stroke="${options.selected ? "#231C44" : "#ffffff"}"
-            stroke-width="${options.selected ? 2.5 : 1.5}" />
+      <path d="${shapePath(shape)}" fill="${fill}" fill-opacity="${options.approximate ? 0.55 : 1}"
+            stroke="${options.selected ? "#231C44" : options.approximate ? "#231C44" : "#ffffff"}"
+            stroke-width="${options.selected ? 2.5 : 1.5}"
+            ${options.approximate ? 'stroke-dasharray="2 1.5"' : ""} />
       ${glyph ? `<text x="12" y="16" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">${glyph}</text>` : ""}
     </svg>`;
 

@@ -18,7 +18,6 @@ function count(value: unknown): string {
 export function NetworkTotals({ summary }: { summary: ModeSummary | undefined }) {
   if (!summary) return null;
   const m = summary.metrics;
-  const pricesKnown = m.prices_available === true;
 
   const tiles: Array<{ label: string; value: string; hint?: string }> = [
     { label: "Availability", value: percent(m.availability_rate) },
@@ -42,12 +41,6 @@ export function NetworkTotals({ summary }: { summary: ModeSummary | undefined })
       <p className="mt-1.5 flex items-center gap-1.5 text-[10px] text-navy/50">
         Derived from simulated stock <ProvenanceBadge provenance="derived" />
       </p>
-      {!pricesKnown && (
-        <p className="mt-1 text-[10px] text-navy/50">
-          Value figures are not shown: no public unit price source is confirmed, so units are
-          reported instead of rupees.
-        </p>
-      )}
     </div>
   );
 }

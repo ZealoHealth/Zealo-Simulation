@@ -1,0 +1,5 @@
+# R6: DECIDED - units only. Values in rupees are not shown.
+# To switch value metrics on later, copy this file to prices.csv and fill it from a
+# verified public price list. Every row needs a source. Prices are then tagged `real`.
+# Value metrics only appear when EVERY simulated medicine has a price.
+drug_code,unit_price_inr,pack_description,source_title,source_url,retrieved

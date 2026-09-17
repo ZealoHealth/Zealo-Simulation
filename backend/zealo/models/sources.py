@@ -44,3 +44,7 @@ class Source(BaseModel):
         default_factory=list,
         description="Known limits, shown in the UI. Never silently dropped.",
     )
+    source_quality: str | None = Field(
+        default=None,
+        description="e.g. official_state_government, third_party_census_mirror.",
+    )

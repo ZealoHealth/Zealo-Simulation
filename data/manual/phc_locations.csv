@@ -1,0 +1,4 @@
+# R4: PHCs missing from OpenStreetMap. One row per PHC. Give latitude and
+# longitude if you have them; otherwise the village alone is geocoded to its
+# centre and shown as approximate. Names stay here and never reach the site.
+hmis_name,village,latitude,longitude,source_url,notes

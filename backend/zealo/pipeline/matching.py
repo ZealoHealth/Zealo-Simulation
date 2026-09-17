@@ -44,12 +44,12 @@ _FORMS = {
     "tablet": "tablet", "tablets": "tablet", "tab": "tablet", "tabs": "tablet",
     "capsule": "capsule", "capsules": "capsule", "cap": "capsule", "caps": "capsule",
     "injection": "injection", "injections": "injection", "inj": "injection",
-    "syrup": "syrup", "syp": "syrup",
+    "syrup": "syrup", "syrups": "syrup", "syp": "syrup",
     "suspension": "suspension", "susp": "suspension",
-    "solution": "solution", "soln": "solution", "sol": "solution",
+    "solution": "solution", "solutions": "solution", "soln": "solution", "sol": "solution",
     "powder": "powder", "powd": "powder",
     "drops": "drops", "drop": "drops",
-    "ointment": "ointment", "oint": "ointment",
+    "ointment": "ointment", "ointments": "ointment", "oint": "ointment",
     "cream": "cream", "gel": "gel", "lotion": "lotion",
     "infusion": "infusion", "inhaler": "inhaler", "sachet": "sachet",
     "pessaries": "pessary", "pessary": "pessary",
@@ -206,6 +206,12 @@ class MatchCandidate:
     name_score: float
     form_ok: bool
     strength_ok: bool
+    # Both labels named a dosage form. `form_ok` is also true when one side is silent,
+    # which is right for auto-matching but too weak to call a suggestion confident.
+    form_known: bool = False
+    # Order-insensitive but subset-sensitive: "folic acid" vs "iron and folic acid"
+    # scores 100 on token_set_ratio and far lower here.
+    strict_name_score: float = 0.0
 
     @property
     def acceptable(self) -> bool:
@@ -246,6 +252,14 @@ class MatchResult:
         return True
 
     @property
+    def near_tie(self) -> bool:
+        """The top two candidates are both acceptable and too close to separate."""
+        if len(self.candidates) < 2:
+            return False
+        a, b = self.candidates[0], self.candidates[1]
+        return a.acceptable and b.acceptable and a.name_score - b.name_score < 2.0
+
+    @property
     def matched_code(self) -> str | None:
         return self.candidates[0].indent_code if self.auto_accepted else None
 
@@ -271,6 +285,17 @@ def match_items(
             str(item.get(k, "")) for k in ("drug_name", "strength", "dosage_form")
         ).strip()
         parsed = parse_medicine(label)
+        # Table 3's dosage form is a structured field; Table 2's strength text is free
+        # text with typos ("Amikacin 100mg/2ml syrup" is an injection per Table 3). When
+        # the structured form exists, it wins over the first form word in the label.
+        structured_form = parse_medicine(str(item.get("dosage_form") or "")).form
+        if structured_form:
+            parsed = ParsedMedicine(
+                raw=parsed.raw,
+                base_name=parsed.base_name,
+                form=structured_form,
+                strengths=parsed.strengths,
+            )
 
         scored: list[MatchCandidate] = []
         for row, pi in parsed_indent:
@@ -285,6 +310,10 @@ def match_items(
                     name_score=round(score, 1),
                     form_ok=forms_compatible(parsed.form, pi.form),
                     strength_ok=strengths_compatible(parsed.strengths, pi.strengths),
+                    form_known=bool(parsed.form and pi.form),
+                    strict_name_score=round(
+                        fuzz.token_sort_ratio(parsed.base_name, pi.base_name), 1
+                    ),
                 )
             )
         # Prefer fully-qualifying candidates, then higher name similarity.

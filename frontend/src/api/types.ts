@@ -22,11 +22,24 @@ export interface Facility {
   source_ids: string[];
   retrieved: string;
   provenance: Record<string, Provenance>;
+  /** "exact" or "approximate_village_centre" (geocoded, drawn differently). */
+  location_precision: string;
+  /** State medicine list carried: phc / chc / tlh / dlh / tlh_proxy / none. */
+  medicine_list: string;
+  level_unconfirmed: boolean;
+}
+
+export interface Coverage {
+  phcs_mapped: number;
+  phcs_in_survey: number;
+  pharmacies_mapped: number;
+  statements: string[];
 }
 
 export interface FacilitiesResponse {
   facilities: Facility[];
   boundary: GeoJsonBoundary | null;
+  coverage: Coverage | null;
   attribution: string;
   disclaimer: string;
   caveats: string[];
@@ -53,6 +66,9 @@ export interface Medicine {
   survey_availability_pct: number | null;
   survey_essentiality: string | null;
   match_status: string | null;
+  survey_sl_no: number | null;
+  /** False = survey availability only: no quantities, no demand. */
+  quantity_modelled: boolean;
 }
 
 export interface MedicinesResponse {
@@ -74,6 +90,7 @@ export interface Source {
   retrieved: string | null;
   access: "automated" | "manual" | "pending";
   limitations: string[];
+  source_quality: string | null;
 }
 
 export interface SourcesResponse {
@@ -89,7 +106,9 @@ export interface ScenarioRequest {
   express_lead_time_days?: number;
   min_shelf_life_days?: number;
   near_expiry_share?: number;
+  private_demand_share?: number;
   excluded_facility_ids?: string[];
+  network_overrides?: Record<string, boolean>;
   approval_decisions?: Record<string, string>;
 }
 
@@ -118,10 +137,22 @@ export interface ModeSummary {
   metrics: Record<string, number | null | boolean>;
 }
 
+export interface RunContext {
+  population_share_pct: number;
+  figure1_interim: boolean;
+  quantity_modelled_items: number;
+  availability_only_items: number;
+  phc_survey_profiles: Record<string, number>;
+  demand_split: string;
+  prices_real: boolean;
+  level_unconfirmed_facilities: string[];
+}
+
 export interface SimulateResponse {
   run_id: string;
   days: number;
   seed: number;
+  context: RunContext | null;
   summaries: ModeSummary[];
   timeline: Record<Mode, DayStatus[]>;
   events: Record<Mode, SimulationEvent[]>;
@@ -143,6 +174,14 @@ export interface FacilityMedicineRow {
   status: FacilityStatus;
 }
 
+export interface AvailabilityOnlyRow {
+  medicine_id: string;
+  name: string;
+  survey_sl_no: number;
+  in_stock: boolean;
+  provenance: Provenance;
+}
+
 export interface FacilityRunResponse {
   run_id: string;
   mode: Mode;
@@ -152,7 +191,11 @@ export interface FacilityRunResponse {
   facility_type: string;
   in_network: boolean;
   status: FacilityStatus;
+  /** Anonymous survey PHC profile assigned here for illustration. */
+  survey_profile: number | null;
+  level_unconfirmed: boolean;
   medicines: FacilityMedicineRow[];
+  availability_only: AvailabilityOnlyRow[];
   events: SimulationEvent[];
   expiry_alerts: ExpiryAlert[];
   series: MedicineSeries | null;
@@ -204,6 +247,14 @@ export interface FacilityBalance {
   position: "surplus" | "short" | "balanced";
 }
 
+export interface UnmappedPhc {
+  phc_number: number;
+  availability_pct: number;
+  items_in_stock: number;
+  provenance: Provenance;
+  note: string;
+}
+
 export interface RedistributionResponse {
   run_id: string;
   mode: Mode;
@@ -211,6 +262,7 @@ export interface RedistributionResponse {
   transfers_over_time: TransferPoint[];
   top_medicines: MedicineImpact[];
   balances: FacilityBalance[];
+  unmapped_phcs: UnmappedPhc[];
   totals: Record<string, number | null>;
   disclaimer: string;
   caveats: string[];
@@ -219,7 +271,10 @@ export interface RedistributionResponse {
 export interface MedicineDayRow {
   facility_id: string;
   display_label: string;
-  on_hand: number;
+  /** Null for availability-only survey items. */
+  on_hand: number | null;
+  in_stock: boolean;
+  provenance: Provenance;
   days_of_cover: number | null;
   next_expiry_day: number | null;
   status: FacilityStatus;
@@ -230,8 +285,26 @@ export interface MedicineAtFacilitiesResponse {
   mode: Mode;
   day: number;
   medicine_id: string;
+  quantity_modelled: boolean;
   rows: MedicineDayRow[];
+  note: string | null;
   disclaimer: string;
+}
+
+export interface DataStatusItem {
+  id: string;
+  title: string;
+  status: "complete" | "interim" | "pending" | "invalid" | "decided" | "optional";
+  file: string;
+  unlocks: string;
+  interim_approach: string;
+  progress: string;
+  problems: string[];
+}
+
+export interface DataStatusResponse {
+  items: DataStatusItem[];
+  pending_count: number;
 }
 
 /**

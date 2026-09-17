@@ -9,6 +9,16 @@ import { InventoryMapPage } from "./pages/InventoryMapPage";
 const FacilityDashboardPage = lazy(() =>
   import("./pages/FacilityDashboardPage").then((m) => ({ default: m.FacilityDashboardPage })),
 );
+const ComparisonPage = lazy(() =>
+  import("./pages/ComparisonPage").then((m) => ({ default: m.ComparisonPage })),
+);
+const SettingsPage = lazy(() =>
+  import("./pages/SettingsPage").then((m) => ({ default: m.SettingsPage })),
+);
+const DataSourcesPage = lazy(() =>
+  import("./pages/DataSourcesPage").then((m) => ({ default: m.DataSourcesPage })),
+);
+const AboutPage = lazy(() => import("./pages/AboutPage").then((m) => ({ default: m.AboutPage })));
 const NetworkRedistributionPage = lazy(() =>
   import("./pages/NetworkRedistributionPage").then((m) => ({
     default: m.NetworkRedistributionPage,
@@ -37,6 +47,10 @@ export default function App() {
               <Route path="/facility" element={<FacilityDashboardPage />} />
               <Route path="/facility/:facilityId" element={<FacilityDashboardPage />} />
               <Route path="/network" element={<NetworkRedistributionPage />} />
+              <Route path="/compare" element={<ComparisonPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/sources" element={<DataSourcesPage />} />
+              <Route path="/about" element={<AboutPage />} />
             </Routes>
           </Suspense>
         </AppShell>

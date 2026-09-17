@@ -1,38 +1,41 @@
 /**
  * The simulation run, shared by every page.
  *
- * Modelled as a query keyed on the scenario rather than a mutation, so the three
- * pages share one cached run instead of each kicking off its own 30-second
- * simulation on mount. Changing a setting changes the key and fetches a new run.
+ * A query keyed on the full scenario rather than a mutation, so all pages share one
+ * cached run instead of each starting its own. Network membership, approval decisions
+ * and every Settings value are part of that key: changing any of them must produce a
+ * new run, or the comparison between modes would rest on different inputs.
  */
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { simulate } from "./client";
+import { useFacilities } from "./hooks";
 import { ApiError } from "./types";
-import type { ScenarioRequest } from "./types";
+import { buildScenarioRequest } from "../state/scenario";
 import { useViewStore } from "../state/store";
 
-export const DEFAULT_SCENARIO: ScenarioRequest = { days: 180, seed: 42 };
-
-export function useRun(base: ScenarioRequest = DEFAULT_SCENARIO) {
+export function useRun() {
   const setRunId = useViewStore((s) => s.setRunId);
   const setTotalDays = useViewStore((s) => s.setTotalDays);
-  const excluded = useViewStore((s) => s.excludedFacilityIds);
-  const decisions = useViewStore((s) => s.approvalDecisions);
+  const scenario = useViewStore((s) => s.scenario);
+  const networkOverrides = useViewStore((s) => s.networkOverrides);
+  const approvalDecisions = useViewStore((s) => s.approvalDecisions);
+  const facilities = useFacilities();
 
-  // Network membership and approval decisions are part of the scenario, not a
-  // view setting: changing either has to produce a new run, or the comparison
-  // between modes would be against different inputs.
-  const scenario: ScenarioRequest = {
-    ...base,
-    excluded_facility_ids: excluded,
-    approval_decisions: decisions,
-  };
+  const facilityIds = useMemo(
+    () => (facilities.data?.facilities ?? []).map((f) => f.id),
+    [facilities.data],
+  );
+  const request = useMemo(
+    () => buildScenarioRequest({ scenario, networkOverrides, approvalDecisions }, facilityIds),
+    [scenario, networkOverrides, approvalDecisions, facilityIds],
+  );
 
   const query = useQuery({
-    queryKey: ["run", scenario],
-    queryFn: () => simulate(scenario),
+    queryKey: ["run", request],
+    queryFn: () => simulate(request),
     staleTime: Infinity,
+    enabled: facilityIds.length > 0,
     // A refused run means inputs are missing, not that the request was flaky.
     retry: (count, error) => !(error instanceof ApiError) && count < 1,
   });
@@ -44,12 +47,10 @@ export function useRun(base: ScenarioRequest = DEFAULT_SCENARIO) {
     }
   }, [query.data, setRunId, setTotalDays]);
 
-  const missingInputs = query.error instanceof ApiError && query.error.isMissingInputs;
-
   return {
     run: query.data,
-    isLoading: query.isLoading,
+    isLoading: query.isLoading || facilities.isLoading,
     error: query.error instanceof ApiError ? query.error : null,
-    missingInputs,
+    missingInputs: query.error instanceof ApiError && query.error.isMissingInputs,
   };
 }

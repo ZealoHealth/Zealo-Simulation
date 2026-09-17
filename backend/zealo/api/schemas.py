@@ -39,6 +39,22 @@ class FacilityOut(BaseModel):
     provenance: dict[str, str] = Field(
         description="Per-field provenance: real / derived / estimated / unknown."
     )
+    location_precision: str = Field(
+        default="exact", description="exact | approximate_village_centre"
+    )
+    medicine_list: str = Field(
+        default="none", description="State list carried: phc/chc/tlh/dlh/tlh_proxy/none"
+    )
+    level_unconfirmed: bool = False
+
+
+class Coverage(BaseModel):
+    """How much of the real facility network our public sources actually cover."""
+
+    phcs_mapped: int
+    phcs_in_survey: int
+    pharmacies_mapped: int
+    statements: list[str]
 
 
 class FacilitiesResponse(BaseModel):
@@ -46,6 +62,7 @@ class FacilitiesResponse(BaseModel):
     boundary: dict | None = Field(
         default=None, description="Gadag taluk outline as GeoJSON, for the map."
     )
+    coverage: Coverage | None = None
     attribution: str
     disclaimer: str
     caveats: list[str]
@@ -68,6 +85,11 @@ class MedicineOut(BaseModel):
     match_status: str | None = Field(
         default=None,
         description="How this item was linked to the survey: auto or confirmed.",
+    )
+    survey_sl_no: int | None = None
+    quantity_modelled: bool = Field(
+        default=True,
+        description="False = survey availability only, no quantities or demand.",
     )
 
 
@@ -92,6 +114,7 @@ class SourceOut(BaseModel):
     retrieved: str | None
     access: str
     limitations: list[str]
+    source_quality: str | None = None
 
 
 class SourcesResponse(BaseModel):
@@ -117,8 +140,14 @@ class ScenarioRequest(BaseModel):
     express_lead_time_days: int = Field(default=5, ge=1, le=180)
     min_shelf_life_days: int = Field(default=180, ge=0, le=1095)
     near_expiry_share: float = Field(default=0.15, ge=0.0, le=1.0)
-    # Facility ids to exclude from the Zealo network. Everything else is in.
+    private_demand_share: float = Field(
+        default=0.25, ge=0.0, le=2.0,
+        description="Private facilities' demand as a fraction of government-derived demand.",
+    )
+    # Facility ids to take out of the Zealo network (kept for compatibility).
     excluded_facility_ids: list[str] = Field(default_factory=list)
+    # Explicit membership, overriding each facility's default (pharmacies default out).
+    network_overrides: dict[str, bool] = Field(default_factory=dict)
     rules: dict[str, FacilityRuleOverride] = Field(default_factory=dict)
     # "<day>:<facility_id>:<medicine_id>" -> "approve" | "reject"
     approval_decisions: dict[str, str] = Field(default_factory=dict)
@@ -135,10 +164,24 @@ class DayStatus(BaseModel):
     availability_rate: float
 
 
+class RunContext(BaseModel):
+    """What this run rests on, so every figure can be labelled honestly."""
+
+    population_share_pct: float
+    figure1_interim: bool
+    quantity_modelled_items: int
+    availability_only_items: int
+    phc_survey_profiles: dict[str, int]
+    demand_split: str
+    prices_real: bool
+    level_unconfirmed_facilities: list[str]
+
+
 class SimulateResponse(BaseModel):
     run_id: str
     days: int
     seed: int
+    context: RunContext | None = None
     summaries: list[ModeSummary]
     timeline: dict[str, list[DayStatus]]
     events: dict[str, list[dict]]
@@ -180,6 +223,7 @@ class RedistributionResponse(BaseModel):
     transfers_over_time: list[TransferPoint]
     top_medicines: list[MedicineImpact]
     balances: list[FacilityBalance]
+    unmapped_phcs: list[dict] = Field(default_factory=list)
     totals: dict
     disclaimer: str
     caveats: list[str]
@@ -188,10 +232,12 @@ class RedistributionResponse(BaseModel):
 class MedicineDayRow(BaseModel):
     facility_id: str
     display_label: str
-    on_hand: int
+    on_hand: int | None = Field(description="None for availability-only survey items.")
+    in_stock: bool
     days_of_cover: float | None
     next_expiry_day: int | None
     status: str
+    provenance: str = "estimated"
 
 
 class MedicineAtFacilitiesResponse(BaseModel):
@@ -199,7 +245,9 @@ class MedicineAtFacilitiesResponse(BaseModel):
     mode: str
     day: int
     medicine_id: str
+    quantity_modelled: bool = True
     rows: list[MedicineDayRow]
+    note: str | None = None
     disclaimer: str
 
 
@@ -239,6 +287,16 @@ class ExpiryAlert(BaseModel):
     bucket: int = Field(description="30, 60 or 90 - the window it falls into.")
 
 
+class AvailabilityOnlyRow(BaseModel):
+    """A survey item with no confirmed indent match: in or out of stock, nothing more."""
+
+    medicine_id: str
+    name: str
+    survey_sl_no: int
+    in_stock: bool
+    provenance: str = "derived"
+
+
 class FacilityRunResponse(BaseModel):
     run_id: str
     mode: str
@@ -248,10 +306,31 @@ class FacilityRunResponse(BaseModel):
     facility_type: str
     in_network: bool
     status: str
+    survey_profile: int | None = Field(
+        default=None, description="Survey PHC profile assigned here, for illustration."
+    )
+    level_unconfirmed: bool = False
     medicines: list[FacilityMedicineRow]
+    availability_only: list[AvailabilityOnlyRow] = Field(default_factory=list)
     events: list[dict]
     expiry_alerts: list[ExpiryAlert]
     series: MedicineSeries | None = Field(
         default=None, description="Populated when ?series=<medicine_id> is given."
     )
     disclaimer: str
+
+
+class DataStatusItem(BaseModel):
+    id: str
+    title: str
+    status: str
+    file: str
+    unlocks: str
+    interim_approach: str
+    progress: str
+    problems: list[str]
+
+
+class DataStatusResponse(BaseModel):
+    items: list[DataStatusItem]
+    pending_count: int

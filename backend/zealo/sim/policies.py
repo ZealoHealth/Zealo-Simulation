@@ -90,6 +90,13 @@ class ZealoPolicy:
 
     name: str = "with_zealo"
     transit_days: int = 1
+    # Not worth dispatching a vehicle for less. Without a floor, facilities with a
+    # demand of about one unit a day traded one- and two-unit parcels constantly.
+    min_transfer_units: int = 5
+    # Rebalancing only acts on batches this close to expiry -- the same 90-day window the
+    # map uses for amber. Without it, a minimum order lot outlasting a slow item's shelf
+    # life was shipped off two years early and labelled "near expiry".
+    near_expiry_horizon_days: int = 90
 
     def decide(self, day: int, state: SimulationState) -> None:
         network = [f for f in state.scenario.facilities if f.in_network]
@@ -136,12 +143,13 @@ class ZealoPolicy:
         )
         needed = _target_units(daily, days_to_cover)
         gap = needed - available
-        if gap <= 0:
+        if gap < self.min_transfer_units:
+            # A small shortfall is left to the regular refill rather than a transfer.
             return
 
         for donor, _distance in self._nearest_donors(state, facility, medicine_id, network):
             spare = self._spare_units(state, donor, medicine_id)
-            if spare <= 0:
+            if spare < self.min_transfer_units:
                 continue
             move = min(spare, gap)
             batches = state.inventories[donor.id].take_expiring_before(
@@ -174,61 +182,81 @@ class ZealoPolicy:
         return candidates
 
     def _spare_units(self, state, facility, medicine_id) -> int:
-        """Units above the facility's own safety level -- never below it."""
+        """Units a donor can give without creating a shortage of its own.
+
+        "Surplus above its own safety level" is read as surplus above the donor's
+        **reorder point** -- enough to last the manufacturer lead time plus its safety
+        days. Reading it as the safety days alone let a donor give itself below its
+        reorder point, so the next day it pulled stock from someone else: a cascade in
+        which every transfer caused another.
+        """
         daily = state.forecast(facility.id, medicine_id)
-        safety = _target_units(daily, facility.rules.safety_days)
-        return max(0, state.on_hand(facility.id, medicine_id) - safety)
+        keep = _target_units(
+            daily, state.scenario.manufacturer.lead_time_days + facility.rules.safety_days
+        )
+        return max(0, state.on_hand(facility.id, medicine_id) - keep)
 
     # --- step 3: near-expiry rebalancing --------------------------------------
 
     def _rebalance_near_expiry(self, day, state, facility, medicine_id, network) -> None:
         """Move stock this facility cannot use in time to one that can.
 
-        At-risk quantity is whatever expires before the facility's own consumption
-        would reach it. It goes to the nearest network facility whose forecast
-        demand will actually consume it before the same expiry day -- otherwise the
-        move only relocates the waste.
+        Stock is consumed earliest-expiry-first, so what is at risk is the quantity
+        expiring by the soonest expiry date **minus what this facility will consume before
+        then**. Comparing total stock instead made any fresh delivery look like it put an
+        old batch at risk.
+
+        A receiver qualifies only if it will consume the stock before that date *after*
+        its own stock expiring by then -- otherwise the move relocates the waste, and the
+        receiver's own rebalancing sends it straight on again.
         """
         inventory = state.inventories[facility.id]
         batches = inventory.batches(medicine_id)
         if not batches:
             return
         daily = state.forecast(facility.id, medicine_id)
-        if daily <= 0:
-            return
-
-        on_hand = state.on_hand(facility.id, medicine_id)
         soonest = min(b.expiry_day for b in batches)
-        days_left = soonest - day
+        if soonest - day > self.near_expiry_horizon_days:
+            return
+        days_left = soonest - day - self.transit_days
         if days_left <= 0:
             return
-        consumable = _target_units(daily, days_left)
-        at_risk = on_hand - consumable
-        if at_risk <= 0:
+
+        expiring = inventory.quantity_expiring_before(medicine_id, soonest + 1)
+        consumable = int(daily * (soonest - day))
+        at_risk = expiring - consumable
+        if at_risk < self.min_transfer_units:
             return
 
-        for peer, _distance in self._nearest_donors(state, facility, medicine_id, network):
+        for peer, _distance in self._nearest_peers(state, facility, network):
             peer_daily = state.forecast(peer.id, medicine_id)
             if peer_daily <= 0:
                 continue
-            peer_headroom = _target_units(peer_daily, days_left) - state.on_hand(
-                peer.id, medicine_id
+            peer_expiring = state.inventories[peer.id].quantity_expiring_before(
+                medicine_id, soonest + 1
             )
-            if peer_headroom <= 0:
+            headroom = int(peer_daily * days_left) - peer_expiring
+            move = min(at_risk, headroom)
+            if move < self.min_transfer_units:
                 continue
-            move = min(at_risk, peer_headroom)
             taken = inventory.take_expiring_before(medicine_id, soonest + 1, move)
             moved = state.transfer(
-                facility.id,
-                peer.id,
-                medicine_id,
-                taken,
-                DeliveryKind.REBALANCE_TRANSFER,
-                transit_days=self.transit_days,
+                facility.id, peer.id, medicine_id, taken,
+                DeliveryKind.REBALANCE_TRANSFER, transit_days=self.transit_days,
             )
             at_risk -= moved
-            if at_risk <= 0:
+            if at_risk < self.min_transfer_units:
                 return
+
+    def _nearest_peers(self, state, facility, network):
+        """Every other network facility, nearest first -- whether or not it holds stock."""
+        peers = [
+            (peer, state.scenario.distance_km(facility.id, peer.id))
+            for peer in network
+            if peer.id != facility.id
+        ]
+        peers.sort(key=lambda pair: pair[1])
+        return peers
 
     # --- step 4: refill -------------------------------------------------------
 

@@ -7,6 +7,7 @@
  * `loadCachedRun` -- so the site still works for someone opening it cold.
  */
 import type {
+  DataStatusResponse,
   FacilitiesResponse,
   FacilityRunResponse,
   MedicineAtFacilitiesResponse,
@@ -50,6 +51,22 @@ export const getMedicines = (surveyLinkedOnly = false) =>
   request<MedicinesResponse>(`/medicines?survey_linked_only=${surveyLinkedOnly}`);
 
 export const getSources = () => request<SourcesResponse>("/sources");
+
+export const getDataStatus = () => request<DataStatusResponse>("/data-status");
+
+export interface SurveySummary {
+  phcs_surveyed: number;
+  items_assessed: number;
+  period: string;
+  overall_availability_pct: number;
+  highest_phc: { phc: number; availability_pct: number };
+  lowest_phc: { phc: number; availability_pct: number };
+  categories: Array<{ category: string; availability_pct: number }>;
+  unavailable_everywhere: Array<{ sl_no: number; name: string }>;
+  items_at_full_availability: number;
+}
+
+export const getSurveySummary = () => request<SurveySummary>("/survey-summary");
 
 export const simulate = (scenario: ScenarioRequest) =>
   request<SimulateResponse>("/simulate", {

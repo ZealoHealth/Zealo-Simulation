@@ -1,22 +1,17 @@
-"""API contract tests.
+"""API contract tests, run against the real processed datasets.
 
-The read endpoints run against the real processed datasets. `/simulate` is
-exercised with **temporary synthetic** population and availability inputs, written
-to a tmp directory and patched in -- the real ones are still missing (requests R5
-and R1), and fabricating them on disk would be exactly what this project refuses
-to do. One test asserts that, with no inputs supplied, `/simulate` refuses.
+Population figures are real (R5 decided) and Figure 1 uses the agreed interim rule
+until transcribed (R1), so `/simulate` always builds. One test removes a processed
+dataset to check the refusal path still reports clearly.
 """
 
 from __future__ import annotations
-
-import csv
-import json
 
 import pytest
 from fastapi.testclient import TestClient
 
 from zealo.api import routes
-from zealo.data_access import load_facilities, load_medicines
+from zealo.data_access import DatasetMissing, load_facilities, load_medicines
 from zealo.main import DISCLAIMER, app
 from zealo.sim import runner
 
@@ -30,29 +25,9 @@ def _empty_run_cache():
 
 
 @pytest.fixture
-def simulation_inputs(tmp_path, monkeypatch):
-    """Stand in for requests R5 and R1 so the endpoint can be exercised."""
-    population = tmp_path / "population.json"
-    population.write_text(
-        json.dumps(
-            {
-                "gadag_taluk_population": 250_000,
-                "karnataka_population": 61_095_297,
-                "source": "SYNTHETIC TEST VALUE - not a real figure",
-                "retrieved": "2026-09-16",
-            }
-        )
-    )
-    matrix = tmp_path / "phc_availability_matrix.csv"
-    with matrix.open("w", newline="") as fh:
-        writer = csv.writer(fh)
-        writer.writerow(["phc_number", "survey_sl_no", "in_stock"])
-        for phc in range(1, 16):
-            for item in range(1, 105):
-                writer.writerow([phc, item, int((phc + item) % 4 != 0)])
-    monkeypatch.setattr(runner, "POPULATION_JSON", population)
-    monkeypatch.setattr(runner, "AVAILABILITY_MATRIX_CSV", matrix)
-    return population, matrix
+def simulation_inputs():
+    """Real processed inputs now always exist (`make data`), so nothing to stand in for."""
+    yield
 
 
 def simulate(**overrides):
@@ -90,7 +65,8 @@ def test_facilities_never_expose_a_real_name():
         assert any(
             label.startswith(prefix)
             for prefix in ("PHC", "CHC", "Clinic", "Pharmacy", "Private Hospital",
-                           "District Hospital", "Government Hospital", "Taluk Hospital")
+                           "District Hospital", "Government Hospital", "Taluk Hospital",
+                           "Other Government Facility")
         ), label
 
 
@@ -116,10 +92,10 @@ def test_medicines_returns_the_master_list():
     assert len(body["medicines"]) == len(load_medicines()) == 890
 
 
-def test_medicines_can_be_narrowed_to_survey_linked_items():
+def test_medicines_can_be_narrowed_to_survey_items():
     body = client.get("/medicines?survey_linked_only=true").json()
     assert all(m["survey_availability_pct"] is not None for m in body["medicines"])
-    assert body["survey_linked_count"] == len(body["medicines"])
+    assert body["survey_linked_count"] == sum(m["quantity_modelled"] for m in body["medicines"])
 
 
 def test_medicines_report_how_many_matches_still_await_confirmation():
@@ -152,8 +128,21 @@ def test_every_source_records_what_was_taken_and_its_limits():
 def test_unobtained_sources_are_marked_rather_than_omitted():
     """A source we could not get must still be visible, with the reason."""
     by_id = {s["id"]: s for s in client.get("/sources").json()["sources"]}
-    assert by_id["census_population"]["access"] == "pending"
-    assert any("TLS" in lim for lim in by_id["census_population"]["limitations"])
+    assert by_id["hmis_mohfw"]["access"] == "pending"
+    assert by_id["unit_prices"]["access"] == "pending"
+
+
+def test_the_third_party_population_source_is_labelled_as_such():
+    by_id = {s["id"]: s for s in client.get("/sources").json()["sources"]}
+    taluk = by_id["gadag_taluk_population_2011"]
+    assert taluk["source_quality"] == "third_party_census_mirror"
+    assert any("third-party mirror" in lim for lim in taluk["limitations"])
+    assert by_id["karnataka_population_2011"]["source_quality"] == "official_state_government"
+
+
+def test_the_units_only_decision_is_stated_on_the_sources():
+    prices = {s["id"]: s for s in client.get("/sources").json()["sources"]}["unit_prices"]
+    assert any("rupees are not shown" in lim for lim in prices["limitations"])
 
 
 @pytest.mark.parametrize("path", ["/facilities", "/medicines", "/sources"])
@@ -161,15 +150,18 @@ def test_every_data_endpoint_carries_the_disclaimer(path):
     assert client.get(path).json()["disclaimer"] == DISCLAIMER
 
 
-# --- /simulate without the real inputs ----------------------------------------
+# --- /simulate when a processed dataset is missing ---------------------------
 
-def test_simulate_refuses_when_the_real_inputs_are_missing():
-    """No population figures and no availability matrix, so no run is invented."""
-    response = client.post("/simulate", json={"days": 10})
+def test_simulate_refuses_clearly_when_a_processed_dataset_is_missing(monkeypatch):
+    def missing():
+        raise DatasetMissing("population.json is missing. Build it with: make data")
+
+    monkeypatch.setattr(runner, "load_population_share", missing)
+    response = client.post("/simulate", json={"days": 10, "seed": 991})
     assert response.status_code == 422
     detail = response.json()["detail"]
     assert detail["error"] == "missing_demand_inputs"
-    assert set(detail["requests"]) == {"R1", "R5"}
+    assert "make data" in detail["requests"]
 
 
 # --- /simulate with inputs supplied -------------------------------------------
@@ -404,14 +396,104 @@ def test_the_baseline_makes_no_transfers_in_the_redistribution_view(simulation_i
     assert data["top_medicines"] == []
 
 
-def test_redistribution_withholds_value_and_says_why(simulation_inputs):
+def test_redistribution_withholds_value(simulation_inputs):
     body = simulate(days=20)
     data = client.get(f"/runs/{body['run_id']}/redistribution").json()
     assert data["totals"]["transfer_value"] is None
-    assert any("price" in c for c in data["caveats"])
 
 
 def test_redistribution_needs_a_cached_run():
     response = client.get("/runs/nosuchrun/redistribution")
     assert response.status_code == 404
     assert response.json()["detail"]["error"] == "run_not_found"
+
+
+
+# --- interim data rules -----------------------------------------------------------------
+
+def test_facilities_report_coverage_honestly():
+    coverage = client.get("/facilities").json()["coverage"]
+    assert coverage["phcs_in_survey"] == 15
+    assert coverage["phcs_mapped"] < 15
+    assert any("PHCs have a public location" in s for s in coverage["statements"])
+    assert any("much higher" in s for s in coverage["statements"])
+
+
+def test_pharmacies_and_the_railway_hospital_start_outside_the_network():
+    facilities = client.get("/facilities").json()["facilities"]
+    for f in facilities:
+        if f["facility_type"] in ("pharmacy", "other_government"):
+            assert f["in_network"] is False, f["display_label"]
+
+
+def test_facilities_of_unconfirmed_level_are_flagged():
+    facilities = client.get("/facilities").json()["facilities"]
+    unknown = [f for f in facilities if f["facility_type"] == "government_level_unknown"]
+    assert unknown and all(f["level_unconfirmed"] for f in unknown)
+    assert all(f["medicine_list"] == "phc" for f in unknown)
+    assert all(f["provenance"]["facility_type"] == "estimated" for f in unknown)
+
+
+def test_survey_items_include_the_availability_only_ones():
+    body = client.get("/medicines?survey_linked_only=true").json()
+    items = body["medicines"]
+    assert len(items) == 104
+    availability_only = [m for m in items if not m["quantity_modelled"]]
+    assert availability_only, "unmatched survey items must be kept, not dropped"
+    assert all(m["id"].startswith("survey-") and m["indent_qty"] is None for m in availability_only)
+    assert any("availability only" in c for c in body["caveats"])
+
+
+def test_a_run_reports_what_it_rests_on(simulation_inputs):
+    context = simulate()["context"]
+    assert context["population_share_pct"] == pytest.approx(0.6011, abs=0.001)
+    assert context["quantity_modelled_items"] + context["availability_only_items"] == 104
+    assert context["demand_split"] in ("equal_shares", "attendance_weighted", "mixed")
+
+
+def test_a_phc_shows_its_survey_profile_and_availability_only_items(simulation_inputs):
+    body = simulate()
+    detail = client.get(f"/runs/{body['run_id']}/facilities/phc-01").json()
+    assert 1 <= detail["survey_profile"] <= 15
+    assert detail["availability_only"]
+    assert all(isinstance(row["in_stock"], bool) for row in detail["availability_only"])
+    assert all(row["provenance"] == "derived" for row in detail["availability_only"])
+
+
+def test_searching_an_availability_only_item_returns_no_quantities(simulation_inputs):
+    body = simulate()
+    items = client.get("/medicines?survey_linked_only=true").json()["medicines"]
+    item = next(m for m in items if not m["quantity_modelled"])
+    data = client.get(f"/runs/{body['run_id']}/medicines/{item['id']}").json()
+    assert data["quantity_modelled"] is False
+    assert data["rows"] and all(r["on_hand"] is None for r in data["rows"])
+    assert data["note"]
+
+
+def test_unmapped_survey_profiles_are_listed(simulation_inputs):
+    body = simulate()
+    data = client.get(f"/runs/{body['run_id']}/redistribution").json()
+    context = body["context"]
+    mapped = len(context["phc_survey_profiles"])
+    assert len(data["unmapped_phcs"]) == 15 - mapped
+
+
+def test_a_network_override_can_bring_a_pharmacy_in(simulation_inputs):
+    pharmacy = next(
+        f for f in client.get("/facilities").json()["facilities"]
+        if f["facility_type"] == "pharmacy"
+    )
+    default = simulate(seed=12)
+    joined = simulate(seed=12, network_overrides={pharmacy["id"]: True})
+    assert default["run_id"] != joined["run_id"]
+    detail = client.get(f"/runs/{joined['run_id']}/facilities/{pharmacy['id']}").json()
+    assert detail["in_network"] is True
+
+
+def test_data_status_lists_every_request_with_its_interim_approach():
+    body = client.get("/data-status").json()
+    by_id = {i["id"]: i for i in body["items"]}
+    assert {"R1", "R4a", "R4b", "R5", "R6", "R7", "R8"} <= set(by_id)
+    assert by_id["R5"]["status"] == "complete"
+    assert by_id["R6"]["status"] == "decided"
+    assert all(i["interim_approach"] for i in body["items"])

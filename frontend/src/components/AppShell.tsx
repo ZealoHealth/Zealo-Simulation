@@ -4,15 +4,21 @@
  * The disclaimer lives here rather than on each page, so it cannot be forgotten
  * on a page added later.
  */
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { NavLink } from "react-router";
+import { DataStatusLink, DataStatusPanel } from "./DataStatusPanel";
 import { Disclaimer } from "./Disclaimer";
+import { SHARE_PARAM, decodeShareState } from "../state/scenario";
 import { useViewStore } from "../state/store";
 
 const NAV = [
   { to: "/", label: "Map", end: true },
   { to: "/facility", label: "Facility" },
   { to: "/network", label: "Network" },
+  { to: "/compare", label: "Compare" },
+  { to: "/settings", label: "Settings" },
+  { to: "/sources", label: "Data sources" },
+  { to: "/about", label: "About" },
 ];
 
 function Wordmark() {
@@ -30,7 +36,13 @@ function Wordmark() {
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { mode, setMode } = useViewStore();
+  const { mode, setMode, hydrate } = useViewStore();
+
+  // Open a shared link with the exact scenario it was copied from.
+  useEffect(() => {
+    const shared = decodeShareState(new URLSearchParams(window.location.search).get(SHARE_PARAM));
+    if (shared) hydrate(shared);
+  }, [hydrate]);
 
   return (
     <div className="flex h-full flex-col">
@@ -55,7 +67,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center gap-1 rounded-lg bg-surface-sunken p-1">
+          <div className="ml-auto">
+            <DataStatusLink />
+          </div>
+          <div className="flex items-center gap-1 rounded-lg bg-surface-sunken p-1">
             {(["without_zealo", "with_zealo"] as const).map((m) => (
               <button
                 key={m}
@@ -75,6 +90,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       <main className="min-h-0 flex-1">{children}</main>
+      <DataStatusPanel />
     </div>
   );
 }

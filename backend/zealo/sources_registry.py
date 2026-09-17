@@ -87,8 +87,10 @@ SOURCES: list[Source] = [
         access=AccessMethod.AUTOMATED,
         raw_path="data/raw/osm/overpass_gadag_health_20260916.json",
         limitations=[
-            "Only 5 of the taluk's 15 PHCs appear in OpenStreetMap, and only 3 pharmacies "
-            "in the whole taluk. Absence from OSM is not evidence a facility does not exist.",
+            "5 of Gadag taluk's 15 PHCs have a public location in our sources. Survey results "
+            "for all 15 are used in taluk-wide statistics.",
+            "Only 3 pharmacies have public map records; the real number in Gadag taluk is "
+            "much higher. Absence from OSM is not evidence a facility does not exist.",
             "No facility carries an operator or beds tag, so facility type and ownership "
             "are inferred from names and bed counts are unknown.",
             "Tags are contributor-entered and may be stale.",
@@ -110,19 +112,75 @@ SOURCES: list[Source] = [
         ],
     ),
     Source(
-        id="census_population",
-        title="Population of Gadag taluk and Karnataka",
-        publisher="Census of India / Office of the Registrar General",
-        url="https://censusindia.gov.in",
-        licence="Government of India open data.",
-        what_was_taken="Not yet obtained.",
-        access=AccessMethod.PENDING,
+        id="karnataka_population_2011",
+        title="Karnataka population, Census 2011 (Society page)",
+        publisher="Government of Karnataka",
+        url="https://karnataka.gov.in/new-page/SOCIETY/en",
+        licence="Government of Karnataka public information page.",
+        attribution="Government of Karnataka, karnataka.gov.in.",
+        what_was_taken="Karnataka population, Census 2011: 6,10,95,297 (61,095,297).",
+        retrieved=date(2026, 9, 17),
+        access=AccessMethod.AUTOMATED,
+        raw_path="data/raw/population/karnataka_gov_society_20260917.html",
+        source_quality="official_state_government",
         limitations=[
-            "censusindia.gov.in serves an incomplete TLS certificate chain, so it cannot "
-            "be fetched with certificate verification enabled.",
-            "Required to scale statewide indent quantities down to taluk demand. Will not "
-            "be estimated.",
+            "A 2011 population is paired with 2025-26 indent quantities. Only Gadag taluk's "
+            "share of state population is used, assumed broadly stable; no growth projection "
+            "is applied.",
         ],
+    ),
+    Source(
+        id="gadag_taluk_population_2011",
+        title="Gadag taluk population, Census 2011",
+        publisher="censusindia2011.com (third-party mirror of Census 2011)",
+        url="https://www.censusindia2011.com/karnataka/gadag/gadag-population.html",
+        licence="Third-party website republishing Census of India 2011 figures.",
+        attribution="censusindia2011.com, Gadag taluk population page.",
+        what_was_taken="Gadag taluk population, Census 2011: 367,258.",
+        retrieved=date(2026, 9, 17),
+        access=AccessMethod.AUTOMATED,
+        raw_path="data/raw/population/censusindia2011_gadag_taluk_20260917.html",
+        source_quality="third_party_census_mirror",
+        limitations=[
+            "Gadag taluk population taken from a third-party mirror of Census 2011 data; the "
+            "official census site could not be accessed securely.",
+            "Gadag district now lists 7 taluks (it had 5 in 2011), so the taluk boundary may "
+            "have changed since the census. This is not adjusted for.",
+            "Checked against the district figure: the taluk is 34.50% of Gadag district and "
+            "0.6011% of Karnataka.",
+        ],
+    ),
+    Source(
+        id="gadag_district_population_2011",
+        title="Gadag district demography",
+        publisher="Gadag district administration (gadag.nic.in)",
+        url="https://gadag.nic.in/en/demography/",
+        licence="Government of India district website (NIC).",
+        attribution="Gadag district, gadag.nic.in.",
+        what_was_taken=(
+            "Gadag district population, 2011: 1,064,570. Used only as a sanity check on "
+            "the taluk figure."
+        ),
+        retrieved=date(2026, 9, 17),
+        access=AccessMethod.AUTOMATED,
+        raw_path="data/raw/population/gadag_nic_demography_20260917.html",
+        source_quality="official_district_site",
+        limitations=[
+            "The page describes its figure as provisional 2011 census data.",
+            "Not used in any calculation; a cross-check only.",
+        ],
+    ),
+    Source(
+        id="team_verification",
+        title="Facility verification by the Zealo team",
+        publisher="Zealo project team",
+        licence="Project records.",
+        what_was_taken=(
+            "Confirmed facility types, ownership and bed counts, entered in "
+            "data/manual/facility_verification.csv."
+        ),
+        access=AccessMethod.MANUAL_DOWNLOAD,
+        limitations=["Applied only to facilities the team has checked by hand."],
     ),
     Source(
         id="ogd_platforms",
@@ -158,10 +216,10 @@ SOURCES: list[Source] = [
         what_was_taken="Not yet obtained.",
         access=AccessMethod.PENDING,
         limitations=[
-            "nppa.gov.in serves an incomplete TLS certificate chain; the Jan Aushadhi "
-            "portal is a JavaScript application.",
-            "Until a public price source is confirmed, all value figures (stock value, "
-            "value moved, value lost to expiry) are withheld rather than shown as zero.",
+            "Values in rupees are not shown because no verified public price list could be "
+            "accessed.",
+            "nppa.gov.in serves an incomplete TLS certificate chain; the Jan Aushadhi portal "
+            "is a JavaScript application. All figures are therefore reported in units.",
         ],
     ),
 ]

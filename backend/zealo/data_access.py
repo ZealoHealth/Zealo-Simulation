@@ -23,12 +23,18 @@ FACILITIES_CSV = PROCESSED_DIR / "facilities.csv"
 MEDICINES_CSV = PROCESSED_DIR / "medicines.csv"
 SURVEY_MATCHES_CSV = PROCESSED_DIR / "survey_item_matches.csv"
 BOUNDARY_GEOJSON = PROCESSED_DIR / "gadag_taluk_boundary.geojson"
+POPULATION_JSON = PROCESSED_DIR / "population.json"
+PROFILES_CSV = PROCESSED_DIR / "phc_availability_profiles.csv"
+MATRIX_CSV = PROCESSED_DIR / "phc_availability_matrix.csv"
 
 _BUILD_COMMANDS = {
     FACILITIES_CSV: "python data/pipeline/03_build_facilities.py",
     MEDICINES_CSV: "python data/pipeline/02_extract_indent_and_match.py",
     SURVEY_MATCHES_CSV: "python data/pipeline/02_extract_indent_and_match.py",
     BOUNDARY_GEOJSON: "python data/pipeline/03_build_facilities.py",
+    POPULATION_JSON: "make data",
+    PROFILES_CSV: "make data",
+    MATRIX_CSV: "make data",
 }
 
 
@@ -72,6 +78,10 @@ class FacilityRecord:
     provenance: dict[str, str]
     review_flags: list[str]
     verified: bool
+    facility_key: str = ""
+    location_precision: str = "exact"
+    medicine_list: str = "none"
+    in_network_default: bool = True
 
 
 @dataclass(frozen=True)
@@ -119,6 +129,10 @@ def load_facilities() -> list[FacilityRecord]:
                 },
                 review_flags=[f for f in row["review_flags"].split() if f],
                 verified=_as_bool(row["verified"]),
+                facility_key=row.get("facility_key", ""),
+                location_precision=row.get("location_precision", "exact") or "exact",
+                medicine_list=row.get("medicine_list", "none") or "none",
+                in_network_default=_as_bool(row.get("in_network_default", "true")),
             )
         )
     return records
@@ -176,8 +190,79 @@ def survey_linked_medicines() -> list[MedicineRecord]:
     return [m for m in load_medicines() if m.survey_sl_no is not None]
 
 
+@dataclass(frozen=True)
+class SurveyItem:
+    """One of the survey's 104 items, whether or not it is matched to the indent."""
+
+    sl_no: int
+    name: str
+    strength: str
+    availability_pct: float
+    essentiality: str
+    indent_code: str | None
+    match_status: str
+
+    @property
+    def quantity_modelled(self) -> bool:
+        """Matched to an indent row, so it has demand and quantities in the simulation."""
+        return bool(self.indent_code) and self.match_status in ("auto", "confirmed")
+
+    @property
+    def id(self) -> str:
+        return self.indent_code if self.quantity_modelled else f"survey-{self.sl_no:03d}"
+
+    @property
+    def label(self) -> str:
+        return f"{self.name} {self.strength}".strip()
+
+
+@lru_cache(maxsize=1)
+def load_survey_items() -> list[SurveyItem]:
+    items = []
+    for row in _read_csv(SURVEY_MATCHES_CSV):
+        items.append(
+            SurveyItem(
+                sl_no=int(row["survey_sl_no"]),
+                name=row["survey_drug_name"],
+                strength=row["survey_strength"],
+                availability_pct=float(row["survey_availability_pct"]),
+                essentiality=row.get("survey_essentiality", "") or "",
+                indent_code=row["indent_drug_code"].strip() or None,
+                match_status=row["match_status"],
+            )
+        )
+    return items
+
+
+@lru_cache(maxsize=1)
+def load_population_share() -> dict:
+    return json.loads(_require(POPULATION_JSON).read_text())
+
+
+@lru_cache(maxsize=1)
+def load_phc_profiles() -> list[dict]:
+    return [
+        {
+            "phc_number": int(r["phc_number"]),
+            "availability_pct": float(r["availability_pct"]),
+            "items_in_stock": int(r["items_in_stock"]),
+            "provenance": r["provenance"],
+            "note": r["note"],
+        }
+        for r in _read_csv(PROFILES_CSV)
+    ]
+
+
+@lru_cache(maxsize=1)
+def load_phc_matrix() -> dict[tuple[int, int], bool]:
+    return {
+        (int(r["phc_number"]), int(r["survey_sl_no"])): r["in_stock"] == "1"
+        for r in _read_csv(MATRIX_CSV)
+    }
+
+
 def clear_cache() -> None:
     """Drop cached datasets. Used by tests and after a pipeline re-run."""
-    load_facilities.cache_clear()
-    load_medicines.cache_clear()
-    load_boundary.cache_clear()
+    for loader in (load_facilities, load_medicines, load_boundary, load_survey_items,
+                   load_population_share, load_phc_profiles, load_phc_matrix):
+        loader.cache_clear()

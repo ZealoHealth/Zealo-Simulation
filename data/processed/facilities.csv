@@ -1,78 +1,78 @@
-internal_id,display_label,facility_type,ownership,lat,lon,beds,inside_boundary,source_ids,retrieved,lat_provenance,lon_provenance,facility_type_provenance,ownership_provenance,beds_provenance,review_flags,verified
-clinic-01,Clinic 1,clinic,private,15.446449,75.645075,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-02,Clinic 2,clinic,private,15.44406,75.646222,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-03,Clinic 3,clinic,private,15.442988,75.643873,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-04,Clinic 4,clinic,private,15.437563,75.638216,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-05,Clinic 5,clinic,private,15.435883,75.629894,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-06,Clinic 6,clinic,private,15.433991,75.637241,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-07,Clinic 7,clinic,private,15.433778,75.637069,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-08,Clinic 8,clinic,private,15.433599,75.643908,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-09,Clinic 9,clinic,private,15.433021,75.646429,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-10,Clinic 10,clinic,private,15.432856,75.644392,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-11,Clinic 11,clinic,private,15.432623,75.633188,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-12,Clinic 12,clinic,private,15.431875,75.648857,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-13,Clinic 13,clinic,private,15.431523,75.643699,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-14,Clinic 14,clinic,private,15.430513,75.644569,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-15,Clinic 15,clinic,private,15.430145,75.635336,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-16,Clinic 16,clinic,private,15.428408,75.626233,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-17,Clinic 17,clinic,private,15.419896,75.622443,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-18,Clinic 18,clinic,private,15.418723,75.621725,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-19,Clinic 19,clinic,private,15.417824,75.62214,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-20,Clinic 20,clinic,private,15.414846,75.621517,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-21,Clinic 21,clinic,private,15.41461,75.620787,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-22,Clinic 22,clinic,private,15.413566,75.622765,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-23,Clinic 23,clinic,private,15.411785,75.617374,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-24,Clinic 24,clinic,private,15.410387,75.624158,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-clinic-25,Clinic 25,clinic,private,15.408546,75.626719,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-district_hospital-01,District Hospital,district_hospital,government,15.432072,75.634974,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-government_other-01,Government Hospital 1,government_other,government,15.585813,75.630419,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unclear_government_level,False
-government_other-02,Government Hospital 2,government_other,government,15.434371,75.641856,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unclear_government_level,False
-government_other-03,Government Hospital 3,government_other,government,15.429279,75.527924,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unclear_government_level,False
-government_other-04,Government Hospital 4,government_other,government,15.282952,75.525491,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unclear_government_level,False
-pharmacy-01,Pharmacy 1,pharmacy,private,15.431708,75.636199,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-pharmacy-02,Pharmacy 2,pharmacy,private,15.431454,75.635738,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unnamed_in_osm,False
-pharmacy-03,Pharmacy 3,pharmacy,private,15.429279,75.629955,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-phc-01,PHC 1,phc,government,15.440556,75.654488,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,merged_records,False
-phc-02,PHC 2,phc,government,15.435818,75.623613,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,generic_phc_name,False
-phc-03,PHC 3,phc,government,15.418971,75.541628,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-phc-04,PHC 4,phc,government,15.393037,75.716135,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-phc-05,PHC 5,phc,government,15.36589,75.525118,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-01,Private Hospital 1,private_hospital,private,15.444917,75.646198,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-02,Private Hospital 2,private_hospital,private,15.443305,75.641878,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-03,Private Hospital 3,private_hospital,private,15.43618,75.637742,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unnamed_in_osm,False
-private_hospital-04,Private Hospital 4,private_hospital,private,15.43391,75.636854,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-05,Private Hospital 5,private_hospital,private,15.433054,75.63676,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,merged_records,False
-private_hospital-06,Private Hospital 6,private_hospital,private,15.432985,75.645242,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-07,Private Hospital 7,private_hospital,private,15.432966,75.645327,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-08,Private Hospital 8,private_hospital,private,15.432522,75.63757,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-09,Private Hospital 9,private_hospital,private,15.432161,75.641249,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-10,Private Hospital 10,private_hospital,private,15.431992,75.639728,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-11,Private Hospital 11,private_hospital,private,15.431966,75.637272,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-12,Private Hospital 12,private_hospital,private,15.431938,75.635697,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-13,Private Hospital 13,private_hospital,private,15.431823,75.637539,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-14,Private Hospital 14,private_hospital,private,15.431577,75.646459,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-15,Private Hospital 15,private_hospital,private,15.431559,75.633794,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-16,Private Hospital 16,private_hospital,private,15.431545,75.642216,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-17,Private Hospital 17,private_hospital,private,15.431496,75.638612,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-18,Private Hospital 18,private_hospital,private,15.431489,75.640351,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-19,Private Hospital 19,private_hospital,private,15.431331,75.637176,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,merged_records possible_duplicate_nearby,False
-private_hospital-20,Private Hospital 20,private_hospital,private,15.43122,75.63725,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,possible_duplicate_nearby,False
-private_hospital-21,Private Hospital 21,private_hospital,private,15.431218,75.637126,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,possible_duplicate_nearby,False
-private_hospital-22,Private Hospital 22,private_hospital,private,15.43121,75.638086,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-23,Private Hospital 23,private_hospital,private,15.429131,75.630394,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-24,Private Hospital 24,private_hospital,private,15.429103,75.527477,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-25,Private Hospital 25,private_hospital,private,15.428351,75.651748,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-26,Private Hospital 26,private_hospital,private,15.428335,75.640963,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-27,Private Hospital 27,private_hospital,private,15.427658,75.647111,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-28,Private Hospital 28,private_hospital,private,15.423487,75.628441,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-29,Private Hospital 29,private_hospital,private,15.423159,75.627385,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-30,Private Hospital 30,private_hospital,private,15.422348,75.635565,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-31,Private Hospital 31,private_hospital,private,15.421817,75.6351,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-32,Private Hospital 32,private_hospital,private,15.421518,75.623525,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-33,Private Hospital 33,private_hospital,private,15.420667,75.622564,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-34,Private Hospital 34,private_hospital,private,15.420538,75.637766,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-35,Private Hospital 35,private_hospital,private,15.419595,75.621863,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-36,Private Hospital 36,private_hospital,private,15.415957,75.620381,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-37,Private Hospital 37,private_hospital,private,15.414741,75.620371,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-38,Private Hospital 38,private_hospital,private,15.411793,75.637077,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
-private_hospital-39,Private Hospital 39,private_hospital,private,15.404765,75.60882,,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+internal_id,facility_key,display_label,facility_type,ownership,lat,lon,beds,inside_boundary,location_precision,medicine_list,in_network_default,source_ids,retrieved,lat_provenance,lon_provenance,facility_type_provenance,ownership_provenance,beds_provenance,review_flags,verified
+clinic-01,node/7565711860,Clinic 1,clinic,private,15.446449,75.645075,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-02,node/7565711926,Clinic 2,clinic,private,15.44406,75.646222,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-03,node/7565711925,Clinic 3,clinic,private,15.442988,75.643873,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-04,node/6947336864,Clinic 4,clinic,private,15.437563,75.638216,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-05,node/7565711932,Clinic 5,clinic,private,15.435883,75.629894,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-06,node/7565711918,Clinic 6,clinic,private,15.433991,75.637241,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-07,node/7565711933,Clinic 7,clinic,private,15.433778,75.637069,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-08,node/6947336859,Clinic 8,clinic,private,15.433599,75.643908,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-09,node/7565711902,Clinic 9,clinic,private,15.433021,75.646429,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-10,node/7565711893,Clinic 10,clinic,private,15.432856,75.644392,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-11,node/7565711969,Clinic 11,clinic,private,15.432623,75.633188,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-12,node/7565711884,Clinic 12,clinic,private,15.431875,75.648857,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-13,node/7565711900,Clinic 13,clinic,private,15.431523,75.643699,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-14,node/6944561880,Clinic 14,clinic,private,15.430513,75.644569,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-15,node/7565711890,Clinic 15,clinic,private,15.430145,75.635336,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-16,node/7565711905,Clinic 16,clinic,private,15.428408,75.626233,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-17,node/7565711880,Clinic 17,clinic,private,15.419896,75.622443,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-18,node/7565711965,Clinic 18,clinic,private,15.418723,75.621725,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-19,node/7565711898,Clinic 19,clinic,private,15.417824,75.62214,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-20,node/7565711962,Clinic 20,clinic,private,15.414846,75.621517,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-21,node/7565711960,Clinic 21,clinic,private,15.41461,75.620787,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-22,node/7565711973,Clinic 22,clinic,private,15.413566,75.622765,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-23,node/7565711911,Clinic 23,clinic,private,15.411785,75.617374,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-24,node/7565711879,Clinic 24,clinic,private,15.410387,75.624158,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+clinic-25,node/7565711946,Clinic 25,clinic,private,15.408546,75.626719,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+district_hospital-01,way/133952361,District Hospital,district_hospital,government,15.432072,75.634974,,True,exact,dlh,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+government_level_unknown-01,node/7205448466,Government Hospital 1,government_level_unknown,government,15.585813,75.630419,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,estimated,derived,unknown,unclear_government_level,False
+government_level_unknown-02,way/133182945,Government Hospital 2,government_level_unknown,government,15.429279,75.527924,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,estimated,derived,unknown,unclear_government_level,False
+government_level_unknown-03,node/7205430734,Government Hospital 3,government_level_unknown,government,15.282952,75.525491,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,estimated,derived,unknown,unclear_government_level,False
+other_government-01,node/7565711904,Other Government Facility,other_government,government,15.434371,75.641856,,True,exact,none,False,osm_overpass,2026-09-16,real,real,estimated,derived,unknown,outside_state_system,False
+pharmacy-01,node/1474002807,Pharmacy 1,pharmacy,private,15.431708,75.636199,,True,exact,tlh_proxy,False,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+pharmacy-02,node/1474002795,Pharmacy 2,pharmacy,private,15.431454,75.635738,,True,exact,tlh_proxy,False,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unnamed_in_osm,False
+pharmacy-03,node/1474747637,Pharmacy 3,pharmacy,private,15.429279,75.629955,,True,exact,tlh_proxy,False,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+phc-01,node/7205430767 node/8188037213,PHC 1,phc,government,15.440556,75.654488,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,merged_records,False
+phc-02,node/7565711917,PHC 2,phc,government,15.435818,75.623613,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,generic_phc_name,False
+phc-03,node/7205430838,PHC 3,phc,government,15.418971,75.541628,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+phc-04,way/771830453,PHC 4,phc,government,15.393037,75.716135,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+phc-05,node/7205430832,PHC 5,phc,government,15.36589,75.525118,,True,exact,phc,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-01,node/7565711870,Private Hospital 1,private_hospital,private,15.444917,75.646198,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-02,node/6947905246,Private Hospital 2,private_hospital,private,15.443305,75.641878,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-03,way/133745373,Private Hospital 3,private_hospital,private,15.43618,75.637742,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,unnamed_in_osm,False
+private_hospital-04,node/7565711861,Private Hospital 4,private_hospital,private,15.43391,75.636854,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-05,node/1466778156 way/133266626,Private Hospital 5,private_hospital,private,15.433054,75.63676,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,merged_records,False
+private_hospital-06,node/6944566399,Private Hospital 6,private_hospital,private,15.432985,75.645242,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-07,node/1473276613,Private Hospital 7,private_hospital,private,15.432966,75.645327,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-08,node/1473218502,Private Hospital 8,private_hospital,private,15.432522,75.63757,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-09,node/7565711887,Private Hospital 9,private_hospital,private,15.432161,75.641249,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-10,node/7565711875,Private Hospital 10,private_hospital,private,15.431992,75.639728,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-11,node/7565711944,Private Hospital 11,private_hospital,private,15.431966,75.637272,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-12,node/7565711931,Private Hospital 12,private_hospital,private,15.431938,75.635697,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-13,way/133293764,Private Hospital 13,private_hospital,private,15.431823,75.637539,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-14,node/1474002803,Private Hospital 14,private_hospital,private,15.431577,75.646459,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-15,node/7565711868,Private Hospital 15,private_hospital,private,15.431559,75.633794,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-16,node/7565711955,Private Hospital 16,private_hospital,private,15.431545,75.642216,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-17,node/7565711864,Private Hospital 17,private_hospital,private,15.431496,75.638612,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-18,node/6944236563,Private Hospital 18,private_hospital,private,15.431489,75.640351,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-19,node/1466778238 node/6947336869,Private Hospital 19,private_hospital,private,15.431331,75.637176,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,merged_records possible_duplicate_nearby,False
+private_hospital-20,way/133266616,Private Hospital 20,private_hospital,private,15.43122,75.63725,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,possible_duplicate_nearby,False
+private_hospital-21,way/133266613,Private Hospital 21,private_hospital,private,15.431218,75.637126,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,possible_duplicate_nearby,False
+private_hospital-22,node/7565711928,Private Hospital 22,private_hospital,private,15.43121,75.638086,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-23,node/7565711910,Private Hospital 23,private_hospital,private,15.429131,75.630394,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-24,way/133182949,Private Hospital 24,private_hospital,private,15.429103,75.527477,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-25,node/7565711913,Private Hospital 25,private_hospital,private,15.428351,75.651748,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-26,node/7565711873,Private Hospital 26,private_hospital,private,15.428335,75.640963,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-27,node/6939465009,Private Hospital 27,private_hospital,private,15.427658,75.647111,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-28,node/7565711901,Private Hospital 28,private_hospital,private,15.423487,75.628441,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-29,node/7565711952,Private Hospital 29,private_hospital,private,15.423159,75.627385,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-30,node/7565711888,Private Hospital 30,private_hospital,private,15.422348,75.635565,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-31,node/7565711968,Private Hospital 31,private_hospital,private,15.421817,75.6351,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-32,node/7565711967,Private Hospital 32,private_hospital,private,15.421518,75.623525,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-33,node/6944464757,Private Hospital 33,private_hospital,private,15.420667,75.622564,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-34,node/7565711943,Private Hospital 34,private_hospital,private,15.420538,75.637766,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-35,node/6944464762,Private Hospital 35,private_hospital,private,15.419595,75.621863,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-36,node/7565711895,Private Hospital 36,private_hospital,private,15.415957,75.620381,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-37,node/7565711862,Private Hospital 37,private_hospital,private,15.414741,75.620371,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-38,node/7565711949,Private Hospital 38,private_hospital,private,15.411793,75.637077,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False
+private_hospital-39,node/7565711899,Private Hospital 39,private_hospital,private,15.404765,75.60882,,True,exact,tlh_proxy,True,osm_overpass,2026-09-16,real,real,derived,derived,unknown,,False

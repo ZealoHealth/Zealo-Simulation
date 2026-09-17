@@ -1,0 +1,45 @@
+{
+  "census_year": 2011,
+  "taluk_share_of_state": 0.006011231928375763,
+  "taluk_share_of_district": 0.3449824811895883,
+  "figures": {
+    "karnataka": {
+      "key": "karnataka",
+      "value": 61095297,
+      "source_title": "Government of Karnataka, Society page",
+      "source_url": "https://karnataka.gov.in/new-page/SOCIETY/en",
+      "source_quality": "official_state_government",
+      "raw_snapshot": "data/raw/population/karnataka_gov_society_20260917.html",
+      "retrieved": "2026-09-17",
+      "machine_verified": true,
+      "provenance": "real"
+    },
+    "gadag_taluk": {
+      "key": "gadag_taluk",
+      "value": 367258,
+      "source_title": "censusindia2011.com, Gadag taluk population page",
+      "source_url": "https://www.censusindia2011.com/karnataka/gadag/gadag-population.html",
+      "source_quality": "third_party_census_mirror",
+      "raw_snapshot": "data/raw/population/censusindia2011_gadag_taluk_20260917.html",
+      "retrieved": "2026-09-17",
+      "machine_verified": true,
+      "provenance": "real"
+    },
+    "gadag_district": {
+      "key": "gadag_district",
+      "value": 1064570,
+      "source_title": "Gadag district official website, Demography page",
+      "source_url": "https://gadag.nic.in/en/demography/",
+      "source_quality": "official_district_site",
+      "raw_snapshot": "data/raw/population/gadag_nic_demography_20260917.html",
+      "retrieved": "2026-09-17",
+      "machine_verified": true,
+      "provenance": "real"
+    }
+  },
+  "limitations": [
+    "Census 2011 populations are paired with 2025-26 indent quantities. Only the taluk's share of state population is used, assumed broadly stable; no growth projection is applied.",
+    "Gadag district now has 7 taluks (5 at the 2011 census), so the taluk boundary may have changed since the census. Not adjusted for.",
+    "The Gadag taluk figure comes from a third-party mirror of Census 2011; the official census site could not be accessed securely."
+  ]
+}

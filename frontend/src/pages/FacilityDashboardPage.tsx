@@ -52,7 +52,7 @@ const NO_EVENTS: SimulationEvent[] = [];
 
 export function FacilityDashboardPage() {
   const params = useParams();
-  const { mode, day, selectedFacilityId, selectFacility, excludedFacilityIds, toggleNetworkMembership } =
+  const { mode, day, selectedFacilityId, selectFacility, networkOverrides, setNetworkMembership } =
     useViewStore();
   const facilitiesQuery = useFacilities();
   const { run, isLoading, error, missingInputs } = useRun();
@@ -143,12 +143,26 @@ export function FacilityDashboardPage() {
             </div>
             {facility && (
               <>
+                {detail.data?.survey_profile != null && (
+                  <div>
+                    <p className="text-[11px] uppercase tracking-wide text-ink-subtle">Stock pattern</p>
+                    <p className="flex items-center gap-2 text-sm font-medium">
+                      Survey profile {detail.data.survey_profile}
+                      <span className="text-[10px] font-normal text-ink-subtle">(illustrative)</span>
+                    </p>
+                  </div>
+                )}
                 <div>
                   <p className="text-[11px] uppercase tracking-wide text-ink-subtle">Type</p>
                   <p className="flex items-center gap-2 text-sm font-medium">
                     {TYPE_LABELS[facility.facility_type] ?? facility.facility_type}
                     <ProvenanceBadge provenance={facility.provenance.facility_type ?? "derived"} />
                   </p>
+                  {(facility.level_unconfirmed || !facility.verified) && (
+                    <p className="text-[10px] text-status-amber">
+                      {facility.level_unconfirmed ? "Level unconfirmed" : "Location unverified"}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <p className="text-[11px] uppercase tracking-wide text-ink-subtle">Ownership</p>
@@ -160,8 +174,10 @@ export function FacilityDashboardPage() {
                 <div className="ml-auto">
                   <Checkbox
                     label="In the Zealo network"
-                    checked={!excludedFacilityIds.includes(facility.id)}
-                    onChange={() => toggleNetworkMembership(facility.id)}
+                    checked={networkOverrides[facility.id] ?? facility.in_network}
+                    onChange={(value) =>
+                      setNetworkMembership(facility.id, value, facility.in_network)
+                    }
                   />
                   <p className="px-1.5 text-[10px] text-ink-subtle">
                     Changing this re-runs the scenario.
@@ -284,6 +300,26 @@ export function FacilityDashboardPage() {
                   medicine list is from the Karnataka annual indent{" "}
                   <ProvenanceBadge provenance="real" />
                 </p>
+                {(detail.data?.availability_only.length ?? 0) > 0 && (
+                  <details className="mt-3 rounded-lg bg-surface-sunken px-3 py-2">
+                    <summary className="cursor-pointer text-xs font-semibold text-ink">
+                      Availability only ({detail.data!.availability_only.length} survey items)
+                    </summary>
+                    <p className="mt-1 text-[11px] text-ink-subtle">
+                      Not yet matched to the state indent, so in or out of stock with no quantities.
+                    </p>
+                    <ul className="mt-1.5 grid max-h-48 grid-cols-1 gap-x-4 gap-y-0.5 overflow-y-auto text-[11px] sm:grid-cols-2">
+                      {detail.data!.availability_only.map((item) => (
+                        <li key={item.medicine_id} className="flex justify-between gap-2">
+                          <span className="truncate">{item.name}</span>
+                          <span className={item.in_stock ? "text-status-green" : "text-status-red"}>
+                            {item.in_stock ? "in stock" : "out"}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
               </Card>
 
               {/* Chart */}

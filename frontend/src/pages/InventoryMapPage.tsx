@@ -50,6 +50,7 @@ export function InventoryMapPage() {
     setOriginFacility,
     toggleLayer,
     setNetworkOnly,
+    setVerifiedOnly,
     setRadiusKm,
   } = useViewStore();
 
@@ -72,7 +73,7 @@ export function InventoryMapPage() {
 
   const highlighted = useMemo(() => {
     if (!selectedMedicineId || !medicineRun.data) return null;
-    return new Set(medicineRun.data.rows.filter((r) => r.on_hand > 0).map((r) => r.facility_id));
+    return new Set(medicineRun.data.rows.filter((r) => r.in_stock).map((r) => r.facility_id));
   }, [selectedMedicineId, medicineRun.data]);
 
   const events = useMemo(
@@ -110,10 +111,26 @@ export function InventoryMapPage() {
               onChange={setNetworkOnly}
               label="Zealo network members only"
             />
+            <Checkbox
+              checked={filters.verifiedOnly}
+              onChange={setVerifiedOnly}
+              label="Verified only"
+            />
             <p className="sr-only" data-testid="facility-count">
               Showing {visible.length} of {facilities.length} facilities
             </p>
           </Card>
+
+          {facilitiesQuery.data?.coverage && (
+            <Card>
+              <CardTitle>About this map&rsquo;s data</CardTitle>
+              <ul className="space-y-1.5 text-[11px] leading-relaxed text-ink-muted">
+                {facilitiesQuery.data.coverage.statements.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+            </Card>
+          )}
 
           <Card className="flex min-h-0 flex-1 flex-col">
             <MedicineSearch
@@ -200,3 +217,4 @@ export function InventoryMapPage() {
     </div>
   );
 }
+

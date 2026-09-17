@@ -54,7 +54,9 @@ export function MedicineSearch({
     [rows, facilities, originFacilityId, radiusKm],
   );
 
-  const inStock = ranked.filter((r) => r.on_hand > 0).length;
+  const inStock = ranked.filter((r) => r.in_stock).length;
+  const selected = medicines.find((m) => m.id === selectedMedicineId);
+  const availabilityOnly = selected ? !selected.quantity_modelled : false;
   const origin = facilities.find((f) => f.id === originFacilityId);
 
   return (
@@ -107,6 +109,11 @@ export function MedicineSearch({
               }`}
             >
               {shortMedicineName(m.name)}
+              {!m.quantity_modelled && (
+                <span className="ml-1 text-[9px] font-medium uppercase opacity-60">
+                  availability only
+                </span>
+              )}
             </button>
           </li>
         ))}
@@ -150,20 +157,31 @@ export function MedicineSearch({
                   )}
                   <span
                     className={
-                      row.on_hand > 0
+                      row.in_stock
                         ? "font-semibold text-status-green"
                         : "font-semibold text-status-red"
                     }
                   >
-                    {row.on_hand > 0 ? `${row.on_hand} units` : "out of stock"}
+                    {!row.in_stock
+                      ? "out of stock"
+                      : row.on_hand == null
+                        ? "in stock"
+                        : `${row.on_hand} units`}
                   </span>
                 </span>
               </li>
             ))}
           </ul>
-          <p className="mt-2 flex items-center gap-1.5 text-[10px] text-ink-subtle">
-            Stock levels are modelled <ProvenanceBadge provenance="estimated" />
-          </p>
+          {availabilityOnly ? (
+            <p className="mt-2 flex items-center gap-1.5 text-[10px] leading-snug text-ink-subtle">
+              Availability only, at mapped PHCs: no confirmed indent match yet, so no
+              quantities <ProvenanceBadge provenance="derived" />
+            </p>
+          ) : (
+            <p className="mt-2 flex items-center gap-1.5 text-[10px] text-ink-subtle">
+              Stock levels are modelled <ProvenanceBadge provenance="estimated" />
+            </p>
+          )}
         </>
       )}
     </div>

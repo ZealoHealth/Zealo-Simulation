@@ -1,0 +1,14 @@
+# R4: annual OPD/IPD attendance from HMIS, for government facilities. While this
+# is empty, demand is split equally (estimated). Fill opd_annual to switch a
+# facility to attendance-weighted demand (derived).
+facility_key,display_label,osm_name,opd_annual,ipd_annual,period,source,notes
+way/133952361,District Hospital,"Government Hospital, Gadag",,,,,
+node/7205448466,Government Hospital 1,Kadadi Government Hospital,,,,,
+way/133182945,Government Hospital 2,Rural Medical Service Hulkoti,,,,,
+node/7205430734,Government Hospital 3,Mulagund Government Hospital,,,,,
+node/7565711904,Other Government Facility,Railway Hospital,,,,,
+node/7205430767 node/8188037213,PHC 1,"PHC, Betigeri | Phc Betageri",,,,,
+node/7565711917,PHC 2,Primary Health Care,,,,,
+node/7205430838,PHC 3,Hulkoti PHC,,,,,
+way/771830453,PHC 4,Lakkundi PHC,,,,,
+node/7205430832,PHC 5,Kurtakoti PHC,,,,,

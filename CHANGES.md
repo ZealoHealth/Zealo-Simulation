@@ -4,6 +4,67 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Data decisions applied, Milestones 5 and 10, end-to-end run — 2026-09-17
+
+**Status:** the site runs end to end on real and clearly labelled interim data. Nothing committed.
+
+### Data decisions (from the team, 2026-09-16)
+- **Population (R5):** Census 2011 figures, each fetched and **machine-verified** against a saved
+  snapshot in `data/raw/population/`; ratio checks (0.6011% of state, 34.50% of district) run on
+  every build and fail loudly.
+- **Figure 1 (R1):** interim rule — PHC 1 = 45.45, PHC 4 = 94.17, other 13 = 74.8754 — with the
+  team's validation for a submitted transcription. The 15 × 104 matrix is now built (Ryser's
+  construction, exact margins asserted; rounding surplus absorbed by estimated rows only).
+- **Matches (R7):** review file sorted by essentiality then PHC-level availability, with
+  `suggested` + `suggestion_confidence`, `accept` support, rules in the header, and suggestions
+  frozen once decided. Unmatched items kept as availability-only.
+- **Facilities (R8, R4):** `other_government` (Railway; no list, out of network) and
+  `government_level_unknown` (PHC list); pharmacies out of network by default; `evidence` column;
+  corrections applied automatically; `phc_locations.csv` with policy-compliant Nominatim
+  geocoding; `facility_attendance.csv` upgrade path for the demand split.
+- **Prices (R6):** units only; `prices.csv.template` switches value metrics on later.
+- Drop-folder READMEs in `data/raw/ogd/`, `abdm/`, `hmis/`.
+
+### Tooling
+- `make data` rebuilds everything; `make data-check` reports status and regenerates
+  `data/DATA_TODO.md`. New pipeline steps 04 (population) and 05 (PHC availability).
+- `GET /data-status` and `GET /survey-summary`.
+
+### Bugs found and fixed along the way
+1. **Verification sheet keyed on `internal_id`**, which changes when a type is corrected — a
+   correction would have orphaned the team's own entries. Re-keyed on stable OSM ids; tested.
+2. **Unsafe "high confidence" match suggestions** — ointment suggested as solution, four glove
+   sizes onto one row, folic acid onto iron+folic acid. Now needs a known form, a strict name
+   score, no near-tie, and no shared suggestion. None qualifies as high.
+3. **Transfer thrashing** on the first real run: 58,273 transfers, 64% of ≤ 2 units, stock
+   ping-ponging. Fixed with a 5-unit minimum, donors keeping their reorder point, and a FEFO-correct
+   90-day near-expiry rule → 1,123 transfers, median 7 units.
+4. **"Near expiry" transfers 679 days before expiry** — minimum order lots outlasting slow items.
+5. **In-stock items opening with zero units** (round vs ceil), which flattened the comparison.
+6. **Approval limit could never trigger** without prices — now read in units.
+7. **780 React duplicate-key errors** from per-order map arrows; **map tiles filling only part of
+   the map** (Leaflet sized before the grid settled); **unreadable day 1** and a feed buried in
+   routine orders. Routes/arrows aggregated and capped, feed grouped and prioritised.
+
+### Milestone 10
+Comparison (side-by-side metrics with % change and availability over time), Settings (every
+scenario parameter, facility rules, network membership, reset, copy share link), Data Sources
+(every source with licence and limits, survey findings marked real, labels explained, formulas,
+the units-only and third-party-population statements, "53 of 104 survey items have quantity
+estimates"), and About.
+
+### Result on the real run (180 days, seed 42)
+| | Availability | Stockout item-days | Unmet units | Expired units |
+|---|---|---|---|---|
+| Without Zealo | 92.0% | 57,646 | 136,493 | 89 |
+| With Zealo | **96.0%** | **28,904** (−49.9%) | **21,449** (−84.3%) | **25** (−71.9%) |
+
+### Tests
+Backend **218**, frontend **61**, lint and typecheck clean. Verified in a browser across all
+seven pages with zero console errors.
+
+---
+
 ## Milestone 9 — Facility dashboard, network view, and a design-system pass — 2026-09-16
 
 **Status:** complete. Both pages render; their simulated content needs R1 and R5. Nothing

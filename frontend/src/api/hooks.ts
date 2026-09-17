@@ -1,12 +1,14 @@
 /** Server state. Everything cached by TanStack Query; view state lives in Zustand. */
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  getDataStatus,
   getFacilities,
   getFacilityRun,
   getMedicineRun,
   getMedicines,
   getRedistribution,
   getSources,
+  getSurveySummary,
   simulate,
 } from "./client";
 import type { Mode, ScenarioRequest } from "./types";
@@ -20,6 +22,12 @@ export const useMedicines = (surveyLinkedOnly = true) =>
     queryFn: () => getMedicines(surveyLinkedOnly),
     staleTime: Infinity,
   });
+
+export const useDataStatus = () =>
+  useQuery({ queryKey: ["data-status"], queryFn: getDataStatus, staleTime: 60_000 });
+
+export const useSurveySummary = () =>
+  useQuery({ queryKey: ["survey-summary"], queryFn: getSurveySummary, staleTime: Infinity });
 
 export const useSources = () =>
   useQuery({ queryKey: ["sources"], queryFn: getSources, staleTime: Infinity });

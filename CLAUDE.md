@@ -62,9 +62,12 @@ docs/
 
 ```bash
 make install       # create .venv and install backend (editable) with pipeline+dev extras
+make data          # rebuild every dataset from data/raw + data/manual (never overwrites entries)
+make data-check    # what is missing / interim / invalid; regenerates data/DATA_TODO.md
 make test          # pytest
 make lint          # ruff check
 make api           # uvicorn dev server on :8000
+cd frontend && npm run dev | npm test | npm run lint | npx tsc -b --noEmit
 ```
 
 Direct equivalents:
@@ -239,35 +242,70 @@ Direct equivalents:
 - Recharts is **lazily loaded**: the two chart pages are `React.lazy` routes so the map, the
   page a judge lands on, does not pay for it.
 
+## Interim data rules (decided by the team, 2026-09-16)
+
+- **Never block on missing data.** Each gap has an interim approach, tagged `estimated`, listed
+  in `data/DATA_TODO.md` and the site's Data status panel. Interim rules must never produce fake
+  facilities, locations, prices or survey values.
+- **User entries in `data/manual/` are never overwritten.** Every pipeline step that rewrites a
+  manual file reads the existing entries first. Keep it that way.
+- **Manual sheets are keyed on stable ids**, not labels: `facility_key` (sorted OSM ids) for
+  facilities, `survey_sl_no` for matches. `internal_id` changes when a type is corrected.
+- Population: Census 2011, machine-verified snapshots, ratio checks fail loudly.
+- Figure 1: PHC 1 = 45.45, PHC 4 = 94.17, other 13 = 74.8754 until transcribed and validated.
+- Unmatched survey items: availability only (PHCs, from the matrix), no quantities.
+- `government_level_unknown` → PHC list, in network; `other_government` (Railway) → no list, out
+  of network; pharmacies out of network by default.
+- Demand: equal shares between government holders (attendance-weighted once every holder has
+  OPD); private facilities get an extra 25% share — a modelling choice, flagged to the team.
+- **Units only.** Hide value metrics entirely. The auto-approval limit is in units while no
+  prices exist, or it could never trigger.
+
+## Simulation policy notes (found on real data)
+
+- Minimum transfer 5 units; donors keep their reorder point; near-expiry rebalancing only within
+  90 days, at-risk computed FEFO. Without these the first real run made 58,273 transfers, 64% of
+  them ≤ 2 units, with stock ping-ponging. There are tests for each.
+- Opening stock uses ceil, not round, or survey-in-stock items open empty.
+- **Map status saturates:** with ~53 medicines per facility, "red if any medicine is out" makes
+  55–75 of 77 facilities red in both modes. Spec rule, kept; options raised with the team.
+
+## Frontend notes (interim data)
+
+- Header has a quiet **Data status** link → `DataStatusPanel`, fed by `GET /data-status`
+  (same `data_status.collect()` as `make data-check`). No warning banners on the map.
+- Map draws at most 25 transfer routes and 12 express arrows per day, aggregated by route /
+  facility; the rest are counted on the movement chip. Per-order lines caused 780 duplicate-key
+  errors and an unreadable day 1.
+- Event feed groups routine manufacturer orders per facility per day and lists transfers,
+  stockouts and express orders first.
+- `KeepSizeInSync` calls `invalidateSize` via ResizeObserver: the grid settles after Leaflet
+  mounts, which left the tiles filling only part of the map.
+- Scenario settings live in `state/scenario.ts`; share links encode them as base64url JSON in
+  `?scenario=`. Settings edits are a draft until "Run simulation".
+
 ## Open questions
 
-- **R7 match confirmations** — 51 of 104 survey items need a decision in
-  `data/manual/indent_match_review.csv`. They are excluded from the build until then.
-- **R8 facility verification** — 77 facilities need checking; 12 carry flags. `verified` is
-  false for all of them until then.
-- **PHC gap (R4)** — only 5 of 15 PHCs are locatable from OSM. Blocks assigning the survey's 15
-  availability profiles to real locations.
-- **R5 population figures** — blocks the demand formula; must be official and cited.
-- **Unit prices** — no source identified yet; ask before using illustrative prices.
-- **HMIS availability** — determines whether the demand split is `derived` or `estimated`.
-- **Gadag taluk boundary source** — needed to draw the outline and validate coordinates.
-- `starlette.testclient` warns that `httpx` is deprecated in favour of `httpx2`. Harmless now;
-  revisit if it breaks.
+- **Map status saturation** (see above) — keep the spec rule, or red only for essential items /
+  a share threshold? Raised with the team.
+- **Private demand share default (25%)** — a modelling choice with no published basis.
+- R1, R4, R7, R8 still being filled by the team; see `data/DATA_TODO.md`.
+- `starlette.testclient` warns that `httpx` is deprecated in favour of `httpx2`. Harmless now.
 
 ## Milestone status
 
 | # | Milestone | Status |
 |---|---|---|
 | 1 | Plan and scaffold | **done** |
-| 2 | Survey data | **tables 1–3 extracted + verified; matrix blocked on R1** |
+| 2 | Survey data | **done — matrix built; Figure 1 interim until transcribed** |
 | 3 | Medicine master list | **done — 51 matches await your confirmation (R7)** |
-| 4 | Facilities | **built from OSM — awaiting R8 verification; PHC gap needs R4** |
-| 5 | Demand and starting inventory | blocked on R4, R5 |
+| 4 | Facilities | **done — interim types; verification and PHC locations ongoing** |
+| 5 | Demand and starting inventory | **done — real population, interim split** |
 | 6 | Simulation core | **done — engine, both policies, metrics, 36 tests** |
-| 7 | API | **done — all endpoints; /simulate gated on R1+R5** |
-| 8 | Inventory map | **done — map, search, panel, playback, feed** |
+| 7 | API | **done — runs end to end; + /data-status, /survey-summary** |
+| 8 | Inventory map | **done — end to end on real + interim data** |
 | 9 | Facility dashboard + redistribution view | **done — plus a design-system pass** |
-| 10 | Comparison, Settings, Data Sources, About | not started |
+| 10 | Comparison, Settings, Data Sources, About | **done** |
 | 11 | Deployment | not started |
 | 12 | Polish | not started |
 

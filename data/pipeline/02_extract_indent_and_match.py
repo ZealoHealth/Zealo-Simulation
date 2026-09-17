@@ -57,50 +57,154 @@ def _link_table2_to_table3(t2: list[dict], t3: list[dict]) -> int:
     return linked
 
 
-def _read_decisions() -> dict[int, dict[str, str]]:
-    """Read previously recorded decisions so a re-run never discards them."""
+REVIEW_HEADER = """\
+# MATCH REVIEW (request R7). Fill the `decision` column; leave a row blank to skip it for now.
+#   accept      -> use the `suggested` value in that row
+#   D00461      -> use this indent drug code (any code, not only the candidates shown)
+#   none        -> this survey item has no equivalent in the indent
+# Rules: accept a match only when generic name, strength AND dosage form all align.
+#   A different strength or dosage form is `none`, even if the drug is the same.
+#   Survey items with no indent equivalent (e.g. some surgical consumables) are `none`.
+# Rows are sorted most useful first: most essential, then very essential, then essential;
+#   within each, items whose best candidate is stocked at PHC level come first.
+# Unmatched items still appear on the map with survey availability only (no quantities).
+# Re-running the pipeline never overwrites a decision you have entered.
+"""
+
+VALID_CONFIDENCE = ("high", "medium", "low")
+
+
+def _read_review_rows() -> dict[int, dict[str, str]]:
+    """Previously written review rows, keyed by survey item, comment lines skipped."""
     if not REVIEW_CSV.exists():
         return {}
-    decisions: dict[int, dict[str, str]] = {}
     with REVIEW_CSV.open(newline="") as fh:
-        for row in csv.DictReader(fh):
-            try:
-                sl_no = int(row["survey_sl_no"])
-            except (KeyError, ValueError):
-                continue
-            decision = (row.get("decision") or "").strip()
-            if decision:
-                decisions[sl_no] = {"decision": decision, "notes": row.get("notes", "")}
+        lines = [line for line in fh if not line.lstrip().startswith("#")]
+    rows: dict[int, dict[str, str]] = {}
+    for row in csv.DictReader(lines):
+        try:
+            rows[int(row["survey_sl_no"])] = row
+        except (KeyError, TypeError, ValueError):
+            continue
+    return rows
+
+
+def _read_decisions() -> dict[int, dict[str, str]]:
+    """Decisions entered by the team, resolved to a concrete code or `none`.
+
+    `accept` resolves to the `suggested` value **in the same row of the file**, i.e.
+    exactly what the reviewer saw, never a suggestion recomputed afterwards.
+    """
+    decisions: dict[int, dict[str, str]] = {}
+    for sl_no, row in _read_review_rows().items():
+        raw = (row.get("decision") or "").strip()
+        if not raw:
+            continue
+        if raw.lower() == "accept":
+            resolved = (row.get("suggested") or "").strip()
+        else:
+            resolved = raw
+        decisions[sl_no] = {
+            "decision": raw,
+            "resolved": resolved,
+            "suggested": (row.get("suggested") or "").strip(),
+            "suggestion_confidence": (row.get("suggestion_confidence") or "").strip(),
+            "notes": row.get("notes", ""),
+        }
     return decisions
 
 
-def _write_review(results: list[MatchResult], decisions: dict[int, dict[str, str]]) -> int:
+ESSENTIALITY_ORDER = {"most_essential": 0, "very_essential": 1, "essential": 2}
+
+
+def _suggest(r: MatchResult) -> tuple[str, str]:
+    """A candidate code (or `none`) and how far the suggestion can be trusted.
+
+    Applies the team's rule: only a candidate whose name, strength and dosage form all
+    align may be suggested as a match; otherwise `none`. "high" is reserved for cases a
+    reviewer can accept without reading the candidates, so it requires both labels to
+    name a form, a strict name score as well as the lenient one, and no near-tie. Items
+    that share a suggestion with another item are capped separately afterwards.
+    """
+    aligned = [c for c in r.candidates if c.form_ok and c.strength_ok]
+    if aligned:
+        best = max(aligned, key=lambda c: (c.name_score, c.strict_name_score))
+        if r.forced_review or r.near_tie:
+            return best.indent_code, "low"
+        if best.form_known and best.name_score >= 90 and best.strict_name_score >= 90:
+            return best.indent_code, "high"
+        if best.name_score >= 75 and best.strict_name_score >= 60:
+            return best.indent_code, "medium"
+        return best.indent_code, "low"
+    if r.candidates and r.candidates[0].name_score >= 88:
+        # Same drug by name, but strength or form differs -> `none` by the rule.
+        return "none", "medium"
+    return "none", "low"
+
+
+def _cap_shared_suggestions(suggestions: dict[int, tuple[str, str]]) -> dict[int, tuple[str, str]]:
+    """At most one survey item can truly be a given indent row.
+
+    Four glove sizes all pointing at the single size-7 row means at least three are
+    wrong, so every item sharing a suggested code drops to `low`.
+    """
+    counts: dict[str, int] = {}
+    for code, _ in suggestions.values():
+        if code != "none":
+            counts[code] = counts.get(code, 0) + 1
+    return {
+        sl: (code, "low" if code != "none" and counts[code] > 1 else confidence)
+        for sl, (code, confidence) in suggestions.items()
+    }
+
+
+def _write_review(
+    results: list[MatchResult],
+    decisions: dict[int, dict[str, str]],
+    survey_rows: dict[int, dict],
+    indent_by_code: dict[str, dict],
+) -> int:
     """Write the review file for every item that is not auto-accepted."""
-    fields = ["survey_sl_no", "survey_label", "why_review"]
+    fields = [
+        "survey_sl_no", "essentiality", "survey_label", "why_review",
+        "suggested", "suggestion_confidence", "decision", "notes",
+    ]
     for i in range(1, REVIEW_CANDIDATES + 1):
         fields += [
-            f"cand{i}_code",
-            f"cand{i}_name",
-            f"cand{i}_score",
-            f"cand{i}_form_ok",
-            f"cand{i}_strength_ok",
+            f"cand{i}_code", f"cand{i}_name", f"cand{i}_score",
+            f"cand{i}_form_ok", f"cand{i}_strength_ok", f"cand{i}_at_phc",
         ]
-    fields += ["decision", "notes"]
+
+    pending_rows = [r for r in results if not r.auto_accepted]
+    suggestions = _cap_shared_suggestions({r.survey_sl_no: _suggest(r) for r in pending_rows})
+
+    def sort_key(r: MatchResult):
+        essentiality = survey_rows[r.survey_sl_no].get("essentiality", "")
+        best = r.candidates[0] if r.candidates else None
+        at_phc = bool(best and indent_by_code.get(best.indent_code, {}).get("at_phc"))
+        return (ESSENTIALITY_ORDER.get(essentiality, 3), 0 if at_phc else 1, r.survey_sl_no)
 
     pending = 0
     with REVIEW_CSV.open("w", newline="") as fh:
+        fh.write(REVIEW_HEADER)
         writer = csv.DictWriter(fh, fieldnames=fields)
         writer.writeheader()
-        for r in results:
-            if r.auto_accepted:
-                continue
+        for r in sorted(pending_rows, key=sort_key):
             existing = decisions.get(r.survey_sl_no, {})
-            if not existing.get("decision"):
+            if existing.get("decision"):
+                # Freeze what the reviewer saw: never swap the suggestion under a decision.
+                suggested = existing.get("suggested", "")
+                confidence = existing.get("suggestion_confidence", "")
+            else:
                 pending += 1
+                suggested, confidence = suggestions[r.survey_sl_no]
             row = {
                 "survey_sl_no": r.survey_sl_no,
+                "essentiality": survey_rows[r.survey_sl_no].get("essentiality", "") or "unknown",
                 "survey_label": r.survey_label,
                 "why_review": _why(r),
+                "suggested": suggested,
+                "suggestion_confidence": confidence,
                 "decision": existing.get("decision", ""),
                 "notes": existing.get("notes", ""),
             }
@@ -111,6 +215,9 @@ def _write_review(results: list[MatchResult], decisions: dict[int, dict[str, str
                 row[f"cand{i}_score"] = c.name_score if c else ""
                 row[f"cand{i}_form_ok"] = c.form_ok if c else ""
                 row[f"cand{i}_strength_ok"] = c.strength_ok if c else ""
+                row[f"cand{i}_at_phc"] = (
+                    bool(indent_by_code.get(c.indent_code, {}).get("at_phc")) if c else ""
+                )
             writer.writerow(row)
     return pending
 
@@ -156,7 +263,14 @@ def main() -> int:
 
     results = match_items(t2, indent)
     decisions = _read_decisions()
-    pending = _write_review(results, decisions)
+    survey_rows = {r["sl_no"]: r for r in t2}
+    indent_by_code = {r["drug_code"]: r for r in indent}
+    invalid = {
+        sl: d["resolved"]
+        for sl, d in decisions.items()
+        if d["resolved"].lower() != "none" and d["resolved"] not in indent_by_code
+    }
+    pending = _write_review(results, decisions, survey_rows, indent_by_code)
 
     # Master list: every indent row, tagged as transcribed from the source.
     medicines = pd.DataFrame(indent)
@@ -168,13 +282,16 @@ def main() -> int:
     by_indent = {r["drug_code"]: r for r in indent}
     rows = []
     for r, survey_row in zip(results, t2, strict=True):
-        decision = decisions.get(r.survey_sl_no, {}).get("decision", "")
+        decision = decisions.get(r.survey_sl_no, {}).get("resolved", "")
         if r.auto_accepted:
             code, status = r.matched_code, "auto"
-        elif decision and decision.lower() != "none":
-            code, status = decision, "confirmed"
+        elif r.survey_sl_no in invalid:
+            # An unknown code is not silently accepted; the item stays availability-only.
+            code, status = None, "invalid_decision"
         elif decision.lower() == "none":
             code, status = None, "confirmed_no_match"
+        elif decision:
+            code, status = decision, "confirmed"
         else:
             code, status = None, "pending_review"
         matched = by_indent.get(code) if code else None
@@ -209,6 +326,7 @@ def main() -> int:
             1 for r in rows if r["match_status"] == "confirmed_no_match"
         ),
         "pending_review": sum(1 for r in rows if r["match_status"] == "pending_review"),
+        "invalid_decision": sum(1 for r in rows if r["match_status"] == "invalid_decision"),
     }
     meta = {
         "built_on": date.today().isoformat(),
@@ -233,11 +351,15 @@ def main() -> int:
         f"{counts['pending_review']} pending"
     )
     print(f"\nWrote medicines.csv and survey_item_matches.csv to {PROCESSED_DIR}")
+    if invalid:
+        print("\n>>> These decisions name an indent code that does not exist, so were NOT used:")
+        for sl, code in sorted(invalid.items()):
+            print(f"    survey item {sl}: '{code}'")
     if pending:
         print(
             f"\n>>> {pending} uncertain matches need your confirmation in\n"
             f"    {REVIEW_CSV}\n"
-            "    Fill the 'decision' column with an indent drug code, or 'none'.\n"
+            "    Fill 'decision' with accept, an indent drug code, or none.\n"
             "    They stay excluded from the build until you do."
         )
     return 0

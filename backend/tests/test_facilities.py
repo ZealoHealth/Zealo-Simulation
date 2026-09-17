@@ -13,10 +13,16 @@ from zealo.config import PROCESSED_DIR, RAW_DIR
 from zealo.pipeline.facilities import (
     CLINIC,
     DISTRICT_HOSPITAL,
-    GOVERNMENT_OTHER,
+    GOVERNMENT_LEVEL_UNKNOWN,
+    MEDICINE_LIST,
+    NETWORK_DEFAULT,
+    OTHER_GOVERNMENT,
     PHARMACY,
     PHC,
+    Facility,
     OsmRecord,
+    apply_corrections,
+    assign_labels,
     build_facilities,
     classify_ownership,
     classify_type,
@@ -26,6 +32,7 @@ from zealo.pipeline.facilities import (
     load_boundary,
     load_osm_records,
     name_similarity,
+    phcs_from_locations,
     point_in_rings,
     stitch_rings,
 )
@@ -79,8 +86,8 @@ def test_point_in_rings():
             {"name": "Government Hospital, Gadag", "description": "District Hospital"},
             DISTRICT_HOSPITAL,
         ),
-        ({"name": "Railway Hospital", "amenity": "hospital"}, GOVERNMENT_OTHER),
-        ({"name": "Mulagund Government Hospital", "amenity": "hospital"}, GOVERNMENT_OTHER),
+        ({"name": "Railway Hospital", "amenity": "hospital"}, OTHER_GOVERNMENT),
+        ({"name": "Mulagund Government Hospital", "amenity": "hospital"}, GOVERNMENT_LEVEL_UNKNOWN),
         ({"name": "Vikram Medicals", "amenity": "pharmacy"}, PHARMACY),
         ({"name": "Ashwini Clinic", "amenity": "clinic"}, CLINIC),
         ({"name": "Dr. Amaresh Hombal", "amenity": "doctors"}, CLINIC),
@@ -92,9 +99,114 @@ def test_type_classification(tags, expected):
 
 def test_a_government_facility_of_unknown_level_is_not_called_a_taluk_hospital():
     """The level decides the medicine list, so guessing it would be inventing data."""
-    facility_type, flags = classify_type({"name": "Railway Hospital", "amenity": "hospital"})
-    assert facility_type == GOVERNMENT_OTHER
+    facility_type, flags = classify_type(
+        {"name": "Mulagund Government Hospital", "amenity": "hospital"}
+    )
+    assert facility_type == GOVERNMENT_LEVEL_UNKNOWN
     assert "unclear_government_level" in flags
+    assert MEDICINE_LIST[facility_type] == "phc", "conservative interim list"
+    assert NETWORK_DEFAULT[facility_type] is True
+
+
+def test_railway_hospital_is_outside_the_state_system():
+    facility_type, flags = classify_type({"name": "Railway Hospital", "amenity": "hospital"})
+    assert facility_type == OTHER_GOVERNMENT
+    assert "outside_state_system" in flags
+    assert MEDICINE_LIST[facility_type] == "none"
+    assert NETWORK_DEFAULT[facility_type] is False
+
+
+def test_pharmacies_are_outside_the_network_by_default():
+    assert NETWORK_DEFAULT["pharmacy"] is False
+
+
+def _facility(**overrides):
+    base = dict(
+        internal_id="government_level_unknown-01", display_label="Government Hospital 1",
+        facility_type=GOVERNMENT_LEVEL_UNKNOWN, ownership="government", lat=15.4, lon=75.6,
+        beds=None, osm_ids=["node/1"], real_names=["X"], inside_boundary=True,
+        review_flags=["unclear_government_level"], facility_key="node/1",
+        type_provenance="estimated",
+    )
+    base.update(overrides)
+    return Facility(**base)
+
+
+def test_a_confirmed_type_replaces_the_interim_and_is_tagged_real():
+    f = _facility()
+    problems = apply_corrections(f, {"correct_type": "chc", "verified": "yes", "beds": "30"})
+    assert not problems
+    assert f.facility_type == "chc"
+    assert f.type_provenance == "real"
+    assert "team_verification" in f.source_ids
+    assert "unclear_government_level" not in f.review_flags
+    assert f.verified is True and f.beds == 30
+
+
+def test_an_invalid_correction_is_reported_not_applied():
+    f = _facility()
+    problems = apply_corrections(f, {"correct_type": "super_hospital", "beds": "lots"})
+    assert len(problems) == 2
+    assert f.facility_type == GOVERNMENT_LEVEL_UNKNOWN
+
+
+def test_labels_follow_a_corrected_type_but_the_key_does_not_change():
+    """Entries are keyed on facility_key precisely because internal_id follows the type."""
+    f = _facility()
+    key = f.facility_key
+    apply_corrections(f, {"correct_type": "chc"})
+    assign_labels([f])
+    assert f.internal_id.startswith("chc-")
+    assert f.facility_key == key
+
+
+def test_a_located_phc_with_coordinates_is_added_exactly():
+    rings = [[(15.0, 75.0), (15.0, 76.0), (16.0, 76.0), (16.0, 75.0), (15.0, 75.0)]]
+    added, report = phcs_from_locations(
+        [{"hmis_name": "Somewhere PHC", "village": "Somewhere",
+          "latitude": "15.5", "longitude": "75.5", "source_url": "https://hmis"}],
+        [], rings,
+    )
+    assert len(added) == 1 and not report
+    assert added[0].location_precision == "exact"
+    assert added[0].facility_key.startswith("phc_locations:")
+    assert "Somewhere" not in added[0].facility_key, "the key must not expose a real name"
+
+
+def test_a_village_only_phc_is_geocoded_to_an_approximate_location():
+    rings = [[(15.0, 75.0), (15.0, 76.0), (16.0, 76.0), (16.0, 75.0), (15.0, 75.0)]]
+
+    class FakeGeocoder:
+        def village_centre(self, village):
+            from zealo.pipeline.geocode import GeocodeResult
+            return GeocodeResult(village, 15.4, 75.4, village, "node", "1")
+
+    added, _ = phcs_from_locations(
+        [{"hmis_name": "Village PHC", "village": "Village", "latitude": "", "longitude": ""}],
+        [], rings, FakeGeocoder(),
+    )
+    assert added[0].location_precision == "approximate_village_centre"
+    assert added[0].location_provenance == "derived"
+    assert "approximate_location" in added[0].review_flags
+
+
+def test_a_located_phc_outside_the_taluk_is_not_placed():
+    rings = [[(15.0, 75.0), (15.0, 76.0), (16.0, 76.0), (16.0, 75.0), (15.0, 75.0)]]
+    added, report = phcs_from_locations(
+        [{"hmis_name": "Far PHC", "latitude": "20.0", "longitude": "80.0"}], [], rings
+    )
+    assert not added and "outside" in report[0]
+
+
+def test_a_phc_already_on_the_map_is_not_duplicated():
+    rings = [[(15.0, 75.0), (15.0, 76.0), (16.0, 76.0), (16.0, 75.0), (15.0, 75.0)]]
+    existing = [_facility(facility_type=PHC, real_names=["Hulkoti PHC"], lat=15.41, lon=75.54)]
+    added, report = phcs_from_locations(
+        [{"hmis_name": "PHC Hulkoti", "village": "Hulkoti",
+          "latitude": "15.412", "longitude": "75.541"}],
+        existing, rings,
+    )
+    assert not added and "not duplicated" in report[0]
 
 
 def test_a_generic_primary_health_name_is_flagged():

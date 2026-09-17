@@ -18,6 +18,8 @@ reads carries display labels ("PHC 3", "Private Hospital 7") and no real names.
 
 from __future__ import annotations
 
+import csv
+import hashlib
 import json
 import math
 import re
@@ -34,7 +36,12 @@ PHC = "phc"
 CHC = "chc"
 TALUK_HOSPITAL = "taluk_hospital"
 DISTRICT_HOSPITAL = "district_hospital"
-GOVERNMENT_OTHER = "government_other"
+# Interim types agreed with the project team for government facilities whose level is
+# not stated anywhere we can read. Neither is guessed into a PHC/CHC/taluk slot.
+#   other_government          -- run outside the state health department (Railway Hospital)
+#   government_level_unknown  -- state facility of unconfirmed level
+OTHER_GOVERNMENT = "other_government"
+GOVERNMENT_LEVEL_UNKNOWN = "government_level_unknown"
 PRIVATE_HOSPITAL = "private_hospital"
 CLINIC = "clinic"
 PHARMACY = "pharmacy"
@@ -44,15 +51,40 @@ TYPE_LABELS = {
     CHC: "CHC",
     TALUK_HOSPITAL: "Taluk Hospital",
     DISTRICT_HOSPITAL: "District Hospital",
-    GOVERNMENT_OTHER: "Government Hospital",
+    OTHER_GOVERNMENT: "Other Government Facility",
+    GOVERNMENT_LEVEL_UNKNOWN: "Government Hospital",
     PRIVATE_HOSPITAL: "Private Hospital",
     CLINIC: "Clinic",
     PHARMACY: "Pharmacy",
 }
 
 GOVERNMENT_TYPES = frozenset(
-    {PHC, CHC, TALUK_HOSPITAL, DISTRICT_HOSPITAL, GOVERNMENT_OTHER}
+    {PHC, CHC, TALUK_HOSPITAL, DISTRICT_HOSPITAL, OTHER_GOVERNMENT, GOVERNMENT_LEVEL_UNKNOWN}
 )
+ALL_TYPES = frozenset(TYPE_LABELS)
+
+# Which state medicine list a facility carries, keyed by type. `none` means no state
+# list at all; `tlh_proxy` is the documented stand-in for private facilities, which
+# have no public medicine list. government_level_unknown takes the PHC list as the
+# most conservative choice until its level is confirmed.
+MEDICINE_LIST = {
+    PHC: "phc",
+    CHC: "chc",
+    TALUK_HOSPITAL: "tlh",
+    DISTRICT_HOSPITAL: "dlh",
+    GOVERNMENT_LEVEL_UNKNOWN: "phc",
+    OTHER_GOVERNMENT: "none",
+    PRIVATE_HOSPITAL: "tlh_proxy",
+    CLINIC: "tlh_proxy",
+    PHARMACY: "tlh_proxy",
+}
+
+# In the Zealo network by default. Pharmacies stay out until better data exists, and a
+# facility outside the state supply system is not assumed to join a state network.
+NETWORK_DEFAULT = {t: t not in (PHARMACY, OTHER_GOVERNMENT) for t in TYPE_LABELS}
+
+# Interim types are estimates, not inferences, and are tagged that way.
+ESTIMATED_TYPES = frozenset({OTHER_GOVERNMENT, GOVERNMENT_LEVEL_UNKNOWN})
 
 # Excluded outright: not human medicine-dispensing facilities, so they cannot
 # carry the essential-medicines list this project models. Recorded, not silently
@@ -77,6 +109,8 @@ FLAG_OUTSIDE_BOUNDARY = "outside_boundary"
 FLAG_MERGED_RECORDS = "merged_records"
 FLAG_UNNAMED_IN_OSM = "unnamed_in_osm"
 FLAG_POSSIBLE_DUPLICATE = "possible_duplicate_nearby"
+FLAG_OUTSIDE_STATE_SYSTEM = "outside_state_system"
+FLAG_APPROXIMATE_LOCATION = "approximate_location"
 
 FLAG_EXPLANATIONS = {
     FLAG_GENERIC_PHC_NAME: (
@@ -84,9 +118,14 @@ FLAG_EXPLANATIONS = {
         "government PHC and not a private clinic using the phrase"
     ),
     FLAG_UNCLEAR_GOVERNMENT_LEVEL: (
-        "government facility of unclear level -- set PHC / CHC / taluk hospital, "
-        "because the level decides which medicine list it carries"
+        "level unconfirmed -- set PHC / CHC / taluk hospital in correct_type; the PHC "
+        "medicine list is used until then because it is the most conservative"
     ),
+    FLAG_OUTSIDE_STATE_SYSTEM: (
+        "probably run by Indian Railways, not the state health department -- kept out of "
+        "the Zealo network with no state medicine list until confirmed"
+    ),
+    FLAG_APPROXIMATE_LOCATION: "approximate: village centre, geocoded from the village name",
     FLAG_NO_AMENITY_TAG: "no amenity tag in OSM; defaulted to clinic",
     FLAG_OUTSIDE_BOUNDARY: "coordinates fall outside the taluk boundary",
     FLAG_MERGED_RECORDS: "several OSM records merged as one facility -- confirm",
@@ -117,6 +156,15 @@ class Facility:
     osm_ids: list[str]
     real_names: list[str]
     inside_boundary: bool
+    # Stable identity for joining the team's manual entries. `internal_id` is derived
+    # from the type, so it changes when a type is corrected; this never does.
+    facility_key: str = ""
+    source_ids: list[str] = field(default_factory=lambda: [SOURCE_ID])
+    location_precision: str = "exact"  # exact | approximate_village_centre
+    location_provenance: str = "real"
+    type_provenance: str = "derived"
+    ownership_provenance: str = "derived"
+    evidence: str = ""
     # Two parallel records of the same concerns. ``review_flags`` are short codes
     # safe to publish; ``review_notes`` are for humans and may name real
     # facilities, so they stay out of data/processed/ and off the website.
@@ -237,14 +285,17 @@ def classify_type(tags: dict[str, str]) -> tuple[str, list[str]]:
     if amenity == "pharmacy":
         return PHARMACY, notes
 
+    if re.search(r"\brailway\b", text, re.I):
+        # Most likely run by Indian Railways rather than the state health department,
+        # so not supplied through the state system and not given a state list.
+        notes.append(FLAG_OUTSIDE_STATE_SYSTEM)
+        return OTHER_GOVERNMENT, notes
     if _GOVERNMENT_PATTERNS.search(text):
         # A government facility not named as PHC/CHC/taluk/district could be any of
-        # them -- "Railway Hospital" serves railway employees, "Rural Medical
-        # Service" is a rural unit. The level decides which medicine list the
-        # facility carries, so calling them all taluk hospitals would hand several
-        # of them the wrong one. They get their own type and go to a human.
+        # them. The level decides which medicine list it carries, so it is not
+        # guessed; the PHC list is used as the conservative interim.
         notes.append(FLAG_UNCLEAR_GOVERNMENT_LEVEL)
-        return GOVERNMENT_OTHER, notes
+        return GOVERNMENT_LEVEL_UNKNOWN, notes
 
     if amenity == "hospital":
         return PRIVATE_HOSPITAL, notes
@@ -412,6 +463,8 @@ def build_facilities(
             flags.append(FLAG_POSSIBLE_DUPLICATE)
             notes.extend(nearby)
 
+        osm_ids = sorted(m.osm_id for m in members)
+        unclear = facility_type in ESTIMATED_TYPES
         facilities.append(
             Facility(
                 internal_id="",  # assigned with the display label, once sorted
@@ -421,16 +474,84 @@ def build_facilities(
                 lat=round(lat, 6),
                 lon=round(lon, 6),
                 beds=None,  # OSM carries no bed count for any facility here
-                osm_ids=sorted(m.osm_id for m in members),
+                osm_ids=osm_ids,
                 real_names=sorted({m.name for m in members if m.name}),
                 inside_boundary=inside,
                 review_flags=sorted(set(flags)),
                 review_notes=notes,
+                facility_key=facility_key_for(osm_ids),
+                type_provenance="estimated" if unclear else "derived",
+                evidence=evidence_for(members, rings) if unclear else "",
             )
         )
 
     assign_labels(facilities)
     return facilities, excluded
+
+
+def facility_key_for(osm_ids: list[str]) -> str:
+    return " ".join(sorted(osm_ids))
+
+
+def evidence_for(members: list[OsmRecord], rings: list[list[tuple[float, float]]]) -> str:
+    """What the source actually says about a facility whose level is unclear.
+
+    Assembled for a human to judge; nothing here decides the level. Registry listings
+    could not be consulted automatically (the ABDM registry is an interactive app), so
+    the evidence is the OSM record's own tags.
+    """
+    parts = []
+    for m in members:
+        tags = {k: v for k, v in m.tags.items() if k != "name"}
+        tag_text = ", ".join(f"{k}={v}" for k, v in sorted(tags.items())) or "no tags"
+        parts.append(f"{m.osm_id}: {tag_text}")
+    parts.append("registry listing: not checked (ABDM registry not machine-accessible)")
+    return "; ".join(parts)
+
+
+def apply_corrections(facility: Facility, correction: dict[str, str]) -> list[str]:
+    """Apply the team's verification entries. Returns problems with the entries.
+
+    A confirmed type or ownership replaces the inference and is tagged `real` with the
+    team's verification as its source. An invalid type is reported and ignored rather
+    than silently coerced.
+    """
+    problems: list[str] = []
+    new_type = (correction.get("correct_type") or "").strip().lower()
+    if new_type:
+        if new_type in ALL_TYPES:
+            facility.facility_type = new_type
+            facility.type_provenance = "real"
+            facility.review_flags = [
+                f for f in facility.review_flags
+                if f not in (FLAG_UNCLEAR_GOVERNMENT_LEVEL, FLAG_OUTSIDE_STATE_SYSTEM,
+                             FLAG_GENERIC_PHC_NAME)
+            ]
+            if "team_verification" not in facility.source_ids:
+                facility.source_ids.append("team_verification")
+        else:
+            problems.append(
+                f"{facility.facility_key}: correct_type '{new_type}' is not one of "
+                f"{sorted(ALL_TYPES)}"
+            )
+    new_ownership = (correction.get("correct_ownership") or "").strip().lower()
+    if new_ownership:
+        if new_ownership in ("government", "private"):
+            facility.ownership = new_ownership
+            facility.ownership_provenance = "real"
+        else:
+            problems.append(
+                f"{facility.facility_key}: correct_ownership '{new_ownership}' must be "
+                "government or private"
+            )
+    beds = (correction.get("beds") or "").strip()
+    if beds:
+        if beds.isdigit():
+            facility.beds = int(beds)
+        else:
+            problems.append(f"{facility.facility_key}: beds '{beds}' is not a whole number")
+    facility.verified = (correction.get("verified") or "").strip().lower() in ("yes", "y", "true")
+    return problems
 
 
 def assign_labels(facilities: list[Facility]) -> None:
@@ -454,3 +575,110 @@ def assign_labels(facilities: list[Facility]) -> None:
     for facility in facilities:
         if facility.facility_type in singletons:
             facility.display_label = TYPE_LABELS[facility.facility_type]
+
+
+PHC_LOCATION_FIELDS = ["hmis_name", "village", "latitude", "longitude", "source_url", "notes"]
+SAME_PHC_DISTANCE_M = 3000.0
+
+
+def read_phc_locations(path: Path) -> list[dict[str, str]]:
+    """Rows from data/manual/phc_locations.csv that name at least a PHC."""
+    if not path.exists():
+        return []
+    with path.open(newline="") as fh:
+        lines = [line for line in fh if not line.lstrip().startswith("#")]
+    return [row for row in csv.DictReader(lines) if (row.get("hmis_name") or "").strip()]
+
+
+def phcs_from_locations(
+    rows: list[dict[str, str]],
+    existing: list[Facility],
+    rings: list[list[tuple[float, float]]],
+    geocoder=None,
+) -> tuple[list[Facility], list[str]]:
+    """Add PHCs the team located from the HMIS list, registry or maps.
+
+    * coordinates given           -> exact location, tagged `real`
+    * village only                -> village centre via Nominatim, tagged `derived`
+    * neither                     -> skipped and reported
+    * already an OSM PHC          -> skipped and reported, never duplicated
+    * outside the taluk boundary  -> rejected and reported, never placed
+    """
+    added: list[Facility] = []
+    report: list[str] = []
+    osm_phcs = [f for f in existing if f.facility_type == PHC]
+
+    for row in rows:
+        name = row["hmis_name"].strip()
+        village = (row.get("village") or "").strip()
+        key = "phc_locations:" + hashlib.sha1(name.lower().encode()).hexdigest()[:10]
+        lat_raw = (row.get("latitude") or "").strip()
+        lon_raw = (row.get("longitude") or "").strip()
+
+        precision, provenance = "exact", "real"
+        if lat_raw and lon_raw:
+            try:
+                lat, lon = float(lat_raw), float(lon_raw)
+            except ValueError:
+                report.append(f"{name}: latitude/longitude are not numbers; skipped")
+                continue
+        elif village and geocoder is not None:
+            hit = geocoder.village_centre(village)
+            if hit is None:
+                report.append(f"{name}: village '{village}' not found by Nominatim; skipped")
+                continue
+            lat, lon = hit.lat, hit.lon
+            precision, provenance = "approximate_village_centre", "derived"
+        else:
+            report.append(f"{name}: no coordinates and no village; skipped")
+            continue
+
+        if not point_in_rings(lat, lon, rings):
+            report.append(f"{name}: location falls outside Gadag taluk; not placed")
+            continue
+
+        duplicate = next(
+            (
+                f
+                for f in osm_phcs
+                if haversine_m(lat, lon, f.lat, f.lon) <= SAME_PHC_DISTANCE_M
+                and (
+                    (village and any(village.lower() in n.lower() for n in f.real_names))
+                    or any(name_similarity(name, n) >= 80 for n in f.real_names)
+                )
+            ),
+            None,
+        )
+        if duplicate is not None:
+            report.append(
+                f"{name}: already on the map as {duplicate.display_label}; not duplicated"
+            )
+            continue
+
+        flags = [FLAG_APPROXIMATE_LOCATION] if precision != "exact" else []
+        source_ids = ["phc_locations_manual"]
+        if (row.get("source_url") or "").strip():
+            source_ids.append("hmis_mohfw")
+        added.append(
+            Facility(
+                internal_id="",
+                display_label="",
+                facility_type=PHC,
+                ownership="government",
+                lat=round(lat, 6),
+                lon=round(lon, 6),
+                beds=None,
+                osm_ids=[],
+                real_names=[name],
+                inside_boundary=True,
+                review_flags=flags,
+                review_notes=[FLAG_EXPLANATIONS[f] for f in flags],
+                facility_key=key,
+                source_ids=source_ids,
+                location_precision=precision,
+                location_provenance=provenance,
+                type_provenance="real",
+                ownership_provenance="real",
+            )
+        )
+    return added, report

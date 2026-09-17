@@ -6,8 +6,9 @@ reference for the second and third kinds. Each method has an anchor id such as
 `methods:taluk_annual_demand`; `Tagged.method` in the code points at it, so a number in the UI
 can be traced to the paragraph that produced it.
 
-> **Status:** skeleton. Methods are filled in as their milestone lands. A method marked
-> *(not yet implemented)* has no code behind it and no numbers depending on it.
+> **Status:** every method below is implemented. Where real data is still being collected,
+> the interim approach agreed with the project team on 2026-09-16 is described in place and
+> tracked in `data/DATA_TODO.md` (`make data-check`).
 
 ---
 
@@ -64,7 +65,7 @@ essentiality class for every row.
 
 ---
 
-## `methods:figure1_transcription` — Per-PHC availability *(Milestone 2, blocked)*
+## `methods:figure1_transcription` — Per-PHC availability *(implemented; interim until transcribed)*
 
 Figure 1 is a raster image with no embedded data labels, so the 15 per-PHC percentages cannot
 be extracted programmatically. They are **transcribed by hand** into
@@ -75,7 +76,7 @@ Tagged `real` (published values, manually transcribed), with the transcription n
 
 ---
 
-## `methods:availability_matrix` — The 15 × 104 in-stock matrix *(Milestone 2)*
+## `methods:availability_matrix` — The 15 × 104 in-stock matrix *(implemented)*
 
 **Problem.** The survey publishes *margins only*: availability per item (Table 2, column
 totals) and availability per PHC (Figure 1, row totals). It never publishes which specific PHC
@@ -144,7 +145,7 @@ carries stays `real`.
 
 ---
 
-## `methods:taluk_annual_demand` — Scaling statewide indent to Gadag *(Milestone 5)*
+## `methods:taluk_annual_demand` — Scaling statewide indent to Gadag *(implemented)*
 
     taluk_annual_demand[item] = statewide_indent_qty[item] × (gadag_population / karnataka_population)
 
@@ -202,7 +203,7 @@ neighbouring facility's name leaked one during development.
 
 ---
 
-## `methods:facility_demand_split` — Splitting demand between facilities *(Milestone 5)*
+## `methods:facility_demand_split` — Splitting demand between facilities *(implemented; equal shares until attendance arrives)*
 
 Preferred: split each item's taluk demand across the government facilities that carry it (per
 the indent's PHC/CHC/TLH/DLH columns) in proportion to **OPD attendance from HMIS** → `derived`.
@@ -225,7 +226,7 @@ Tagged `estimated`: the Poisson shape is a modelling choice, not an observation.
 
 ---
 
-## `methods:starting_stock` — Opening inventory *(Milestone 5)*
+## `methods:starting_stock` — Opening inventory *(implemented)*
 
 - **PHCs:** in-stock/out-of-stock from `methods:availability_matrix`. In-stock items open at an
   estimated quantity derived from days-of-cover against estimated demand; out-of-stock items
@@ -238,7 +239,7 @@ Tagged `estimated`: the Poisson shape is a modelling choice, not an observation.
 
 ---
 
-## `methods:starting_shelf_life` — Opening expiry dates *(Milestone 5)*
+## `methods:starting_shelf_life` — Opening expiry dates *(implemented)*
 
 Opening batches are given estimated remaining shelf life, with a configurable share near
 expiry. Tagged `estimated` — the survey records no expiry dates whatsoever.
@@ -319,11 +320,105 @@ pre-computed default run, so this is a build-time cost rather than a page-load o
 
 ---
 
-## `methods:unit_prices` — Unit prices *(Milestone 5, open)*
+## `methods:unit_prices` — Unit prices *(decided: units only)*
 
 To be filled once a public price source is identified. If a government ceiling price list or
 public generic price list is found, prices are `real` and cited. **If none is found, we ask
 before using illustrative prices**, and tag them `estimated`.
+
+---
+
+## Decisions of 2026-09-16/17 and how they are implemented
+
+### `methods:population_share` — Population
+Census 2011: Karnataka **61,095,297** (karnataka.gov.in, official), Gadag taluk **367,258**
+(censusindia2011.com, a third-party mirror, because censusindia.gov.in serves an incomplete TLS
+chain), Gadag district **1,064,570** (gadag.nic.in, sanity check only). Each value was
+machine-verified against a saved snapshot in `data/raw/population/`, and step 04 re-checks the
+snapshots and two ratios on every run, failing loudly if either drifts:
+taluk ÷ state = **0.6011%** (expected ≈ 0.601%) and taluk ÷ district = **34.50%** (≈ 34.5%).
+
+Limitations: 2011 populations are paired with 2025-26 indent quantities; only the taluk's
+*share* is used and assumed broadly stable, with no growth projection. Gadag district now lists
+7 taluks (5 in 2011), so the taluk boundary may have changed; this is not adjusted for.
+
+### `methods:figure1_interim` — Figure 1 until it is transcribed
+PHC 1 = 45.45 and PHC 4 = 94.17 (stated in the paper, `real`). The other 13 take one equal value,
+(74.20 × 15 − 45.45 − 94.17) ÷ 13 = **74.8754**, which preserves the published mean (`estimated`,
+"interim: equal distribution pending Figure 1 transcription"). A submitted transcription is used
+only if all 15 are filled, each is 0–100, PHC 1 and PHC 4 match the paper and are the minimum and
+maximum, and the mean is within ±0.5 of 74.20. Otherwise the failures are reported and the
+interim values stay in force.
+
+### Matrix construction, as implemented
+Row totals = round-half-down(pct × 104). Column totals = round-half-down(Table 2 pct × 15) —
+item 49's impossible 83.33% becomes 12. Rounding left rows 2 above columns (1159 vs 1157); the
+difference is absorbed one unit at a time by the rows closest to rounding the other way,
+**estimated rows first**, so the published PHC 1 and PHC 4 are not moved. Feasibility is checked
+with Gale–Ryser, then the matrix is built by Ryser's construction (items in descending order of
+holders, each given to the PHCs with most remaining capacity, ties broken by a fixed seed).
+Exact row and column margins are asserted, not assumed.
+
+### Unmatched survey items
+Items without a confirmed indent match stay on the map with **survey availability only** — in or
+out of stock at mapped PHCs from the matrix, tagged `derived`, with no quantities or demand, and
+static because the survey is a single-day snapshot. Currently 53 of 104 have quantities.
+
+Review suggestions: only a candidate whose name, strength and dosage form all align may be
+suggested. "high" additionally needs both labels to name a form, a strict (subset-sensitive)
+name score ≥ 90, and no near-tie; items sharing a suggested code are capped at "low". None
+currently qualifies as high: anything that confident was already auto-accepted.
+
+### Facilities of unconfirmed level, network defaults, corrections
+* Railway Hospital → `other_government`: probably Indian Railways, **not in the network by
+  default, no state medicine list**, type `estimated`.
+* Other government facilities of unstated level → `government_level_unknown`: **PHC medicine
+  list** (most conservative), in the network, type `estimated`, flagged "level unconfirmed".
+* Pharmacies are **not in the network by default**. No pharmacy count is estimated.
+* Team corrections in `facility_verification.csv` are keyed on each facility's stable OSM ids.
+  A confirmed type is applied before labelling, switches the medicine list automatically and is
+  tagged `real` with source `team_verification`. Invalid entries are reported and ignored.
+
+### PHC locations (R4)
+Rows in `data/manual/phc_locations.csv` with coordinates are placed exactly (`real`). Rows with
+only a village are geocoded to the village centre with OpenStreetMap Nominatim — at most one
+request per second, a descriptive user agent, results cached in `data/raw/geocode/`, restricted
+to the Gadag taluk bounding box — tagged `derived`, labelled "approximate: village centre", and
+drawn with a dashed, translucent marker. Locations outside the taluk are rejected; a PHC already
+on the map is not duplicated. Survey profiles are assigned to mapped PHCs by a seeded,
+illustrative shuffle; unassigned profiles are listed as unmapped and still count in taluk-wide
+survey statistics.
+
+### Demand split and private demand
+Government facilities carrying an item share its taluk demand **equally** (`estimated`) until
+every one of them has an OPD figure in `facility_attendance.csv`, then by attendance
+(`derived`). Private facilities share an additional **25%** of the taluk demand equally
+(`estimated`, adjustable in Settings). *The 25% is a modelling choice with no published basis.*
+
+### Opening stock
+An item recorded as in stock opens with **ceil**(30 × mean daily demand) units — ceiling, not
+rounding, because rounding sent slow items at private facilities in with zero units while the
+survey said they were in stock.
+
+### Transfer policy corrections (found on the real data)
+The first end-to-end run made 58,273 transfers in 180 days: 64% moved ≤ 2 units and stock
+ran back and forth. Three rules fixed it (1,123 transfers, median 7 units):
+1. **Minimum transfer of 5 units.** Smaller gaps are left to the regular refill.
+2. **Donors keep their reorder point** (lead time + safety days of forecast), not just safety
+   days — giving below it made the donor pull stock the next day, a cascade.
+3. **Near-expiry rebalancing acts only within 90 days of expiry**, and at-risk quantity is
+   computed FEFO: stock expiring by the soonest date minus what the facility consumes before
+   then. A receiver must be able to consume it after its own stock expiring by that date.
+
+### Approval limit in units
+With no prices, an order's value is unknown and a rupee limit could never be exceeded, so
+approvals would silently never occur. The limit is read as **units per order line** while prices
+are absent, and as rupees if `data/manual/prices.csv` is added.
+
+### Units only
+No verified public price list could be accessed, so no rupee values are shown anywhere. Adding
+`data/manual/prices.csv` (from `prices.csv.template`, every row sourced) switches value metrics
+back on with `real` tags — but only when every simulated medicine is priced.
 
 ---
 

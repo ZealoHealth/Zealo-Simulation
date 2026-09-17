@@ -128,8 +128,7 @@ export function NetworkRedistributionPage() {
                 />
               </div>
               <p className="mt-2 flex items-center gap-1.5 text-[10px] text-ink-subtle">
-                Derived from simulated stock <ProvenanceBadge provenance="derived" /> &middot;
-                value moved is withheld while no public price source is confirmed
+                Derived from simulated stock <ProvenanceBadge provenance="derived" />
               </p>
             </Card>
 
@@ -216,6 +215,32 @@ export function NetworkRedistributionPage() {
                 )}
               </Card>
             </div>
+
+            {data.unmapped_phcs.length > 0 && (
+              <Card>
+                <CardTitle
+                  hint="Survey PHCs with no public location in our sources. Their availability profiles still count in taluk-wide statistics."
+                >
+                  Unmapped PHCs ({data.unmapped_phcs.length})
+                </CardTitle>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                  {data.unmapped_phcs.map((phc) => (
+                    <div key={phc.phc_number} className="rounded-lg bg-surface-sunken px-3 py-2">
+                      <p className="text-[10px] font-medium uppercase tracking-wide text-ink-subtle">
+                        Survey profile {phc.phc_number}
+                      </p>
+                      <p className="tabular text-sm font-bold text-ink">
+                        {phc.availability_pct.toFixed(1)}%
+                      </p>
+                      <p className="flex items-center gap-1 text-[10px] text-ink-subtle">
+                        {phc.items_in_stock} of 104 items
+                        <ProvenanceBadge provenance={phc.provenance} />
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
 
             <Card>
               <CardTitle

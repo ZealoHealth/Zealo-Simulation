@@ -1,0 +1,29 @@
+{
+  "_comment": "R5, decided 2026-09-16. Census 2011 figures. Each value was machine-verified against a saved snapshot in data/raw/population/. The pipeline re-checks those snapshots and the sanity ratios on every run.",
+  "census_year": 2011,
+  "karnataka": {
+    "value": 61095297,
+    "source_title": "Government of Karnataka, Society page",
+    "source_url": "https://karnataka.gov.in/new-page/SOCIETY/en",
+    "source_quality": "official_state_government",
+    "raw_snapshot": "data/raw/population/karnataka_gov_society_20260917.html",
+    "retrieved": "2026-09-17"
+  },
+  "gadag_taluk": {
+    "value": 367258,
+    "source_title": "censusindia2011.com, Gadag taluk population page",
+    "source_url": "https://www.censusindia2011.com/karnataka/gadag/gadag-population.html",
+    "source_quality": "third_party_census_mirror",
+    "raw_snapshot": "data/raw/population/censusindia2011_gadag_taluk_20260917.html",
+    "retrieved": "2026-09-17"
+  },
+  "gadag_district": {
+    "value": 1064570,
+    "use": "sanity_check_only",
+    "source_title": "Gadag district official website, Demography page",
+    "source_url": "https://gadag.nic.in/en/demography/",
+    "source_quality": "official_district_site",
+    "raw_snapshot": "data/raw/population/gadag_nic_demography_20260917.html",
+    "retrieved": "2026-09-17"
+  }
+}

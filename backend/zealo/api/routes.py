@@ -15,6 +15,10 @@ import json
 from fastapi import APIRouter, HTTPException, Query
 
 from zealo.api.schemas import (
+    AvailabilityOnlyRow,
+    Coverage,
+    DataStatusItem,
+    DataStatusResponse,
     DayStatus,
     ExpiryAlert,
     FacilitiesResponse,
@@ -30,6 +34,7 @@ from zealo.api.schemas import (
     MedicinesResponse,
     ModeSummary,
     RedistributionResponse,
+    RunContext,
     ScenarioRequest,
     SimulateResponse,
     SourceOut,
@@ -41,8 +46,10 @@ from zealo.data_access import (
     load_boundary,
     load_facilities,
     load_medicines,
-    survey_linked_medicines,
+    load_phc_matrix,
+    load_survey_items,
 )
+from zealo.pipeline.data_status import collect as collect_data_status
 from zealo.sim.events import EventType
 from zealo.sim.runner import (
     MissingDemandInputs,
@@ -64,10 +71,11 @@ FACILITY_CAVEATS = [
     "Facility type and ownership are inferred from names: OpenStreetMap carries no "
     "operator field for any facility here.",
     "Bed counts are unknown, not estimated.",
-    "Only 5 of the taluk's 15 PHCs appear in OpenStreetMap, and only 3 pharmacies.",
-    "No facility has been verified by hand yet.",
+    "Facilities not yet checked by hand are marked 'Location unverified'.",
     "Real facility names are never shown; facilities are labelled by type and number.",
 ]
+
+LEVEL_UNCONFIRMED_TYPES = ("government_level_unknown", "other_government")
 
 MEDICINE_CAVEATS = [
     "Availability percentages are real observations from a 2021-22 survey of 15 PHCs.",
@@ -83,7 +91,7 @@ SIMULATION_CAVEATS = [
     "never how much.",
     "The assignment of the survey's anonymous PHC profiles to real locations is "
     "illustrative: the survey anonymised its PHCs.",
-    "Value figures are withheld until a public unit price source is confirmed.",
+    "All figures are in units. No verified public price list could be accessed.",
 ]
 
 router = APIRouter()
@@ -103,6 +111,20 @@ def get_facilities(include_boundary: bool = True) -> FacilitiesResponse:
     except DatasetMissing as exc:
         raise _dataset_error(exc) from exc
 
+    phcs = sum(1 for r in records if r.facility_type == "phc")
+    pharmacies = sum(1 for r in records if r.facility_type == "pharmacy")
+    coverage = Coverage(
+        phcs_mapped=phcs,
+        phcs_in_survey=15,
+        pharmacies_mapped=pharmacies,
+        statements=[
+            f"{phcs} of Gadag taluk's 15 PHCs have a public location in our sources. "
+            "Survey results for all 15 are used in taluk-wide statistics.",
+            f"Only {pharmacies} pharmacies have public map records; the real number in "
+            "Gadag taluk is much higher.",
+        ],
+    )
+
     return FacilitiesResponse(
         facilities=[
             FacilityOut(
@@ -113,16 +135,20 @@ def get_facilities(include_boundary: bool = True) -> FacilitiesResponse:
                 lat=r.lat,
                 lon=r.lon,
                 beds=r.beds,
-                in_network=True,
+                in_network=r.in_network_default,
                 verified=r.verified,
                 review_flags=r.review_flags,
                 source_ids=r.source_ids,
                 retrieved=r.retrieved,
                 provenance=r.provenance,
+                location_precision=r.location_precision,
+                medicine_list=r.medicine_list,
+                level_unconfirmed=r.facility_type in LEVEL_UNCONFIRMED_TYPES,
             )
             for r in records
         ],
         boundary=boundary,
+        coverage=coverage,
         attribution=OSM_ATTRIBUTION,
         disclaimer=DISCLAIMER,
         caveats=FACILITY_CAVEATS,
@@ -131,37 +157,80 @@ def get_facilities(include_boundary: bool = True) -> FacilitiesResponse:
 
 @router.get("/medicines", response_model=MedicinesResponse, tags=["data"])
 def get_medicines(survey_linked_only: bool = False) -> MedicinesResponse:
-    """The medicine master list, with survey availability where it is known."""
+    """The medicine master list, or the survey's 104 items.
+
+    With `survey_linked_only=true` the response is the survey's items: those matched to
+    the indent carry quantities; the rest are **availability only** -- kept on the map
+    rather than dropped, but with no quantities or demand.
+    """
     try:
-        records = survey_linked_medicines() if survey_linked_only else load_medicines()
-        linked = len(survey_linked_medicines())
+        indent = load_medicines()
+        survey = load_survey_items()
     except DatasetMissing as exc:
         raise _dataset_error(exc) from exc
 
     level_names = {"at_phc": "phc", "at_chc": "chc", "at_tlh": "taluk_hospital",
                    "at_dlh": "district_hospital"}
-    return MedicinesResponse(
-        medicines=[
+    by_code = {m.drug_code: m for m in indent}
+    quantified = sum(1 for s in survey if s.quantity_modelled and s.indent_code in by_code)
+
+    if survey_linked_only:
+        out = []
+        for s in sorted(survey, key=lambda x: x.sl_no):
+            rec = by_code.get(s.indent_code or "") if s.quantity_modelled else None
+            out.append(
+                MedicineOut(
+                    id=s.id,
+                    drug_code=rec.drug_code if rec else "",
+                    name=s.label,
+                    drug_type=rec.drug_type if rec else "",
+                    therapeutic_group=(
+                        rec.category if rec else "Survey item (no indent match yet)"
+                    ),
+                    levels=(
+                        [n for c, n in level_names.items() if getattr(rec, c)] if rec
+                        else ["phc"]
+                    ),
+                    indent_qty=rec.indent_qty if rec else None,
+                    provenance="real",
+                    survey_availability_pct=s.availability_pct,
+                    survey_essentiality=s.essentiality or None,
+                    match_status=s.match_status,
+                    survey_sl_no=s.sl_no,
+                    quantity_modelled=rec is not None,
+                )
+            )
+    else:
+        linked = {s.indent_code: s for s in survey if s.quantity_modelled}
+        out = [
             MedicineOut(
                 id=r.drug_code,
                 drug_code=r.drug_code,
                 name=r.drug_name,
                 drug_type=r.drug_type,
                 therapeutic_group=r.category,
-                levels=[name for col, name in level_names.items() if getattr(r, col)],
+                levels=[n for c, n in level_names.items() if getattr(r, c)],
                 indent_qty=r.indent_qty,
                 provenance=r.provenance,
-                survey_availability_pct=r.survey_availability_pct,
-                survey_essentiality=r.survey_essentiality,
-                match_status=r.match_status,
+                survey_availability_pct=linked[r.drug_code].availability_pct
+                if r.drug_code in linked else None,
+                survey_essentiality=(linked[r.drug_code].essentiality or None)
+                if r.drug_code in linked else None,
+                match_status=linked[r.drug_code].match_status if r.drug_code in linked else None,
+                survey_sl_no=linked[r.drug_code].sl_no if r.drug_code in linked else None,
             )
-            for r in records
-        ],
-        survey_linked_count=linked,
-        # 104 survey items exist; those not linked are awaiting human confirmation.
-        pending_review_count=104 - linked,
+            for r in indent
+        ]
+
+    return MedicinesResponse(
+        medicines=out,
+        survey_linked_count=quantified,
+        pending_review_count=len(survey) - quantified,
         disclaimer=DISCLAIMER,
-        caveats=MEDICINE_CAVEATS,
+        caveats=MEDICINE_CAVEATS + [
+            f"{quantified} of {len(survey)} survey items have quantity estimates; the rest "
+            "show availability only."
+        ],
     )
 
 
@@ -181,6 +250,7 @@ def get_sources() -> SourcesResponse:
                 retrieved=s.retrieved.isoformat() if s.retrieved else None,
                 access=s.access.value,
                 limitations=s.limitations,
+                source_quality=getattr(s, "source_quality", None),
             )
             for s in SOURCES
         ],
@@ -214,6 +284,8 @@ def simulate(request: ScenarioRequest) -> SimulateResponse:
                 min_shelf_life_days=request.min_shelf_life_days,
                 near_expiry_share=request.near_expiry_share,
                 excluded_facility_ids=request.excluded_facility_ids,
+                network_overrides=request.network_overrides,
+                private_demand_share=request.private_demand_share,
                 rule_overrides={k: v.model_dump() for k, v in request.rules.items()},
                 approval_decisions=request.approval_decisions,
             )
@@ -234,10 +306,27 @@ def simulate(request: ScenarioRequest) -> SimulateResponse:
         cached = run_both_modes(scenario, run_id)
         run_cache.put(cached)
 
+    ctx = cached.context
+    context = None
+    if ctx is not None:
+        methods = set(ctx.demand_method.values())
+        context = RunContext(
+            population_share_pct=round(ctx.population_share * 100, 4),
+            figure1_interim=ctx.figure1_interim,
+            quantity_modelled_items=len(cached.scenario.medicines),
+            availability_only_items=len(ctx.availability_only),
+            phc_survey_profiles=ctx.profile_by_phc,
+            demand_split="attendance_weighted" if methods == {"attendance_weighted"}
+            else ("mixed" if len(methods) > 1 else "equal_shares"),
+            prices_real=ctx.prices_real,
+            level_unconfirmed_facilities=ctx.level_unconfirmed,
+        )
+
     return SimulateResponse(
         run_id=run_id,
         days=request.days,
         seed=request.seed,
+        context=context,
         summaries=[
             ModeSummary(mode=mode, metrics=result.metrics.to_dict())
             for mode, result in cached.results.items()
@@ -411,6 +500,24 @@ def get_facility_run(
     ]
     status = result.timeline[day].status.get(facility_id, "green")
 
+    ctx = cached.context
+    profile = ctx.profile_by_phc.get(facility_id) if ctx else None
+    availability_only: list[AvailabilityOnlyRow] = []
+    if ctx is not None and profile is not None:
+        # Survey items with no confirmed indent match: shown as in/out of stock from the
+        # reconstructed matrix, with no quantities. Static, because the survey is a
+        # single-day snapshot.
+        matrix = load_phc_matrix()
+        availability_only = [
+            AvailabilityOnlyRow(
+                medicine_id=item.id,
+                name=item.label,
+                survey_sl_no=item.sl_no,
+                in_stock=matrix.get((profile, item.sl_no), False),
+            )
+            for item in ctx.availability_only
+        ]
+
     return FacilityRunResponse(
         run_id=run_id,
         mode=mode,
@@ -420,7 +527,10 @@ def get_facility_run(
         facility_type=facility.facility_type.value,
         in_network=facility.in_network,
         status=status,
+        survey_profile=profile,
+        level_unconfirmed=bool(ctx and facility_id in ctx.level_unconfirmed),
         medicines=rows,
+        availability_only=availability_only,
         events=events,
         expiry_alerts=alerts,
         series=medicine_series,
@@ -444,24 +554,58 @@ def get_medicine_run(
     result = cached.results[mode]
     scenario = cached.scenario
     day = min(day, scenario.days - 1)
+    ctx = cached.context
 
     rows: list[MedicineDayRow] = []
-    for facility in scenario.facilities:
-        history = result.history.get((facility.id, medicine_id))
-        if history is None:
-            continue
-        on_hand = int(history["on_hand"][day])
-        forecast = float(history["forecast"][day])
-        rows.append(
-            MedicineDayRow(
-                facility_id=facility.id,
-                display_label=facility.display_label,
-                on_hand=on_hand,
-                days_of_cover=_days_of_cover(on_hand, forecast),
-                next_expiry_day=None,
-                status="red" if on_hand == 0 else "green",
-            )
+    quantity_modelled = True
+    note = None
+    availability_item = next(
+        (i for i in (ctx.availability_only if ctx else []) if i.id == medicine_id), None
+    )
+    if availability_item is not None:
+        quantity_modelled = False
+        note = (
+            "No confirmed match to the state indent yet, so this item has no quantities. "
+            "Shown for PHCs only, from the survey's availability pattern."
         )
+        matrix = load_phc_matrix()
+        for facility in scenario.facilities:
+            profile = ctx.profile_by_phc.get(facility.id)
+            if profile is None:
+                continue
+            in_stock = matrix.get((profile, availability_item.sl_no), False)
+            rows.append(
+                MedicineDayRow(
+                    facility_id=facility.id,
+                    display_label=facility.display_label,
+                    on_hand=None,
+                    in_stock=in_stock,
+                    days_of_cover=None,
+                    next_expiry_day=None,
+                    status="green" if in_stock else "red",
+                    provenance="derived",
+                )
+            )
+    else:
+        for facility in scenario.facilities:
+            history = result.history.get((facility.id, medicine_id))
+            if history is None:
+                continue
+            on_hand = int(history["on_hand"][day])
+            forecast = float(history["forecast"][day])
+            expiry = int(history["next_expiry"][day])
+            next_expiry = expiry if expiry >= 0 else None
+            rows.append(
+                MedicineDayRow(
+                    facility_id=facility.id,
+                    display_label=facility.display_label,
+                    on_hand=on_hand,
+                    in_stock=on_hand > 0,
+                    days_of_cover=_days_of_cover(on_hand, forecast),
+                    next_expiry_day=next_expiry,
+                    status=_row_status(on_hand, forecast, next_expiry, day),
+                )
+            )
     if not rows:
         raise HTTPException(
             status_code=404,
@@ -473,7 +617,9 @@ def get_medicine_run(
         mode=mode,
         day=day,
         medicine_id=medicine_id,
+        quantity_modelled=quantity_modelled,
         rows=rows,
+        note=note,
         disclaimer=DISCLAIMER,
     )
 
@@ -489,7 +635,8 @@ REDISTRIBUTION_CAVEATS = [
     "a hundred paracetamol tablets is surplus at one facility and a day's use at another.",
     "Distances are straight-line. No routing service is configured, so road distance "
     "would be longer.",
-    "Value moved is not shown: no public unit price source is confirmed.",
+    "Only PHCs with a public location are simulated; the survey's remaining profiles "
+    "are listed as unmapped.",
 ]
 
 
@@ -615,7 +762,34 @@ def get_redistribution(
         transfers_over_time=transfers_over_time,
         top_medicines=top_medicines[:15],
         balances=balances,
+        unmapped_phcs=cached.context.unmapped_profiles if cached.context else [],
         totals=totals,
         disclaimer=DISCLAIMER,
         caveats=REDISTRIBUTION_CAVEATS,
     )
+
+
+@router.get("/data-status", response_model=DataStatusResponse, tags=["data"])
+def get_data_status() -> DataStatusResponse:
+    """Pending manual data, the interim approach in use for each, and any failures."""
+    items = collect_data_status()
+    return DataStatusResponse(
+        items=[DataStatusItem(**vars(i)) for i in items],
+        pending_count=sum(1 for i in items if i.status in ("interim", "pending", "invalid")),
+    )
+
+
+@router.get("/survey-summary", tags=["data"])
+def get_survey_summary() -> dict:
+    """The Gadag PHC survey's published headline findings. Every figure is real."""
+    from zealo.config import PROCESSED_DIR
+
+    path = PROCESSED_DIR / "survey_summary.json"
+    if not path.exists():
+        raise HTTPException(
+            status_code=503,
+            detail={"error": "dataset_missing", "message": "Run `make data` first."},
+        )
+    import json
+
+    return {**json.loads(path.read_text()), "disclaimer": DISCLAIMER}
