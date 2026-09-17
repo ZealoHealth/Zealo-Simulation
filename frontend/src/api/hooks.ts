@@ -11,6 +11,7 @@ import {
   getSurveySummary,
   simulate,
 } from "./client";
+import { keepWhileOnlyDayChanges } from "./placeholder";
 import type { Mode, ScenarioRequest } from "./types";
 
 export const useFacilities = () =>
@@ -41,35 +42,44 @@ export const useFacilityRun = (
   day: number,
   /** Ask for one medicine's whole history, for the dashboard chart. */
   series?: string | null,
-) =>
-  useQuery({
-    queryKey: ["facility-run", runId, facilityId, mode, day, series ?? null],
+) => {
+  const queryKey = ["facility-run", runId, facilityId, mode, day, series ?? null];
+  return useQuery({
+    queryKey,
     queryFn: () => getFacilityRun(runId!, facilityId!, mode, day, series ?? undefined),
     enabled: Boolean(runId && facilityId),
+    placeholderData: keepWhileOnlyDayChanges(queryKey, 4),
   });
+};
 
 export const useRedistribution = (
   runId: string | null,
   mode: Mode,
   day: number,
   medicineId?: string | null,
-) =>
-  useQuery({
-    queryKey: ["redistribution", runId, mode, day, medicineId ?? null],
+) => {
+  const queryKey = ["redistribution", runId, mode, day, medicineId ?? null];
+  return useQuery({
+    queryKey,
     queryFn: () => getRedistribution(runId!, mode, day, medicineId ?? undefined),
     enabled: Boolean(runId),
+    placeholderData: keepWhileOnlyDayChanges(queryKey, 3),
   });
+};
 
 export const useMedicineRun = (
   runId: string | null,
   medicineId: string | null,
   mode: Mode,
   day: number,
-) =>
-  useQuery({
-    queryKey: ["medicine-run", runId, medicineId, mode, day],
+) => {
+  const queryKey = ["medicine-run", runId, medicineId, mode, day];
+  return useQuery({
+    queryKey,
     queryFn: () => getMedicineRun(runId!, medicineId!, mode, day),
     enabled: Boolean(runId && medicineId),
+    placeholderData: keepWhileOnlyDayChanges(queryKey, 4),
   });
+};
 
 export type { ScenarioRequest };

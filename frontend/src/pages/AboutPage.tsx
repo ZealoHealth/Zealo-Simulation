@@ -31,8 +31,8 @@ export function AboutPage() {
               <li>Real medicine lists from the Karnataka State Annual Indent 2025&ndash;26.</li>
               <li>Real availability patterns from a published survey of Gadag&rsquo;s 15 PHCs.</li>
               <li>
-                A simulation of the same facilities and the same demand, managed alone and as a
-                Zealo network, so the difference is the policy alone.
+                A simulation of these facilities run as a Zealo network: refilled directly from
+                manufacturers, with stock moved between members before it runs out or expires.
               </li>
               <li>Every number labelled Real, Derived or Estimated.</li>
             </ul>

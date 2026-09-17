@@ -396,6 +396,49 @@ def test_the_baseline_makes_no_transfers_in_the_redistribution_view(simulation_i
     assert data["top_medicines"] == []
 
 
+def test_redistribution_totals_count_up_to_the_selected_day(simulation_inputs):
+    """The page must agree with the map mid-playback, not show the whole run on day 1."""
+    body = simulate(days=30)
+    run_id = body["run_id"]
+    last = client.get(f"/runs/{run_id}/redistribution", params={"day": 29}).json()
+    series = last["transfers_over_time"]
+    metrics = next(s["metrics"] for s in body["summaries"] if s["mode"] == "with_zealo")
+    for key in ("transfers", "transfer_units", "expired_units", "unmet_units"):
+        assert last["totals"][key] == metrics[key]
+
+    for day in (0, 10):
+        data = client.get(f"/runs/{run_id}/redistribution", params={"day": day}).json()
+        assert data["totals"]["transfers"] == sum(p["transfers"] for p in series[: day + 1])
+        assert data["totals"]["transfer_units"] == sum(p["units"] for p in series[: day + 1])
+        # The series itself always covers the whole run, for the chart.
+        assert data["transfers_over_time"] == series
+
+
+def test_shortage_counts_deliveries_due_this_week(simulation_inputs):
+    """Same cover rule as the map colours: a refill a day away is not a shortage."""
+    body = simulate(days=30)
+    run_id = body["run_id"]
+    balances = client.get(f"/runs/{run_id}/redistribution", params={"day": 12}).json()[
+        "balances"
+    ]
+    facility_id = balances[0]["facility_id"]
+    rows = {
+        r["medicine_id"]: r
+        for r in client.get(
+            f"/runs/{run_id}/facilities/{facility_id}", params={"day": 12}
+        ).json()["medicines"]
+    }
+    for b in (b for b in balances if b["facility_id"] == facility_id):
+        row = rows[b["medicine_id"]]
+        assert b["name"] == row["name"]
+        assert b["incoming_7d"] == row["incoming_7d"]
+        if row["forecast"] > 0:
+            # The facility endpoint rounds forecast to 3 dp, hence a relative tolerance.
+            expected = (row["on_hand"] + row["incoming_7d"]) / row["forecast"]
+            assert b["days_of_cover"] == pytest.approx(expected, rel=0.02, abs=0.02)
+            assert (b["position"] == "short") == (b["days_of_cover"] < 7)
+
+
 def test_redistribution_withholds_value(simulation_inputs):
     body = simulate(days=20)
     data = client.get(f"/runs/{body['run_id']}/redistribution").json()

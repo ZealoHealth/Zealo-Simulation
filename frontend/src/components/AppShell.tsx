@@ -1,11 +1,13 @@
 /**
- * The frame every page sits in: brand, navigation, mode toggle, disclaimer.
+ * The frame every page sits in: brand, navigation, disclaimer, and the mode toggle
+ * when the "without Zealo" baseline is switched on (see `config.ts`).
  *
  * The disclaimer lives here rather than on each page, so it cannot be forgotten
  * on a page added later.
  */
 import { useEffect, type ReactNode } from "react";
 import { NavLink } from "react-router";
+import { SHOW_WITHOUT_ZEALO } from "../config";
 import { DataStatusLink, DataStatusPanel } from "./DataStatusPanel";
 import { Disclaimer } from "./Disclaimer";
 import { SHARE_PARAM, decodeShareState } from "../state/scenario";
@@ -15,7 +17,7 @@ const NAV = [
   { to: "/", label: "Map", end: true },
   { to: "/facility", label: "Facility" },
   { to: "/network", label: "Network" },
-  { to: "/compare", label: "Compare" },
+  ...(SHOW_WITHOUT_ZEALO ? [{ to: "/compare", label: "Compare" }] : []),
   { to: "/settings", label: "Settings" },
   { to: "/sources", label: "Data sources" },
   { to: "/about", label: "About" },
@@ -70,6 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="ml-auto">
             <DataStatusLink />
           </div>
+          {SHOW_WITHOUT_ZEALO && (
           <div className="flex items-center gap-1 rounded-lg bg-surface-sunken p-1">
             {(["without_zealo", "with_zealo"] as const).map((m) => (
               <button
@@ -85,6 +88,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </button>
             ))}
           </div>
+          )}
         </div>
         <Disclaimer className="border-t border-hairline px-4 py-1.5" />
       </header>

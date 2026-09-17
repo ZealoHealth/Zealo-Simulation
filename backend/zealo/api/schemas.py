@@ -216,7 +216,9 @@ class FacilityBalance(BaseModel):
     facility_id: str
     display_label: str
     medicine_id: str
+    name: str
     on_hand: int
+    incoming_7d: int = Field(description="Deliveries due within 7 days; counted in cover.")
     days_of_cover: float | None
     position: str = Field(description="'surplus' | 'short' | 'balanced'")
 

@@ -242,6 +242,32 @@ Direct equivalents:
 - Recharts is **lazily loaded**: the two chart pages are `React.lazy` routes so the map, the
   page a judge lands on, does not pay for it.
 
+## "With Zealo" only (decided 2026-09-17)
+
+- The UI shows the Zealo network only. The mode toggle and the Compare page are hidden behind
+  `VITE_SHOW_WITHOUT_ZEALO` (`frontend/src/config.ts`, default off); `/compare` redirects to the
+  map. **The backend still runs both modes** and every baseline test stays — hiding is UI-only,
+  so the comparison can come back without code changes. Don't delete `ComparisonPage`.
+- Copy must not refer to "both modes" or "without Zealo" outside flag-gated UI.
+
+## Network page and per-day queries (2026-09-17)
+
+- **Per-day queries use `keepWhileOnlyDayChanges`** (`api/placeholder.ts`): the previous day's
+  data stays on screen while the next day loads, but only if nothing else in the key changed.
+  Without it the Network page blanked 12 times in 4 s of playback. Use it for any new query keyed
+  on `day`.
+- The Network page's movement figures (transfers, units, km, expired, chart, top medicines) come
+  from `run.events` via `components/network/networkLogic.ts`, the same log the map's feed uses, so
+  they count **up to the selected day** and cost no request. Only surplus/shortage positions are
+  fetched. `/runs/{id}/redistribution` totals also count up to `day` (tested equal to the run
+  metrics on the last day); `transfers_over_time` stays a whole-run series.
+- "Short" on the Network page = the map's low-cover rule (cover incl. deliveries due in 7 days),
+  via `SHORT_DAYS = LOW_COVER_DAYS`, so the two views cannot disagree.
+- Recharts animations are off on pages that update during playback.
+- The map's totals card is whole-run and says so ("Whole run").
+- The uvicorn started for browser checks has no `--reload`: restart it after backend changes, or
+  the frontend reads the old response shape (a missing `name` crashed the page once).
+
 ## Proof-of-concept subset (decided 2026-09-17)
 
 - The site shows **15 of 77** facilities: all 9 state facilities with a medicine list + the nearest
@@ -322,7 +348,7 @@ Direct equivalents:
 | 7 | API | **done — runs end to end; + /data-status, /survey-summary** |
 | 8 | Inventory map | **done — end to end on real + interim data** |
 | 9 | Facility dashboard + redistribution view | **done — plus a design-system pass** |
-| 10 | Comparison, Settings, Data Sources, About | **done** |
+| 10 | Comparison, Settings, Data Sources, About | **done — Compare hidden by default (flag)** |
 | 11 | Deployment | not started |
 | 12 | Polish | not started |
 

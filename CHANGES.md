@@ -4,6 +4,55 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## "With Zealo" only, a steady Network page, README — 2026-09-17
+
+**Status:** complete. Nothing committed.
+
+### Baseline hidden
+- The "Without Zealo" toggle and the Compare page are hidden. `/compare` redirects to the map.
+- Hidden, not removed: `VITE_SHOW_WITHOUT_ZEALO=true` brings both back. The backend still
+  simulates both modes on identical demand, and every baseline test still runs.
+- Copy that referred to "both modes" reworded: Settings header, the "review interval" label (now
+  "outside the network", which is what it controls under Zealo), About, Data Sources.
+
+### Network page: no reloading, and consistent with the map
+- **Diagnosed in the browser:** every new day changed the query key, the data went `undefined`,
+  and the whole page unmounted. 12 blank frames in 4 seconds of playback. Now 0.
+- New `keepWhileOnlyDayChanges` placeholder keeps the previous day on screen while the next
+  loads, only when nothing but the day changed. Applied to the Network, Facility and map
+  medicine/facility queries. The Facility page had the same flicker.
+- **Inconsistency fixed:** on day 13 the page showed the whole run's 272 transfers and full chart
+  while the map showed day 13. Everything now counts up to the selected day: transfers, units,
+  distance and expired units come from the run's event log (the map's source), so they move in
+  step with playback without a request. The cumulative chart grows with the day.
+- `/runs/{id}/redistribution` totals and top medicines now also count up to `day`.
+- "Short" now counts deliveries due within the week, the same rule as the map colours.
+  Previously a facility shown green could be listed as short while its refill was a day away.
+- Table shows medicine names instead of indent codes, and "+N due" beside stock.
+- The medicine filter lists only modelled medicines (availability-only items had empty tables).
+- Chart animations off; fixed heights so cards don't jump.
+- The map's totals card is now titled "Whole run", as it shows all 180 days.
+
+### README
+Rewritten. It still said "Milestone 1 of 12". Now covers: what each page shows, map colours, how
+the simulation works, the baseline flag, data honesty and where sources live, what is still
+interim and which file fills it, local setup, env vars, data rebuild, tests, layout, credits.
+
+### Tests
+- Backend 247 (+2): redistribution totals count up to the day and match run metrics on the last
+  day; shortage cover matches the facility endpoint including deliveries due.
+- Frontend 72 (+9): `networkActivity` (counts through day, ignores manufacturer orders, chart
+  starts from zero, medicine ranking), `keepWhileOnlyDayChanges` (keeps on day change, drops on
+  facility or run change).
+
+### Worth knowing for the demo
+Most redistribution happens on day 1: 237 of the 270 transfers in the default run, when
+Zealo first sees stock across the network and closes the gaps the survey patterns leave. The
+chart shows a step on day 1, then a slow climb. That is the model's behaviour, not a display
+bug.
+
+---
+
 ## References CSV, 15-facility proof of concept, share-based map colours — 2026-09-17
 
 **Status:** complete. Nothing committed.

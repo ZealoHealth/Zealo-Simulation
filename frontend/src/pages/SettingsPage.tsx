@@ -97,8 +97,7 @@ export function SettingsPage() {
             <div className="mr-auto">
               <h1 className="text-base font-bold tracking-tight text-ink">Scenario settings</h1>
               <p className="text-xs text-ink-muted">
-                Both modes always run on the same settings, so any difference between them comes
-                from the policy alone.
+                Edits take effect when you run the simulation. Share links carry these settings.
               </p>
             </div>
             <Button variant="ghost" onClick={() => { store.resetScenario(); setDraft(DEFAULT_SCENARIO); }}>
@@ -166,8 +165,9 @@ export function SettingsPage() {
                 hint="Blank = no limit. In units because no verified price list exists." />
               <NumberField label="Approval delay (days)" value={draft.rules.approval_delay_days} min={0} max={30}
                 onChange={(v) => setRule("approval_delay_days", v ?? 1)} />
-              <NumberField label="Review interval without Zealo (days)" value={draft.rules.review_interval_days} min={1} max={60}
-                onChange={(v) => setRule("review_interval_days", v ?? 7)} />
+              <NumberField label="Review interval outside the network (days)" value={draft.rules.review_interval_days} min={1} max={60}
+                onChange={(v) => setRule("review_interval_days", v ?? 7)}
+                hint="How often a facility that is not in the network checks its own stock." />
             </div>
           </Card>
         </div>

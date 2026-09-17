@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { AppShell } from "./components/AppShell";
+import { SHOW_WITHOUT_ZEALO } from "./config";
 import { InventoryMapPage } from "./pages/InventoryMapPage";
 
 // The two chart-heavy pages pull in Recharts, which is large. Loading them on
@@ -47,7 +48,10 @@ export default function App() {
               <Route path="/facility" element={<FacilityDashboardPage />} />
               <Route path="/facility/:facilityId" element={<FacilityDashboardPage />} />
               <Route path="/network" element={<NetworkRedistributionPage />} />
-              <Route path="/compare" element={<ComparisonPage />} />
+              <Route
+                path="/compare"
+                element={SHOW_WITHOUT_ZEALO ? <ComparisonPage /> : <Navigate to="/" replace />}
+              />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/sources" element={<DataSourcesPage />} />
               <Route path="/about" element={<AboutPage />} />

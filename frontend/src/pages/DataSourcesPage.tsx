@@ -195,7 +195,7 @@ export function DataSourcesPage() {
               <dd>
                 Government facilities carrying an item share it equally until hospital attendance
                 data arrives, after which it is weighted by outpatient attendance. Daily demand is
-                drawn from a Poisson distribution with a fixed seed, identical in both modes.
+                drawn from a Poisson distribution with a fixed seed, so every run is reproducible.
               </dd>
             </div>
             <div>
@@ -222,8 +222,8 @@ export function DataSourcesPage() {
                 more than a tenth of its medicines under a week of cover, or more than a quarter of
                 its stock within 90 days of expiry. <strong className="text-status-green">Green</strong>{" "}
                 means 95% or more in stock (a standard inventory service level) with none of those
-                warnings. Cover counts deliveries already due within the week. The same rule applies
-                in both modes. <ProvenanceBadge provenance="derived" />
+                warnings. Cover counts deliveries already due within the week. The thresholds were fixed
+                before any run was measured. <ProvenanceBadge provenance="derived" />
               </dd>
             </div>
             <div>

@@ -185,9 +185,11 @@ export function InventoryMapPage() {
               </p>
             </Card>
           )}
-          {summary && (
+          {summary && run && (
             <Card>
-              <CardTitle>Network totals</CardTitle>
+              <CardTitle hint={`All ${run.days} days. The Network page counts up to the day shown.`}>
+                Whole run
+              </CardTitle>
               <NetworkTotals summary={summary} />
             </Card>
           )}

@@ -638,9 +638,10 @@ def get_medicine_run(
 
 # Surplus and shortage thresholds, in days of forecast cover. A facility with
 # more than a month's cover has stock the network could use elsewhere; one with
-# under a week is the reason a transfer happens.
+# under a week is the reason a transfer happens. "Short" is the map's low-cover
+# threshold, so the two views cannot disagree.
 SURPLUS_DAYS = 30
-SHORT_DAYS = 7
+SHORT_DAYS = LOW_COVER_DAYS
 
 REDISTRIBUTION_CAVEATS = [
     "Surplus and shortage are measured in days of forecast cover, not absolute units: "
@@ -667,16 +668,26 @@ def get_redistribution(
 
     Backs the network redistribution view. Aggregated from the cached run rather
     than re-simulated, so switching day or medicine costs nothing.
+
+    Everything counts **up to and including** ``day``, so the page agrees with
+    the map at the same point in playback. ``transfers_over_time`` is the one
+    exception: it is a series over the whole run, for a chart that marks the day.
     """
     cached = _require_run(run_id, mode)
     result = cached.results[mode]
     scenario = cached.scenario
     day = min(day, scenario.days - 1)
 
-    # Transfers per day, cumulative through the current day.
     per_day: dict[int, dict[str, float]] = {}
     impact: dict[str, dict[str, int]] = {}
+    totals = {"transfers": 0, "transfer_units": 0, "transfer_distance_km": 0.0,
+              "expired_units": 0}
+    transfer_values: list[float | None] = []
     for event in result.events.events:
+        if event.type is EventType.EXPIRED:
+            if event.day <= day:
+                totals["expired_units"] += event.quantity
+            continue
         if event.type not in (EventType.RELIEF_TRANSFER, EventType.REBALANCE_TRANSFER):
             continue
         bucket = per_day.setdefault(
@@ -685,7 +696,13 @@ def get_redistribution(
         bucket["transfers"] += 1
         bucket["units"] += event.quantity
         bucket["distance_km"] += event.distance_km or 0.0
+        if event.day > day:
+            continue
 
+        totals["transfers"] += 1
+        totals["transfer_units"] += event.quantity
+        totals["transfer_distance_km"] += event.distance_km or 0.0
+        transfer_values.append(event.value)
         row = impact.setdefault(
             event.medicine_id,
             {"relief_transfers": 0, "relief_units": 0,
@@ -724,18 +741,24 @@ def get_redistribution(
     )
 
     # Surplus/shortage positions on the selected day, for the chosen medicine or
-    # every medicine the facility carries.
+    # every medicine the facility carries. Cover counts deliveries due within the
+    # week, as the map colours do, so a facility the map shows green is not listed
+    # as short while its refill is a day away.
     balances: list[FacilityBalance] = []
+    unmet_units = 0
     for facility in scenario.facilities:
         carried = scenario.carried.get(facility.id, frozenset())
-        medicine_ids = [medicine_id] if medicine_id else sorted(carried)
-        for mid in medicine_ids:
+        for mid in sorted(carried):
             history = result.history.get((facility.id, mid))
             if history is None:
                 continue
+            unmet_units += int(history["unmet"][: day + 1].sum())
+            if medicine_id and mid != medicine_id:
+                continue
             on_hand = int(history["on_hand"][day])
+            incoming = int(history["incoming_7d"][day])
             forecast = float(history["forecast"][day])
-            cover = _days_of_cover(on_hand, forecast)
+            cover = _days_of_cover(on_hand + incoming, forecast)
             if cover is None:
                 position = "balanced"
             elif cover >= SURPLUS_DAYS:
@@ -749,23 +772,25 @@ def get_redistribution(
                     facility_id=facility.id,
                     display_label=facility.display_label,
                     medicine_id=mid,
+                    name=scenario.medicine(mid).generic_name,
                     on_hand=on_hand,
+                    incoming_7d=incoming,
                     days_of_cover=cover,
                     position=position,
                 )
             )
 
-    metrics = result.metrics
-    totals = {
-        "transfers": metrics.transfers,
-        "transfer_units": metrics.transfer_units,
-        "transfer_distance_km": round(metrics.transfer_distance_km, 1),
-        "transfer_value": metrics.to_dict()["transfer_value"],
-        "expired_units": metrics.expired_units,
-        "unmet_units": metrics.unmet_units,
-        "surplus_positions": sum(1 for b in balances if b.position == "surplus"),
-        "short_positions": sum(1 for b in balances if b.position == "short"),
-    }
+    prices_known = result.metrics.prices_available
+    totals.update(
+        transfer_distance_km=round(totals["transfer_distance_km"], 1),
+        # Withheld rather than zeroed while no verified price list exists.
+        transfer_value=(
+            round(sum(v or 0.0 for v in transfer_values), 2) if prices_known else None
+        ),
+        unmet_units=unmet_units,
+        surplus_positions=sum(1 for b in balances if b.position == "surplus"),
+        short_positions=sum(1 for b in balances if b.position == "short"),
+    )
 
     return RedistributionResponse(
         run_id=run_id,

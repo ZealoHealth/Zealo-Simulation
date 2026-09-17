@@ -247,7 +247,10 @@ export interface FacilityBalance {
   facility_id: string;
   display_label: string;
   medicine_id: string;
+  name: string;
   on_hand: number;
+  /** Deliveries due within 7 days; counted in days of cover, as on the map. */
+  incoming_7d: number;
   days_of_cover: number | null;
   position: "surplus" | "short" | "balanced";
 }
