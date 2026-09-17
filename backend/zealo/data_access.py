@@ -26,6 +26,7 @@ BOUNDARY_GEOJSON = PROCESSED_DIR / "gadag_taluk_boundary.geojson"
 POPULATION_JSON = PROCESSED_DIR / "population.json"
 PROFILES_CSV = PROCESSED_DIR / "phc_availability_profiles.csv"
 MATRIX_CSV = PROCESSED_DIR / "phc_availability_matrix.csv"
+PRIVATE_SHARE_JSON = PROCESSED_DIR / "private_share.json"
 
 _BUILD_COMMANDS = {
     FACILITIES_CSV: "python data/pipeline/03_build_facilities.py",
@@ -35,6 +36,7 @@ _BUILD_COMMANDS = {
     POPULATION_JSON: "make data",
     PROFILES_CSV: "make data",
     MATRIX_CSV: "make data",
+    PRIVATE_SHARE_JSON: "make data",
 }
 
 
@@ -240,6 +242,11 @@ def load_population_share() -> dict:
 
 
 @lru_cache(maxsize=1)
+def load_private_share() -> dict:
+    return json.loads(_require(PRIVATE_SHARE_JSON).read_text())
+
+
+@lru_cache(maxsize=1)
 def load_phc_profiles() -> list[dict]:
     return [
         {
@@ -264,5 +271,6 @@ def load_phc_matrix() -> dict[tuple[int, int], bool]:
 def clear_cache() -> None:
     """Drop cached datasets. Used by tests and after a pipeline re-run."""
     for loader in (load_facilities, load_medicines, load_boundary, load_survey_items,
-                   load_population_share, load_phc_profiles, load_phc_matrix):
+                   load_population_share, load_phc_profiles, load_phc_matrix,
+                   load_private_share):
         loader.cache_clear()

@@ -6,6 +6,7 @@
  */
 import { useMemo, useState } from "react";
 import { useFacilities } from "../api/hooks";
+import { useRun } from "../api/useRun";
 import type { Facility } from "../api/types";
 import { TYPE_LABELS } from "../components/map/icons";
 import { Disclaimer } from "../components/Disclaimer";
@@ -54,6 +55,11 @@ export function SettingsPage() {
   const [draft, setDraft] = useState<ScenarioSettings>(store.scenario);
   const [copied, setCopied] = useState(false);
   const [typeFilter, setTypeFilter] = useState("");
+  const { run } = useRun();
+  const researchShare =
+    run?.context?.private_share_basis === "nss_75th_round"
+      ? run.context.private_demand_share
+      : null;
 
   const dirty = JSON.stringify(draft) !== JSON.stringify(store.scenario);
   const set = <K extends keyof ScenarioSettings>(key: K, value: ScenarioSettings[K]) =>
@@ -124,9 +130,9 @@ export function SettingsPage() {
               <NumberField label="Demand scale" value={draft.demand_scale} step={0.1} min={0.1} max={10}
                 onChange={(v) => set("demand_scale", v ?? 1)}
                 hint="1 = indent quantity x Gadag taluk's share of Karnataka's population." />
-              <NumberField label="Private demand share" value={draft.private_demand_share} step={0.05} min={0} max={2}
-                onChange={(v) => set("private_demand_share", v ?? 0.25)}
-                hint="Private facilities' demand as a fraction of government demand. A modelling choice." />
+              <NumberField label="Private demand per government demand" value={draft.private_demand_share} step={0.1} min={0} max={10}
+                onChange={(v) => set("private_demand_share", v)}
+                hint={`Blank = research value${researchShare != null ? ` (${researchShare.toFixed(2)})` : ""}: private facilities treat that many ailments per one treated in government facilities in Karnataka (NSS 75th round, 2017-18), weighted for Gadag's urban/rural mix.`} />
               <NumberField label="Near-expiry share at start" value={draft.near_expiry_share} step={0.05} min={0} max={1}
                 onChange={(v) => set("near_expiry_share", v ?? 0.15)}
                 hint="Share of opening batches that start within 90 days of expiry." />

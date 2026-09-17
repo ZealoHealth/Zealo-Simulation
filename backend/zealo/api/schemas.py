@@ -140,9 +140,12 @@ class ScenarioRequest(BaseModel):
     express_lead_time_days: int = Field(default=5, ge=1, le=180)
     min_shelf_life_days: int = Field(default=180, ge=0, le=1095)
     near_expiry_share: float = Field(default=0.15, ge=0.0, le=1.0)
-    private_demand_share: float = Field(
-        default=0.25, ge=0.0, le=2.0,
-        description="Private facilities' demand as a fraction of government-derived demand.",
+    private_demand_share: float | None = Field(
+        default=None, ge=0.0, le=10.0,
+        description=(
+            "Private facilities' demand per unit of government demand. Omit to use the "
+            "NSS 75th round Karnataka ratio (about 3.66)."
+        ),
     )
     # Facility ids to take out of the Zealo network (kept for compatibility).
     excluded_facility_ids: list[str] = Field(default_factory=list)
@@ -168,6 +171,8 @@ class RunContext(BaseModel):
     """What this run rests on, so every figure can be labelled honestly."""
 
     population_share_pct: float
+    private_demand_share: float
+    private_share_basis: str
     figure1_interim: bool
     quantity_modelled_items: int
     availability_only_items: int

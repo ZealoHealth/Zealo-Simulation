@@ -17,6 +17,7 @@ const QUALITY_LABEL: Record<string, string> = {
   official_state_government: "Official state government source",
   official_district_site: "Official district website",
   third_party_census_mirror: "Third-party mirror of Census 2011",
+  official_central_government: "Official Government of India publication",
 };
 
 function SourceCard({ source }: { source: Source }) {
@@ -189,9 +190,22 @@ export function DataSourcesPage() {
               <dt className="font-semibold text-ink">Splitting demand between facilities</dt>
               <dd>
                 Government facilities carrying an item share it equally until hospital attendance
-                data arrives, after which it is weighted by outpatient attendance. Private
-                facilities share an extra, adjustable fraction of it. Daily demand is drawn from a
-                Poisson distribution with a fixed seed, identical in both modes.
+                data arrives, after which it is weighted by outpatient attendance. Daily demand is
+                drawn from a Poisson distribution with a fixed seed, identical in both modes.
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-ink">Demand at private facilities</dt>
+              <dd>
+                No public source records medicine volumes at private hospitals, clinics or
+                pharmacies. The closest government evidence is where people are treated: in
+                Karnataka, government hospitals treat 29.0% of ailments in rural areas and 14.1% in
+                towns, private hospitals and clinics 70.7% and 84.0% (NSS 75th round, 2017&ndash;18,
+                Table A8). Weighted by Gadag taluk&rsquo;s 52% urban population, private facilities
+                treat about <strong className="text-ink">3.66</strong> ailments for every one treated
+                in a government facility, so they carry 3.66 times the government demand, split
+                equally between them. This assumes a treated ailment uses medicines similarly in
+                either sector. <ProvenanceBadge provenance="derived" />
               </dd>
             </div>
             <div>

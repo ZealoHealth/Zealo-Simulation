@@ -24,7 +24,11 @@ export interface ScenarioSettings {
   express_lead_time_days: number;
   min_shelf_life_days: number;
   near_expiry_share: number;
-  private_demand_share: number;
+  /**
+   * Private facilities' demand per unit of government demand. `null` uses the NSS 75th
+   * round Karnataka ratio the backend derives (about 3.66); a number overrides it.
+   */
+  private_demand_share: number | null;
   rules: RuleSettings;
 }
 
@@ -44,7 +48,7 @@ export const DEFAULT_SCENARIO: ScenarioSettings = {
   express_lead_time_days: 5,
   min_shelf_life_days: 180,
   near_expiry_share: 0.15,
-  private_demand_share: 0.25,
+  private_demand_share: null,
   rules: DEFAULT_RULES,
 };
 
@@ -63,9 +67,11 @@ export function buildScenarioRequest(
   state: ShareableState,
   facilityIds: string[],
 ): ScenarioRequest {
-  const { rules, ...rest } = state.scenario;
+  const { rules, private_demand_share, ...rest } = state.scenario;
   const request: ScenarioRequest & { rules?: Record<string, RuleSettings> } = {
     ...rest,
+    // Omitted rather than sent as null, so the default run keeps a stable cache key.
+    ...(private_demand_share != null ? { private_demand_share } : {}),
     network_overrides: state.networkOverrides,
     approval_decisions: state.approvalDecisions,
   };

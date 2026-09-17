@@ -252,12 +252,16 @@ Direct equivalents:
 - **Manual sheets are keyed on stable ids**, not labels: `facility_key` (sorted OSM ids) for
   facilities, `survey_sl_no` for matches. `internal_id` changes when a type is corrected.
 - Population: Census 2011, machine-verified snapshots, ratio checks fail loudly.
+- `data/raw/private_share/nss75_health_in_india_report_586.pdf` is 68.8 MB and gitignored; no
+  step reads it. Don't commit it.
 - Figure 1: PHC 1 = 45.45, PHC 4 = 94.17, other 13 = 74.8754 until transcribed and validated.
 - Unmatched survey items: availability only (PHCs, from the matrix), no quantities.
 - `government_level_unknown` → PHC list, in network; `other_government` (Railway) → no list, out
   of network; pharmacies out of network by default.
 - Demand: equal shares between government holders (attendance-weighted once every holder has
-  OPD); private facilities get an extra 25% share — a modelling choice, flagged to the team.
+  OPD). **Private facilities carry 3.656x government demand** — NSS 75th round Karnataka,
+  Table A8, weighted by Gadag's urban/rural mix; verified against the PDF by step 06. A Settings
+  value overrides it (`private_share_basis: user_setting`). It replaced an unsourced 25%.
 - **Units only.** Hide value metrics entirely. The auto-approval limit is in units while no
   prices exist, or it could never trigger.
 
@@ -268,7 +272,8 @@ Direct equivalents:
   them ≤ 2 units, with stock ping-ponging. There are tests for each.
 - Opening stock uses ceil, not round, or survey-in-stock items open empty.
 - **Map status saturates:** with ~53 medicines per facility, "red if any medicine is out" makes
-  55–75 of 77 facilities red in both modes. Spec rule, kept; options raised with the team.
+  55–75 of 77 facilities red in both modes. **Team decision 2026-09-17: keep the spec rule.**
+  Do not change it without asking.
 
 ## Frontend notes (interim data)
 
@@ -286,9 +291,6 @@ Direct equivalents:
 
 ## Open questions
 
-- **Map status saturation** (see above) — keep the spec rule, or red only for essential items /
-  a share threshold? Raised with the team.
-- **Private demand share default (25%)** — a modelling choice with no published basis.
 - R1, R4, R7, R8 still being filled by the team; see `data/DATA_TODO.md`.
 - `starlette.testclient` warns that `httpx` is deprecated in favour of `httpx2`. Harmless now.
 

@@ -24,6 +24,7 @@ data:
 	$(PY) data/pipeline/03_build_facilities.py
 	$(PY) data/pipeline/04_population.py
 	$(PY) data/pipeline/05_phc_availability.py
+	$(PY) data/pipeline/06_private_share.py
 	$(PY) data/pipeline/data_check.py
 
 # What is missing, interim or failing validation. Also regenerates data/DATA_TODO.md.

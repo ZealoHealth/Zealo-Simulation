@@ -9,8 +9,10 @@ Demand (see methods:taluk_annual_demand, methods:facility_demand_split):
     taluk annual demand = statewide indent qty x (Gadag taluk pop / Karnataka pop) x scale
     government facilities carrying the item share it -- by OPD attendance where every
     one of them has an HMIS figure (derived), otherwise equally (estimated)
-    private facilities carrying the item share an additional, configurable fraction of it
-    equally (estimated)
+    private facilities carrying the item share an additional amount equal to the private :
+    government ratio of treated ailments in Karnataka (NSS 75th round, weighted by Gadag's
+    urban/rural population, ~3.66) times it, equally (derived; a Settings override is
+    estimated)
 
 Opening stock (see methods:starting_stock):
     PHCs -> in / out of stock from the reconstructed availability matrix, using a survey
@@ -37,6 +39,7 @@ from zealo.data_access import (
     load_phc_matrix,
     load_phc_profiles,
     load_population_share,
+    load_private_share,
     load_survey_items,
 )
 from zealo.pipeline.prices import load_prices
@@ -46,7 +49,6 @@ from zealo.sim.policies import BaselinePolicy, ZealoPolicy
 
 ATTENDANCE_CSV = MANUAL_DIR / "facility_attendance.csv"
 OPENING_DAYS_OF_STOCK = 30
-DEFAULT_PRIVATE_DEMAND_SHARE = 0.25
 N_SURVEY_PROFILES = 15
 
 LIST_COLUMN = {"phc": "at_phc", "chc": "at_chc", "tlh": "at_tlh", "dlh": "at_dlh",
@@ -67,6 +69,8 @@ class ScenarioContext:
     """What a run rests on, for honest labelling in the UI."""
 
     population_share: float
+    private_demand_share: float
+    private_share_basis: str  # "nss_75th_round" | "user_setting"
     profile_by_phc: dict[str, int]  # facility id -> survey profile number
     unmapped_profiles: list[dict]
     availability_only: list[SurveyItem]
@@ -125,6 +129,7 @@ def _check_datasets() -> None:
         load_population_share()
         load_phc_profiles()
         load_phc_matrix()
+        load_private_share()
         load_survey_items()
         load_facilities()
     except DatasetMissing as exc:
@@ -142,12 +147,17 @@ def build_scenario(
     near_expiry_share: float,
     excluded_facility_ids: list[str] | None = None,
     network_overrides: dict[str, bool] | None = None,
-    private_demand_share: float = DEFAULT_PRIVATE_DEMAND_SHARE,
+    private_demand_share: float | None = None,
     rule_overrides: dict[str, dict] | None = None,
     approval_decisions: dict[str, str] | None = None,
 ) -> BuiltScenario:
     _check_datasets()
     rng = np.random.default_rng(seed)
+    research_share = float(load_private_share()["private_to_government_ratio"])
+    if private_demand_share is None:
+        private_demand_share, share_basis = research_share, "nss_75th_round"
+    else:
+        share_basis = "user_setting"
     overrides = dict(network_overrides or {})
     for fid in excluded_facility_ids or []:
         overrides[fid] = False
@@ -286,6 +296,8 @@ def build_scenario(
     )
     context = ScenarioContext(
         population_share=share,
+        private_demand_share=private_demand_share,
+        private_share_basis=share_basis,
         profile_by_phc=profile_by_phc,
         unmapped_profiles=[profiles[n] for n in sorted(unassigned)],
         availability_only=availability_only,

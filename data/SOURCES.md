@@ -214,6 +214,26 @@ projection); the district page calls its figure provisional; Gadag district now 
 
 ---
 
+## 7a. `nss75_health_karnataka` — Private vs government treatment, NSS 75th round — **obtained, machine-verified**
+
+| | |
+|---|---|
+| **Title** | Key Indicators of Social Consumption in India: Health, NSS 75th round (July 2017 – June 2018) |
+| **Publisher** | National Statistical Office, Ministry of Statistics and Programme Implementation, Government of India |
+| **PDF** | https://www.mospi.gov.in/sites/default/files/publication_reports/KI_Health_75th_Final.pdf |
+| **Taken** | Table A8 (PDF page 48), Karnataka: ailments treated on medical advice by provider, rural and urban |
+| **Retrieved** | 2026-09-17; mospi.gov.in serves no robots.txt; valid TLS |
+| **Raw files** | `data/raw/private_share/` — Key Indicators (5 MB, used), Report 586 summary (0.25 MB, all-India context), full Report 586 (68.8 MB, **gitignored**, not used; URL and SHA-256 in the folder README) |
+
+Rural: government 29.0%, private hospital 35.3%, private doctor/clinic 35.4%. Urban: 14.1%,
+55.0%, 29.0%. Weighted by Gadag taluk's urban/rural population → **3.656** private treated
+ailments per government one, which sets private facilities' demand (`methods:private_demand_share`).
+
+**Limitations:** treated ailments, not medicine units; Karnataka-wide, not Gadag-specific;
+2017–18; charitable/NGO (1.1%) and informal providers excluded.
+
+---
+
 ## 8. `unit_prices` — Medicine unit prices — **decided: units only**
 
 Searched: nppa.gov.in serves an incomplete TLS chain, the Jan Aushadhi portal is a JavaScript

@@ -4,6 +4,49 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Research-based private demand; map status rule kept — 2026-09-17
+
+**Status:** complete. Nothing committed.
+
+### Decisions
+- **Map status:** keep the specified rule (red if any carried medicine is out), knowing it makes
+  most facilities red in both modes. Recorded in METHODS and CLAUDE.md.
+- **Private demand:** replace my unsourced 25% placeholder with government-backed research.
+
+### Private demand share = 3.656, from NSS 75th round
+Source: *Key Indicators of Social Consumption in India: Health* (NSO, MoSPI, 2017–18), **Table A8,
+Karnataka** — ailments treated on medical advice by provider. Government hospitals treat 29.0%
+(rural) and 14.1% (urban); private hospitals and clinics 70.7% and 84.0%. Weighted by Gadag
+taluk's 52.1% urban population (urban 191,375 + rural 175,883 = the verified total), private
+facilities treat **3.656** ailments for each one treated in a government facility, so they carry
+3.656 x government demand. Karnataka is far more private than India as a whole (all-India
+government shares are 33% rural, 26% urban), which is why the state table was used.
+
+- `data/manual/private_share.json`, `backend/zealo/pipeline/private_share.py`,
+  `data/pipeline/06_private_share.py` (added to `make data`). **Every figure is checked against
+  the Karnataka block of Table A8 in the saved PDF on each build**, and the population split
+  against the verified taluk total.
+- Runner uses it by default (`derived`); a Settings value overrides it (`estimated`, reported as
+  `private_share_basis: user_setting`). API cap raised from 2 to 10.
+- New source `nss75_health_karnataka`; Data Sources page explains the calculation; Settings shows
+  the research value; Data status lists it (R9, complete).
+- Found along the way: the census mirror's own prose says Gadag is "50% urban and 60% rural"
+  (110%); its table is consistent, so the table's counts were used.
+- The full NSS Report 586 (68.8 MB) is gitignored with its URL and SHA-256 recorded; only the
+  5 MB Key Indicators report is used.
+
+### Effect on the 180-day run
+| | Private share | Availability | Unmet demand | Transfers |
+|---|---|---|---|---|
+| 25% placeholder | 0.25 | 92.0% → 95.9% | −85% | 1,136 |
+| **NSS research** | **3.656** | **95.0% → 98.7%** | **−82%** | 1,482 |
+
+### Tests
+Backend **230** (12 new, including a mistyped figure being caught against the PDF), frontend **63**.
+Verified live: Settings shows "research value (3.66)", Data Sources explains the formula.
+
+---
+
 ## Data decisions applied, Milestones 5 and 10, end-to-end run — 2026-09-17
 
 **Status:** the site runs end to end on real and clearly labelled interim data. Nothing committed.

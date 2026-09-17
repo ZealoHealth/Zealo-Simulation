@@ -312,6 +312,8 @@ def simulate(request: ScenarioRequest) -> SimulateResponse:
         methods = set(ctx.demand_method.values())
         context = RunContext(
             population_share_pct=round(ctx.population_share * 100, 4),
+            private_demand_share=round(ctx.private_demand_share, 4),
+            private_share_basis=ctx.private_share_basis,
             figure1_interim=ctx.figure1_interim,
             quantity_modelled_items=len(cached.scenario.medicines),
             availability_only_items=len(ctx.availability_only),

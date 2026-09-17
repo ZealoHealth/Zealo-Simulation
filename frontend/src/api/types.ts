@@ -139,6 +139,9 @@ export interface ModeSummary {
 
 export interface RunContext {
   population_share_pct: number;
+  private_demand_share: number;
+  /** "nss_75th_round" (research default) or "user_setting". */
+  private_share_basis: string;
   figure1_interim: boolean;
   quantity_modelled_items: number;
   availability_only_items: number;

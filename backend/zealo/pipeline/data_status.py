@@ -81,6 +81,21 @@ def collect() -> list[StatusItem]:
             "None: the simulation cannot scale demand without it.", problems=[str(exc)],
         ))
 
+    # Private facilities' demand share
+    private = _json(PROCESSED_DIR / "private_share.json")
+    items.append(StatusItem(
+        "R9", "Private facilities' demand share",
+        COMPLETE if private.get("machine_verified") else INVALID,
+        "data/manual/private_share.json",
+        "Demand at private hospitals, clinics and pharmacies",
+        "None needed: NSS 75th round, Karnataka, weighted by Gadag's urban/rural population.",
+        progress=(
+            f"{private['private_to_government_ratio']:.2f} private per government treated "
+            "ailment, verified against Table A8"
+            if private else "not built -- run make data"
+        ),
+    ))
+
     # R1 Figure 1
     resolved = resolve_profiles()
     filled = sum(1 for p in resolved.profiles if p.provenance == "real")

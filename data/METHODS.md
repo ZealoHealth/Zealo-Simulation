@@ -253,6 +253,10 @@ expiry. Tagged `estimated` — the survey records no expiry dates whatsoever.
   **25%** of units on hand expire within **90 days**
 - **green** — otherwise
 
+**Known effect, kept by decision (2026-09-17):** facilities carry about 53 medicines, so "any
+out of stock" is true most of the time and 55-75 of 77 facilities show red in both modes. The
+team chose to keep the specified rule.
+
 `derived` from simulation state. Days of cover use the forecast, not a fixed average.
 
 ---
@@ -389,11 +393,41 @@ on the map is not duplicated. Survey profiles are assigned to mapped PHCs by a s
 illustrative shuffle; unassigned profiles are listed as unmapped and still count in taluk-wide
 survey statistics.
 
-### Demand split and private demand
+### Demand split
 Government facilities carrying an item share its taluk demand **equally** (`estimated`) until
 every one of them has an OPD figure in `facility_attendance.csv`, then by attendance
-(`derived`). Private facilities share an additional **25%** of the taluk demand equally
-(`estimated`, adjustable in Settings). *The 25% is a modelling choice with no published basis.*
+(`derived`).
+
+### `methods:private_demand_share` — Demand at private facilities
+No public source records medicine volumes at private hospitals, clinics or pharmacies. The closest
+government-backed evidence is where people are treated. **NSS 75th round** (NSO, MoSPI, July 2017
+– June 2018), *Key Indicators of Social Consumption in India: Health*, **Table A8**, Karnataka —
+ailments treated on medical advice, by provider:
+
+| | Government/public hospital | Private hospital | Private doctor/clinic | Charitable/NGO |
+|---|---|---|---|---|
+| Rural | 29.0% | 35.3% | 35.4% | 0.2% |
+| Urban | 14.1% | 55.0% | 29.0% | 2.0% |
+
+    private : government ratio = (private hospital + private clinic) / government
+    rural 70.7 / 29.0 = 2.44      urban 84.0 / 14.1 = 5.96
+    Gadag-weighted, urban weight w = 191,375 / 367,258 = 0.5211 (Census 2011 table):
+    ratio = (w x 84.0 + (1-w) x 70.7) / (w x 14.1 + (1-w) x 29.0) = 77.63 / 21.24 = 3.656
+
+Private facilities carrying an item share **3.656 x** the item's government demand, equally.
+Tagged `derived`. A value set in Settings overrides it and is tagged `estimated`.
+
+**Assumptions, stated in the UI:** a treated ailment draws on medicines similarly in either
+sector (the survey counts treated spells, not medicine units); Karnataka-wide shares applied to
+Gadag; charitable/NGO and informal providers excluded; 2017-18 data.
+
+**Verification:** step 06 reads the Karnataka block of Table A8 from the saved PDF and fails if
+any rural or urban government, private-hospital or private-clinic figure in
+`data/manual/private_share.json` differs, or if the urban + rural population does not equal the
+verified taluk total.
+
+This replaced an unsourced 25% placeholder, which understated private demand by roughly 15x. On
+the 180-day run: availability 95.0% -> 98.7%, unmet demand -82%, 1,482 transfers.
 
 ### Opening stock
 An item recorded as in stock opens with **ceil**(30 × mean daily demand) units — ceiling, not

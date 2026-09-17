@@ -1,0 +1,28 @@
+{
+  "_comment": "Research basis for private facilities' medicine demand (decided 2026-09-17). Figures machine-verified against the saved PDF on every build by data/pipeline/06_private_share.py.",
+  "geography": "Karnataka",
+  "measure": "ailments treated on medical advice, by healthcare service provider",
+  "source": {
+    "title": "Key Indicators of Social Consumption in India: Health, NSS 75th round (July 2017 - June 2018)",
+    "publisher": "National Statistical Office, Ministry of Statistics and Programme Implementation, Government of India",
+    "table": "Table A8, page A-8 (PDF page 48)",
+    "url": "https://www.mospi.gov.in/sites/default/files/publication_reports/KI_Health_75th_Final.pdf",
+    "raw_snapshot": "data/raw/private_share/nss75_key_indicators_health.pdf",
+    "retrieved": "2026-09-17"
+  },
+  "rural": {
+    "government_pct": 29.0,
+    "private_hospital_pct": 35.3,
+    "private_clinic_pct": 35.4,
+    "other_pct": 0.2
+  },
+  "urban": {
+    "government_pct": 14.1,
+    "private_hospital_pct": 55.0,
+    "private_clinic_pct": 29.0,
+    "other_pct": 2.0
+  },
+  "gadag_taluk_urban_population": 191375,
+  "gadag_taluk_rural_population": 175883,
+  "population_split_source": "Census 2011 urban/rural table on the Gadag taluk page, data/raw/population/censusindia2011_gadag_taluk_20260917.html (urban + rural = the verified taluk total)"
+}

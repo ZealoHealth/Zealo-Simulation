@@ -51,6 +51,16 @@ describe("buildScenarioRequest", () => {
     expect(request.days).toBe(90);
   });
 
+  it("omits the private demand share by default so the research value applies", () => {
+    const request = buildScenarioRequest(state, ["phc-01"]) as Record<string, unknown>;
+    expect("private_demand_share" in request).toBe(false);
+  });
+
+  it("sends an explicit private demand share when the user sets one", () => {
+    const custom = { ...state, scenario: { ...state.scenario, private_demand_share: 1.5 } };
+    expect(buildScenarioRequest(custom, ["phc-01"]).private_demand_share).toBe(1.5);
+  });
+
   it("omits rules while they are the defaults, keeping the run key stable", () => {
     const request = buildScenarioRequest(state, ["phc-01", "phc-02"]) as Record<string, unknown>;
     expect(request.rules).toBeUndefined();

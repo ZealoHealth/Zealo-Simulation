@@ -497,3 +497,23 @@ def test_data_status_lists_every_request_with_its_interim_approach():
     assert by_id["R5"]["status"] == "complete"
     assert by_id["R6"]["status"] == "decided"
     assert all(i["interim_approach"] for i in body["items"])
+
+
+
+def test_private_demand_defaults_to_the_nss_research_ratio(simulation_inputs):
+    context = simulate()["context"]
+    assert context["private_share_basis"] == "nss_75th_round"
+    assert context["private_demand_share"] == pytest.approx(3.656, abs=0.001)
+
+
+def test_a_settings_value_overrides_the_research_ratio(simulation_inputs):
+    context = simulate(private_demand_share=0.5)["context"]
+    assert context["private_share_basis"] == "user_setting"
+    assert context["private_demand_share"] == 0.5
+
+
+def test_the_nss_source_is_listed_with_its_assumption():
+    by_id = {s["id"]: s for s in client.get("/sources").json()["sources"]}
+    nss = by_id["nss75_health_karnataka"]
+    assert "Table A8" in nss["what_was_taken"]
+    assert any("not medicines" in lim for lim in nss["limitations"])

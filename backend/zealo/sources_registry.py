@@ -171,6 +171,36 @@ SOURCES: list[Source] = [
         ],
     ),
     Source(
+        id="nss75_health_karnataka",
+        title="Key Indicators of Social Consumption in India: Health (NSS 75th round)",
+        publisher=(
+            "National Statistical Office, Ministry of Statistics and Programme Implementation"
+        ),
+        url="https://www.mospi.gov.in/sites/default/files/publication_reports/KI_Health_75th_Final.pdf",
+        licence="Government of India publication (MoSPI).",
+        attribution="NSO, MoSPI, Government of India. NSS 75th round, July 2017 - June 2018.",
+        what_was_taken=(
+            "Table A8, Karnataka: share of ailments treated on medical advice by provider. "
+            "Rural: government 29.0%, private hospital 35.3%, private doctor/clinic 35.4%. "
+            "Urban: government 14.1%, private hospital 55.0%, private doctor/clinic 29.0%. "
+            "Weighted by Gadag taluk's urban/rural population, private facilities treat about "
+            "3.66 ailments for every one treated in government facilities; that ratio sets "
+            "private facilities' medicine demand."
+        ),
+        retrieved=date(2026, 9, 17),
+        access=AccessMethod.AUTOMATED,
+        raw_path="data/raw/private_share/nss75_key_indicators_health.pdf",
+        source_quality="official_central_government",
+        limitations=[
+            "Counts treated ailments, not medicines: assumes a treated ailment draws on "
+            "medicines similarly in either sector.",
+            "Karnataka-wide shares, not Gadag-specific; weighted by the taluk's own "
+            "urban/rural population (Census 2011).",
+            "Surveyed July 2017 - June 2018.",
+            "Charitable/NGO and informal providers (about 1% in Karnataka) are excluded.",
+        ],
+    ),
+    Source(
         id="team_verification",
         title="Facility verification by the Zealo team",
         publisher="Zealo project team",

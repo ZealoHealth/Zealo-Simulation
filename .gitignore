@@ -24,3 +24,7 @@ dist/
 # Intermediate build output is not.
 data/interim/*
 !data/interim/.gitkeep
+
+# The full NSS 75th round report is 68.8 MB and not used by any pipeline step; the figures
+# come from the 5 MB Key Indicators report. See data/raw/private_share/README.md.
+data/raw/private_share/nss75_health_in_india_report_586.pdf
