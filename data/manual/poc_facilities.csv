@@ -1,0 +1,19 @@
+# Proof-of-concept facilities. Generated once by the rule in
+# zealo.pipeline.facilities.select_poc, then yours to edit: add or remove rows
+# by facility_key and run `make data`. This file is never overwritten.
+facility_key,facility_type,label_when_selected,reason
+way/133952361,district_hospital,District Hospital,state government facility with a medicine list
+node/7205448466,government_level_unknown,Government Hospital 1,state government facility with a medicine list
+way/133182945,government_level_unknown,Government Hospital 2,state government facility with a medicine list
+node/7205430734,government_level_unknown,Government Hospital 3,state government facility with a medicine list
+node/7205430767 node/8188037213,phc,PHC 1,state government facility with a medicine list
+node/7565711917,phc,PHC 2,state government facility with a medicine list
+node/7205430838,phc,PHC 3,state government facility with a medicine list
+way/771830453,phc,PHC 4,state government facility with a medicine list
+node/7205430832,phc,PHC 5,state government facility with a medicine list
+node/7565711931,private_hospital,Private Hospital 12,nearest private facility to District Hospital (0.1 km)
+node/7565711926,clinic,Clinic 2,nearest private facility to PHC 1 (1.0 km)
+node/7565711932,clinic,Clinic 5,nearest private facility to PHC 2 (0.7 km)
+way/133182949,private_hospital,Private Hospital 24,nearest private facility to PHC 3 (1.9 km)
+node/7565711913,private_hospital,Private Hospital 25,nearest private facility to PHC 4 (7.9 km)
+node/7565711899,private_hospital,Private Hospital 39,nearest private facility to PHC 5 (10.0 km)

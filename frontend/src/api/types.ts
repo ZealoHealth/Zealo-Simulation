@@ -173,6 +173,8 @@ export interface FacilityMedicineRow {
   unmet: number;
   forecast: number;
   days_of_cover: number | null;
+  /** Deliveries due within the next 7 days; counted in cover for the status colour. */
+  incoming_7d: number;
   next_expiry_day: number | null;
   status: FacilityStatus;
 }

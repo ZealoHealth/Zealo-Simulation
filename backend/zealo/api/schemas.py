@@ -266,6 +266,7 @@ class FacilityMedicineRow(BaseModel):
     unmet: int
     forecast: float
     days_of_cover: float | None
+    incoming_7d: int = Field(default=0, description="Deliveries due within the next 7 days.")
     next_expiry_day: int | None
     status: str
 

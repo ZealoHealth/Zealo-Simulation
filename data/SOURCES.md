@@ -3,6 +3,11 @@
 Every dataset in this project traces back to an entry here. Each entry records the URL, what
 we took, the licence or terms, the retrieval date, how it was obtained, and its known limits.
 
+**Complete reference list:** `data/references.csv` — every source from the start of the project,
+including those consulted but not used, blocked by robots.txt or TLS, or rejected, with status,
+purpose, licence, retrieval date and verification. A test keeps it in step with the app's source
+registry.
+
 **Status legend** — `obtained` (in `data/raw/`, untouched) · `needed` (blocked, waiting on a
 manual download) · `planned` (not started).
 

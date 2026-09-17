@@ -372,3 +372,43 @@ def test_no_real_facility_name_reaches_processed_output():
         text = path.read_text()
         leaked = sorted(n for n in names if n in text)
         assert not leaked, f"{path.name} leaks real facility names: {leaked}"
+
+
+# --- proof-of-concept subset -----------------------------------------------------------
+
+@needs_raw
+def test_the_poc_rule_takes_every_listed_state_facility_and_nearest_private_neighbours(built):
+    from zealo.pipeline.facilities import select_poc
+
+    (facilities, _), _ = built
+    chosen = select_poc(facilities)
+    assert len(chosen) == 15
+    types = [f.facility_type for f, _ in chosen]
+    assert types.count(PHC) == 5
+    assert types.count(DISTRICT_HOSPITAL) == 1
+    assert OTHER_GOVERNMENT not in types
+    private = [(f, why) for f, why in chosen if f.ownership != "government"]
+    assert len(private) == 6
+    assert all("nearest private facility to" in why for _, why in private)
+    assert len({f.facility_key for f, _ in chosen}) == 15, "no facility chosen twice"
+
+
+@needs_raw
+def test_the_poc_rule_is_deterministic(built):
+    from zealo.pipeline.facilities import select_poc
+
+    (facilities, _), _ = built
+    first = [f.facility_key for f, _ in select_poc(facilities)]
+    second = [f.facility_key for f, _ in select_poc(list(reversed(facilities)))]
+    assert first == second
+
+
+def test_an_existing_poc_file_is_read_not_regenerated(tmp_path):
+    from zealo.pipeline.facilities import read_poc_keys
+
+    path = tmp_path / "poc_facilities.csv"
+    path.write_text(
+        "# mine\nfacility_key,facility_type,label_when_selected,reason\nnode/1,phc,,team\n"
+    )
+    assert read_poc_keys(path) == ["node/1"]
+    assert read_poc_keys(tmp_path / "absent.csv") is None

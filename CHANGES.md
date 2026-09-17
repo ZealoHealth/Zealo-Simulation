@@ -4,6 +4,51 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## References CSV, 15-facility proof of concept, share-based map colours — 2026-09-17
+
+**Status:** complete. Nothing committed.
+
+### `data/references.csv`
+26 references from the start of the project: the 11 sources used (survey, indent, OSM facilities,
+boundary and tiles, three population sources, NSS Karnataka table, WHO/HAI benchmark via the
+survey), 4 consulted but not used (NSS summary and full report, PIB release, National Health
+Accounts), 6 blocked (data.gov.in, karnataka.data.gov.in, censusindia.gov.in, NPPA, Jan Aushadhi,
+PMBI), 2 pending manual (ABDM, HMIS), 1 rejected (census2011.co.in), Nominatim (authorised, unused),
+and the CC BY 4.0 and ODbL licences. Columns: status, purpose, access method, licence, retrieval
+date, raw file, verification, notes. `test_references.py` keeps it in step with the app.
+
+### 15 facilities
+Chosen by a documented rule, not by hand: all 9 state facilities with a medicine list, plus the
+nearest private facility to each PHC and the district hospital (4 private hospitals, 2 clinics).
+Written to `data/manual/poc_facilities.csv` once and never overwritten. **Each facility keeps the
+demand it would have with all 77 present** — dividing taluk demand over 15 would have inflated
+each clinic's demand about tenfold. Runs now take 2.5 s instead of 15 s.
+
+### Map colours
+- Replaced "red if any medicine is out" (red almost everywhere) with a share-based rule: red under
+  80% in stock (WHO/HAI benchmark, confirmed in the survey PDF), amber under 95% or with low cover
+  or much near-expiry stock, green otherwise. Thresholds fixed before measuring.
+- **Found a measurement flaw:** cover counted shelf stock only, so the 21-day lead time kept ~90% of
+  facility-days amber in both modes. Cover now includes deliveries due within the week — in the
+  engine, the per-medicine status and a new `incoming_7d` field on facility rows.
+- Legend, Data Sources and the facility dashboard updated; Compare page gains **"How often
+  facilities are healthy"**.
+- Also fixed on Compare: the availability axis read 102%, and closing stock (+55%) was coloured
+  as an improvement although more stock is not better in itself.
+
+### Result (15 facilities, 180 days)
+| | Availability | Unmet units | Green / amber / red facility-days |
+|---|---|---|---|
+| Without Zealo | 95.4% | 89,744 | 74% / 19% / 7% |
+| With Zealo | **99.0%** | **14,415** (−84%) | **94% / 5% / 1%** |
+
+### Tests
+Backend **245** (POC rule, file preservation, universe demand, colour thresholds, delivery-aware
+cover, references), frontend **63**. Verified in the browser: 15 facilities, green markers, legend,
+Compare colour bars.
+
+---
+
 ## Research-based private demand; map status rule kept — 2026-09-17
 
 **Status:** complete. Nothing committed.

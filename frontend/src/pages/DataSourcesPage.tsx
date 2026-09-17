@@ -97,6 +97,10 @@ export function DataSourcesPage() {
           </p>
           <ul className="mt-3 space-y-1 text-xs text-ink-muted">
             <li>
+              The full reference list, including sources consulted but not used, is in{" "}
+              <code>data/references.csv</code>.
+            </li>
+            <li>
               {quantified} of {total} survey items have quantity estimates; the rest show
               availability only.
             </li>
@@ -206,6 +210,31 @@ export function DataSourcesPage() {
                 in a government facility, so they carry 3.66 times the government demand, split
                 equally between them. This assumes a treated ailment uses medicines similarly in
                 either sector. <ProvenanceBadge provenance="derived" />
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-ink">Map colours</dt>
+              <dd>
+                A facility is <strong className="text-status-red">red</strong> when fewer than 80% of
+                its medicines are in stock &mdash; the availability benchmark set by WHO and Health
+                Action International, cited in the Gadag survey.{" "}
+                <strong className="text-status-amber">Amber</strong> means 80&ndash;95% in stock, or
+                more than a tenth of its medicines under a week of cover, or more than a quarter of
+                its stock within 90 days of expiry. <strong className="text-status-green">Green</strong>{" "}
+                means 95% or more in stock (a standard inventory service level) with none of those
+                warnings. Cover counts deliveries already due within the week. The same rule applies
+                in both modes. <ProvenanceBadge provenance="derived" />
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-ink">Which facilities are shown</dt>
+              <dd>
+                This proof of concept shows 15 of the 77 health facilities mapped in Gadag taluk:
+                every state facility that carries a medicine list (5 PHCs, the district hospital and
+                3 government hospitals of unconfirmed level), and the private facility nearest each
+                PHC and the district hospital. Each facility keeps the share of taluk demand it
+                would have with all 77 present, so no facility&rsquo;s demand is inflated by the
+                smaller network.
               </dd>
             </div>
             <div>

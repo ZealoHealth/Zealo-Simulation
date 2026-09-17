@@ -30,15 +30,15 @@ export function Legend({ hasRun }: { hasRun: boolean }) {
       <ul className="space-y-1">
         <li className="flex items-center gap-1.5">
           <span className="inline-block h-3 w-3 rounded-full" style={{ background: STATUS_COLOURS.green }} />
-          <span className="text-navy/80">All medicines in stock</span>
+          <span className="text-navy/80">95%+ of medicines in stock</span>
         </li>
         <li className="flex items-center gap-1.5">
           <span className="inline-block h-3 w-3 rounded-full" style={{ background: STATUS_COLOURS.amber }} />
-          <span className="text-navy/80">Low cover or near-expiry stock</span>
+          <span className="text-navy/80">80&ndash;95% in stock, low cover or near expiry</span>
         </li>
         <li className="flex items-center gap-1.5">
           <span className="inline-block h-3 w-3 rounded-full" style={{ background: STATUS_COLOURS.red }} />
-          <span className="text-navy/80">Something is out of stock</span>
+          <span className="text-navy/80">Under 80% in stock (WHO/HAI benchmark)</span>
         </li>
         {!hasRun && (
           <li className="flex items-center gap-1.5">

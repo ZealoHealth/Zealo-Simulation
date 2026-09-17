@@ -27,6 +27,7 @@ POPULATION_JSON = PROCESSED_DIR / "population.json"
 PROFILES_CSV = PROCESSED_DIR / "phc_availability_profiles.csv"
 MATRIX_CSV = PROCESSED_DIR / "phc_availability_matrix.csv"
 PRIVATE_SHARE_JSON = PROCESSED_DIR / "private_share.json"
+UNIVERSE_CSV = PROCESSED_DIR / "facility_universe.csv"
 
 _BUILD_COMMANDS = {
     FACILITIES_CSV: "python data/pipeline/03_build_facilities.py",
@@ -37,6 +38,7 @@ _BUILD_COMMANDS = {
     PROFILES_CSV: "make data",
     MATRIX_CSV: "make data",
     PRIVATE_SHARE_JSON: "make data",
+    UNIVERSE_CSV: "python data/pipeline/03_build_facilities.py",
 }
 
 
@@ -242,6 +244,16 @@ def load_population_share() -> dict:
 
 
 @lru_cache(maxsize=1)
+def load_facility_universe() -> list[dict[str, str]]:
+    """Every facility mapped in the taluk, including those outside the POC subset.
+
+    No names or coordinates -- only what the demand split needs, so a POC facility's
+    share of taluk demand is what it would be with every facility present.
+    """
+    return _read_csv(UNIVERSE_CSV)
+
+
+@lru_cache(maxsize=1)
 def load_private_share() -> dict:
     return json.loads(_require(PRIVATE_SHARE_JSON).read_text())
 
@@ -272,5 +284,5 @@ def clear_cache() -> None:
     """Drop cached datasets. Used by tests and after a pipeline re-run."""
     for loader in (load_facilities, load_medicines, load_boundary, load_survey_items,
                    load_population_share, load_phc_profiles, load_phc_matrix,
-                   load_private_share):
+                   load_private_share, load_facility_universe):
         loader.cache_clear()

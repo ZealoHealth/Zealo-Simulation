@@ -45,8 +45,25 @@ from zealo.sim.models import (
 EARTH_RADIUS_KM = 6371.0
 
 # Facility status thresholds (see methods:facility_status).
+#
+# A facility's colour reflects the SHARE of its medicines that are in stock. The first rule
+# ("red if any carried medicine is out") could not work with ~53 medicines per facility: one
+# gap anywhere turned it red, so nearly every facility was red in both modes and the colour
+# said nothing. Thresholds were fixed before looking at the result:
+#   red    below 80% in stock -- the WHO / Health Action International availability
+#          benchmark, cited in the Gadag survey paper itself
+#   amber  below 95% in stock (the standard inventory service level), or more than 10% of
+#          medicines under 7 days of cover, or more than 25% of units expiring within 90 days
+# Cover counts stock on the shelf plus deliveries due within the same 7 days. Counting the
+# shelf alone flagged ~90% of facility-days in both modes: with a 21-day manufacturer lead
+# time, shelf stock routinely dips under a week while the replenishment is already on its
+# way, which is normal operation rather than a risk.
+#   green  otherwise
+# Applied identically in both modes, so a colour difference is caused by the policy alone.
+RED_BELOW_IN_STOCK_SHARE = 0.80
+GREEN_FROM_IN_STOCK_SHARE = 0.95
 LOW_COVER_DAYS = 7
-AMBER_LOW_COVER_MEDICINES = 2
+AMBER_LOW_COVER_SHARE = 0.10
 NEAR_EXPIRY_DAYS = 90
 AMBER_NEAR_EXPIRY_SHARE = 0.25
 
@@ -155,7 +172,8 @@ class SimulationState:
                 self.forecasters[(fid, mid)] = self.make_forecaster(fid, mid)
                 self.history[(fid, mid)] = {
                     key: np.zeros(scenario.days, dtype=np.int32)
-                    for key in ("on_hand", "demand", "dispensed", "unmet", "next_expiry")
+                    for key in ("on_hand", "demand", "dispensed", "unmet", "next_expiry",
+                                "incoming_7d")
                 }
                 self.history[(fid, mid)]["forecast"] = np.zeros(scenario.days, dtype=np.float32)
                 # -1 means "nothing on hand", which is distinct from "expires today".
@@ -530,29 +548,40 @@ def _serve_demand(state: SimulationState, day: int) -> None:
 
 
 def facility_status(state: SimulationState, facility_id: str, day: int) -> FacilityStatus:
-    """Red / amber / green for the map. See methods:facility_status."""
+    """Red / amber / green for the map. See methods:facility_status and the thresholds above."""
     medicine_ids = state.scenario.carried.get(facility_id, frozenset())
     if not medicine_ids:
         return FacilityStatus.GREEN
     inventory = state.inventories[facility_id]
 
+    in_stock = 0
     low_cover = 0
     near_expiry_units = 0
     total_units = 0
     for medicine_id in medicine_ids:
         on_hand = inventory.on_hand(medicine_id)
-        if on_hand == 0:
-            return FacilityStatus.RED
-        daily = max(state.forecast(facility_id, medicine_id), 1e-9)
-        if on_hand / daily < LOW_COVER_DAYS:
-            low_cover += 1
+        if on_hand > 0:
+            in_stock += 1
+            daily = state.forecast(facility_id, medicine_id)
+            if daily > 0:
+                incoming = state.arrivals_within(facility_id, medicine_id, LOW_COVER_DAYS)
+                if (on_hand + incoming) / daily < LOW_COVER_DAYS:
+                    low_cover += 1
         total_units += on_hand
         near_expiry_units += inventory.quantity_expiring_before(
             medicine_id, day + NEAR_EXPIRY_DAYS
         )
 
+    n = len(medicine_ids)
+    in_stock_share = in_stock / n
+    if in_stock_share < RED_BELOW_IN_STOCK_SHARE:
+        return FacilityStatus.RED
     near_expiry_share = near_expiry_units / total_units if total_units else 0.0
-    if low_cover >= AMBER_LOW_COVER_MEDICINES or near_expiry_share > AMBER_NEAR_EXPIRY_SHARE:
+    if (
+        in_stock_share < GREEN_FROM_IN_STOCK_SHARE
+        or low_cover / n > AMBER_LOW_COVER_SHARE
+        or near_expiry_share > AMBER_NEAR_EXPIRY_SHARE
+    ):
         return FacilityStatus.AMBER
     return FacilityStatus.GREEN
 
@@ -592,6 +621,10 @@ def run(scenario: Scenario, policy: Policy) -> RunResult:
         _expire(state, day)
         _serve_demand(state, day)
         policy.decide(day, state)
+        # Deliveries due within the cover window, after today's orders are placed -- the
+        # same quantity the status rule counts, so the facility panel agrees with the map.
+        for (fid, mid), record in state.history.items():
+            record["incoming_7d"][day] = state.arrivals_within(fid, mid, LOW_COVER_DAYS)
 
         statuses = {
             f.id: facility_status(state, f.id, day).value for f in scenario.facilities

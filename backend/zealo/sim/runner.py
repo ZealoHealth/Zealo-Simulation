@@ -35,6 +35,7 @@ from zealo.data_access import (
     FacilityRecord,
     SurveyItem,
     load_facilities,
+    load_facility_universe,
     load_medicines,
     load_phc_matrix,
     load_phc_profiles,
@@ -130,6 +131,7 @@ def _check_datasets() -> None:
         load_phc_profiles()
         load_phc_matrix()
         load_private_share()
+        load_facility_universe()
         load_survey_items()
         load_facilities()
     except DatasetMissing as exc:
@@ -227,6 +229,20 @@ def build_scenario(
     attendance = _read_attendance()
     demand: dict[tuple[str, str], np.ndarray] = {}
     method: dict[str, str] = {}
+    # Holders in the whole taluk, not just the POC subset. Splitting taluk demand over the
+    # 15 POC facilities alone would hand each one several times its real share.
+    universe = load_facility_universe()
+
+    def universe_holders(medicine_id: str, government: bool) -> int:
+        count = 0
+        for row in universe:
+            column = LIST_COLUMN.get(row["medicine_list"])
+            if not column or not getattr(indent[medicine_id], column):
+                continue
+            if (row["ownership"] == "government") == government:
+                count += 1
+        return count
+
     for m in medicines:
         taluk_annual = (indent[m.id].indent_qty or 0) * share * demand_scale
         holders = [f for f in facilities if m.id in carried[f.id]]
@@ -234,23 +250,25 @@ def build_scenario(
             continue
         government = [f for f in holders if f.ownership == "government"]
         private = [f for f in holders if f.ownership != "government"]
+        n_government = max(universe_holders(m.id, True), len(government))
+        n_private = max(universe_holders(m.id, False), len(private))
 
         weights: dict[str, float] = {}
         keys = [record_by_id[f.id].facility_key for f in government]
-        if government and all(k in attendance for k in keys):
+        if government and n_government == len(government) and all(k in attendance for k in keys):
             total = sum(attendance[k] for k in keys)
             weights = {
                 f.id: attendance[record_by_id[f.id].facility_key] / total for f in government
             }
             method[m.id] = "attendance_weighted"
         elif government:
-            weights = {f.id: 1 / len(government) for f in government}
+            weights = {f.id: 1 / n_government for f in government}
             method[m.id] = "equal_shares"
         for f in government:
             rate = taluk_annual * weights[f.id] / 365
             demand[(f.id, m.id)] = rng.poisson(rate, days).astype(np.int32)
         if private and private_demand_share > 0:
-            per = taluk_annual * private_demand_share / len(private) / 365
+            per = taluk_annual * private_demand_share / n_private / 365
             for f in private:
                 demand[(f.id, m.id)] = rng.poisson(per, days).astype(np.int32)
 

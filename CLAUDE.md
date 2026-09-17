@@ -242,6 +242,18 @@ Direct equivalents:
 - Recharts is **lazily loaded**: the two chart pages are `React.lazy` routes so the map, the
   page a judge lands on, does not pay for it.
 
+## Proof-of-concept subset (decided 2026-09-17)
+
+- The site shows **15 of 77** facilities: all 9 state facilities with a medicine list + the nearest
+  private facility to each PHC and the district hospital. Rule in `select_poc`; selection in
+  `data/manual/poc_facilities.csv` (generated once, then the team's to edit, never overwritten).
+- `data/processed/facilities.csv` holds only the 15, labelled within the subset (PHC 1-5,
+  Private Hospital 1-4, Clinic 1-2...). `facility_universe.csv` holds all 77 (no names/coords).
+- **Demand shares divide by holders in the universe, not the POC**, or each POC facility would get
+  several times its real demand. Tested.
+- `data/references.csv` is the complete reference list (26 rows, incl. blocked/rejected sources);
+  `test_references.py` fails if a registry source is missing from it.
+
 ## Interim data rules (decided by the team, 2026-09-16)
 
 - **Never block on missing data.** Each gap has an interim approach, tagged `estimated`, listed
@@ -271,9 +283,12 @@ Direct equivalents:
   90 days, at-risk computed FEFO. Without these the first real run made 58,273 transfers, 64% of
   them ≤ 2 units, with stock ping-ponging. There are tests for each.
 - Opening stock uses ceil, not round, or survey-in-stock items open empty.
-- **Map status saturates:** with ~53 medicines per facility, "red if any medicine is out" makes
-  55–75 of 77 facilities red in both modes. **Team decision 2026-09-17: keep the spec rule.**
-  Do not change it without asking.
+- **Map status is share-based** (team decision 2026-09-17, replacing the spec's "red if any
+  medicine is out", which made nearly every facility red): red < 80% in stock (WHO/HAI
+  benchmark, cited in the survey), amber < 95% or >10% of medicines under 7 days' cover or >25%
+  near expiry, green otherwise. **Cover includes deliveries due within 7 days** — shelf-only cover
+  flagged ~90% of facility-days amber in both modes. Same rule in both modes; thresholds fixed
+  before measuring. Don't tune them to the output.
 
 ## Frontend notes (interim data)
 

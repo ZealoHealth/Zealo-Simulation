@@ -682,3 +682,61 @@ def phcs_from_locations(
             )
         )
     return added, report
+
+
+# --- proof-of-concept subset ---------------------------------------------------------
+
+POC_SIZE = 15
+POC_FIELDS = ["facility_key", "facility_type", "label_when_selected", "reason"]
+
+
+def select_poc(facilities: list[Facility]) -> list[tuple[Facility, str]]:
+    """Choose the proof-of-concept facilities by a fixed, documented rule.
+
+    1. Every state government facility that carries a state medicine list -- the five PHCs
+       the survey is about, the district hospital, and the facilities of unconfirmed
+       level. The Railway Hospital is left out: it has no state list and is outside the
+       network, so it would add nothing to the simulation.
+    2. For each PHC and the district hospital, the nearest private facility not already
+       chosen, so every government facility has a real neighbour to trade stock with.
+
+    Deterministic: anchors are taken in internal-id order, ties broken by id.
+    """
+    government = sorted(
+        (f for f in facilities
+         if f.facility_type in GOVERNMENT_TYPES and MEDICINE_LIST[f.facility_type] != "none"),
+        key=lambda f: f.internal_id,
+    )
+    chosen: list[tuple[Facility, str]] = [
+        (f, "state government facility with a medicine list") for f in government
+    ]
+    private = [f for f in facilities if f.ownership != "government"]
+    anchors = [f for f in government if f.facility_type in (PHC, DISTRICT_HOSPITAL)]
+    taken: set[str] = set()
+    for anchor in anchors:
+        candidates = sorted(
+            (p for p in private if p.facility_key not in taken),
+            key=lambda p: (haversine_m(anchor.lat, anchor.lon, p.lat, p.lon), p.internal_id),
+        )
+        if not candidates:
+            break
+        nearest = candidates[0]
+        taken.add(nearest.facility_key)
+        km = haversine_m(anchor.lat, anchor.lon, nearest.lat, nearest.lon) / 1000
+        chosen.append(
+            (nearest, f"nearest private facility to {anchor.display_label} ({km:.1f} km)")
+        )
+    return chosen[:POC_SIZE]
+
+
+def read_poc_keys(path: Path) -> list[str] | None:
+    """Facility keys in the team's POC file, or None if it does not exist yet."""
+    if not path.exists():
+        return None
+    with path.open(newline="") as fh:
+        lines = [line for line in fh if not line.lstrip().startswith("#")]
+    return [
+        row["facility_key"].strip()
+        for row in csv.DictReader(lines)
+        if (row.get("facility_key") or "").strip()
+    ]

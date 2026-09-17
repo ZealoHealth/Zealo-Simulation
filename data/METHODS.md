@@ -246,18 +246,56 @@ expiry. Tagged `estimated` — the survey records no expiry dates whatsoever.
 
 ---
 
-## `methods:facility_status` — Map colour per facility per day *(Milestone 6 — implemented)*
+## `methods:facility_status` — Map colour per facility per day *(implemented; revised 2026-09-17)*
 
-- **red** — any carried medicine is out of stock
-- **amber** — **2 or more** carried medicines have under **7 days** of cover, **or** more than
-  **25%** of units on hand expire within **90 days**
-- **green** — otherwise
+A facility's colour reflects the **share of its medicines in stock**:
 
-**Known effect, kept by decision (2026-09-17):** facilities carry about 53 medicines, so "any
-out of stock" is true most of the time and 55-75 of 77 facilities show red in both modes. The
-team chose to keep the specified rule.
+- **red** — fewer than **80%** of carried medicines in stock. This is the availability benchmark
+  set by WHO and Health Action International, cited in the Gadag survey itself (page 7:
+  "slightly lower than the 80% benchmark set by WHO and Health Action International").
+- **amber** — 80% to under **95%** in stock (a standard inventory service level), **or** more than
+  **10%** of carried medicines under **7 days** of cover, **or** more than **25%** of units on hand
+  expiring within **90 days**.
+- **green** — 95% or more in stock with none of the amber warnings.
 
-`derived` from simulation state. Days of cover use the forecast, not a fixed average.
+**Cover** = (stock on hand + deliveries due within the next 7 days) ÷ forecast daily demand.
+
+`derived` from simulation state, and applied identically in both modes.
+
+**Why it changed.** The original rule — red if *any* carried medicine is out of stock — could not
+work with ~53 medicines per facility: a single gap anywhere turned a facility red, so 55–75 of 77
+facilities were red in both modes and the colour carried no information. The thresholds above
+were fixed before the result was measured, not tuned to it.
+
+The first version of the share rule still left ~85% of facility-days amber in both modes. The
+cause was a measurement flaw: cover counted shelf stock only. With a 21-day manufacturer lead
+time, shelf stock routinely dips under a week while the replenishment is already on its way,
+which is normal operation rather than a risk. Counting deliveries due within the week fixed it.
+
+**Result (15 facilities, 180 days, seed 42):** without Zealo 74% green / 19% amber / 7% red of
+facility-days; with Zealo 94% / 5% / 1%. After the first month: 84% vs 100% green. The one
+condition that separates the modes is "under 95% in stock": 16% of facility-days without Zealo,
+0% with it.
+
+---
+
+## `methods:poc_subset` — The 15 facilities in the proof of concept
+
+The site shows 15 of the 77 facilities mapped in Gadag taluk, chosen by a fixed rule
+(`zealo.pipeline.facilities.select_poc`), written once to `data/manual/poc_facilities.csv` and
+never overwritten — edit that file to change the selection:
+
+1. Every state government facility that carries a state medicine list: the 5 PHCs, the district
+   hospital and the 3 government hospitals of unconfirmed level. The Railway Hospital is left out
+   (no state list, outside the network, so it adds nothing to the simulation).
+2. For each PHC and the district hospital, the nearest private facility not already chosen, so
+   each has a real neighbour to trade stock with. Result: 4 private hospitals and 2 clinics.
+
+**Demand is not inflated by the smaller network.** Each POC facility receives the share of taluk
+demand it would have with all 77 present: the demand for an item is divided by the number of
+facilities carrying it in `data/processed/facility_universe.csv`, not by the number in the POC.
+Splitting the taluk's private demand over 6 facilities instead of 67 would have given each clinic
+roughly ten times its real share.
 
 ---
 

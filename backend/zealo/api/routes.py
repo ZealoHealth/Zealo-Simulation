@@ -45,6 +45,7 @@ from zealo.data_access import (
     DatasetMissing,
     load_boundary,
     load_facilities,
+    load_facility_universe,
     load_medicines,
     load_phc_matrix,
     load_survey_items,
@@ -112,16 +113,21 @@ def get_facilities(include_boundary: bool = True) -> FacilitiesResponse:
         raise _dataset_error(exc) from exc
 
     phcs = sum(1 for r in records if r.facility_type == "phc")
-    pharmacies = sum(1 for r in records if r.facility_type == "pharmacy")
+    universe = load_facility_universe()
+    universe_pharmacies = sum(1 for u in universe if u["facility_type"] == "pharmacy")
     coverage = Coverage(
         phcs_mapped=phcs,
         phcs_in_survey=15,
-        pharmacies_mapped=pharmacies,
+        pharmacies_mapped=universe_pharmacies,
         statements=[
+            f"This proof of concept shows {len(records)} of the {len(universe)} health "
+            "facilities mapped in Gadag taluk from public sources: every state facility with "
+            "a medicine list, and the private facility nearest each PHC and the district "
+            "hospital. Each keeps the demand it would have with all facilities present.",
             f"{phcs} of Gadag taluk's 15 PHCs have a public location in our sources. "
             "Survey results for all 15 are used in taluk-wide statistics.",
-            f"Only {pharmacies} pharmacies have public map records; the real number in "
-            "Gadag taluk is much higher.",
+            f"Only {universe_pharmacies} pharmacies have public map records; the real number "
+            "in Gadag taluk is much higher.",
         ],
     )
 
@@ -390,11 +396,12 @@ def _expiry_bucket(days_remaining: int) -> int | None:
 
 
 def _row_status(
-    on_hand: int, forecast: float, next_expiry: int | None, day: int
+    on_hand: int, forecast: float, next_expiry: int | None, day: int, incoming: int = 0
 ) -> str:
+    """One medicine's status. Cover counts deliveries due within the week, as the map does."""
     if on_hand == 0:
         return "red"
-    cover = _days_of_cover(on_hand, forecast)
+    cover = _days_of_cover(on_hand + incoming, forecast)
     if cover is not None and cover < LOW_COVER_DAYS:
         return "amber"
     if next_expiry is not None and next_expiry - day <= NEAR_EXPIRY_DAYS:
@@ -445,6 +452,7 @@ def get_facility_run(
         forecast = float(history["forecast"][day])
         expiry = int(history["next_expiry"][day])
         next_expiry = expiry if expiry >= 0 else None
+        incoming = int(history["incoming_7d"][day])
         rows.append(
             FacilityMedicineRow(
                 medicine_id=medicine_id,
@@ -456,8 +464,9 @@ def get_facility_run(
                 unmet=int(history["unmet"][day]),
                 forecast=round(forecast, 3),
                 days_of_cover=_days_of_cover(on_hand, forecast),
+                incoming_7d=incoming,
                 next_expiry_day=next_expiry,
-                status=_row_status(on_hand, forecast, next_expiry, day),
+                status=_row_status(on_hand, forecast, next_expiry, day, incoming),
             )
         )
         if next_expiry is not None and on_hand > 0:
@@ -597,6 +606,7 @@ def get_medicine_run(
             forecast = float(history["forecast"][day])
             expiry = int(history["next_expiry"][day])
             next_expiry = expiry if expiry >= 0 else None
+            incoming = int(history["incoming_7d"][day])
             rows.append(
                 MedicineDayRow(
                     facility_id=facility.id,
@@ -605,7 +615,7 @@ def get_medicine_run(
                     in_stock=on_hand > 0,
                     days_of_cover=_days_of_cover(on_hand, forecast),
                     next_expiry_day=next_expiry,
-                    status=_row_status(on_hand, forecast, next_expiry, day),
+                    status=_row_status(on_hand, forecast, next_expiry, day, incoming),
                 )
             )
     if not rows:

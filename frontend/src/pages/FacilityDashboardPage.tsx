@@ -279,7 +279,14 @@ export function FacilityDashboardPage() {
                             }`}
                           >
                             <Td>{row.name}</Td>
-                            <Td align="right">{row.on_hand}</Td>
+                            <Td align="right">
+                              {row.on_hand}
+                              {row.incoming_7d > 0 && (
+                                <span className="ml-1 text-[10px] text-purple" title="Due within 7 days">
+                                  +{row.incoming_7d}
+                                </span>
+                              )}
+                            </Td>
                             <Td align="right">{row.days_of_cover?.toFixed(1) ?? "—"}</Td>
                             <Td align="right">
                               {row.next_expiry_day != null

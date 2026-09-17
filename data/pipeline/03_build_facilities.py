@@ -44,6 +44,9 @@ from zealo.pipeline.facilities import (
     load_osm_records,
     phcs_from_locations,
     read_phc_locations,
+    read_poc_keys,
+    select_poc,
+    POC_FIELDS,
 )
 from zealo.pipeline.geocode import Geocoder
 
@@ -53,12 +56,13 @@ BOUNDARY_JSON = OSM_DIR / "overpass_gadag_taluk_boundary_20260916.json"
 VERIFICATION_CSV = MANUAL_DIR / "facility_verification.csv"
 PHC_LOCATIONS_CSV = MANUAL_DIR / "phc_locations.csv"
 ATTENDANCE_CSV = MANUAL_DIR / "facility_attendance.csv"
+POC_CSV = MANUAL_DIR / "poc_facilities.csv"
 
 SURVEY_PHC_COUNT = 15
 RETRIEVED = "2026-09-16"
 
 VERIFICATION_FIELDS = [
-    "facility_key", "internal_id", "display_label", "facility_type", "ownership",
+    "facility_key", "in_poc", "internal_id", "display_label", "facility_type", "ownership",
     "osm_name", "lat", "lon", "location_precision", "needs_review", "evidence",
     "map_link_osm", "map_link_google",
     "verified", "correct_type", "correct_ownership", "beds", "notes",
@@ -124,11 +128,48 @@ def main() -> int:
     for f in facilities:
         if f.facility_key in corrections:
             correction_problems += apply_corrections(f, corrections[f.facility_key])
-    assign_labels(facilities)  # relabel after corrections, so labels follow confirmed types
+    assign_labels(facilities)  # labels over the full list, used only to describe the selection
+
+    # --- proof-of-concept subset (15) ------------------------------------------------
+    poc_keys = read_poc_keys(POC_CSV)
+    poc_problems: list[str] = []
+    if poc_keys is None:
+        selection = select_poc(facilities)
+        with POC_CSV.open("w", newline="") as fh:
+            fh.write(
+                "# Proof-of-concept facilities. Generated once by the rule in\n"
+                "# zealo.pipeline.facilities.select_poc, then yours to edit: add or remove rows\n"
+                "# by facility_key and run `make data`. This file is never overwritten.\n"
+            )
+            writer = csv.DictWriter(fh, fieldnames=POC_FIELDS)
+            writer.writeheader()
+            for f, reason in selection:
+                writer.writerow({"facility_key": f.facility_key, "facility_type": f.facility_type,
+                                 "label_when_selected": f.display_label, "reason": reason})
+        poc_keys = [f.facility_key for f, _ in selection]
+    by_key = {f.facility_key: f for f in facilities}
+    poc_problems += [f"poc_facilities.csv: {k} is not a known facility" for k in poc_keys
+                     if k not in by_key]
+    poc_key_set = {k for k in poc_keys if k in by_key}
+    poc = [f for f in facilities if f.facility_key in poc_key_set]
+    rest = [f for f in facilities if f.facility_key not in poc_key_set]
+
+    # Everything the rest of the pipeline and the site see is the subset, numbered within
+    # itself (PHC 1-5, Private Hospital 1-4, ...). The full list is kept as a universe so
+    # each facility's share of taluk demand is what it would be with every facility present.
+    universe = [
+        {"facility_key": f.facility_key, "facility_type": f.facility_type,
+         "ownership": f.ownership, "medicine_list": MEDICINE_LIST[f.facility_type],
+         "in_poc": f.facility_key in poc_key_set}
+        for f in facilities
+    ]
+    pd.DataFrame(universe).to_csv(PROCESSED_DIR / "facility_universe.csv", index=False)
+    assign_labels(poc)
+    facilities = poc + rest
 
     # --- what the website reads: no real names anywhere ------------------------------
     rows = []
-    for f in facilities:
+    for f in poc:
         rows.append(
             {
                 "internal_id": f.internal_id,
@@ -183,11 +224,13 @@ def main() -> int:
         for f in facilities:
             prior = corrections.get(f.facility_key, {})
             osm_link, google_link = _links(f.lat, f.lon)
+            in_poc = f.facility_key in poc_key_set
             writer.writerow(
                 {
                     "facility_key": f.facility_key,
-                    "internal_id": f.internal_id,
-                    "display_label": f.display_label,
+                    "in_poc": "yes" if in_poc else "no",
+                    "internal_id": f.internal_id if in_poc else "",
+                    "display_label": f.display_label if in_poc else "",
                     "facility_type": f.facility_type,
                     "ownership": f.ownership,
                     "osm_name": " | ".join(f.real_names),
@@ -219,7 +262,7 @@ def main() -> int:
         )
         writer = csv.DictWriter(fh, fieldnames=ATTENDANCE_FIELDS)
         writer.writeheader()
-        for f in facilities:
+        for f in poc:
             if f.facility_type not in GOVERNMENT_TYPES:
                 continue
             prior = attendance.get(f.facility_key, {})
@@ -229,23 +272,25 @@ def main() -> int:
                 **{k: prior.get(k, "") for k in
                    ("opd_annual", "ipd_annual", "period", "source", "notes")},
             })
-        for key in sorted(set(attendance) - {f.facility_key for f in facilities}):
+        for key in sorted(set(attendance) - {f.facility_key for f in poc}):
             writer.writerow({k: attendance[key].get(k, "") for k in ATTENDANCE_FIELDS})
 
     by_type: dict[str, int] = {}
-    for f in facilities:
+    for f in poc:
         by_type[f.facility_type] = by_type.get(f.facility_type, 0) + 1
     phc_count = by_type.get(PHC, 0)
     meta = {
         "built_on": date.today().isoformat(),
         "osm_records": len(records),
-        "facilities": len(facilities),
+        "facilities_mapped": len(facilities),
+        "facilities": len(poc),
+        "poc_problems": poc_problems,
         "added_from_phc_locations": len(added),
         "geocoder_live_requests": geocoder.live_requests if geocoder else 0,
         "excluded": excluded,
         "by_type": by_type,
-        "verified": sum(1 for f in facilities if f.verified),
-        "pharmacies_mapped": by_type.get(PHARMACY, 0),
+        "verified": sum(1 for f in poc if f.verified),
+        "pharmacies_mapped": sum(1 for f in facilities if f.facility_type == PHARMACY),
         "phcs_mapped": phc_count,
         "phcs_in_survey": SURVEY_PHC_COUNT,
         "location_report": location_report,
@@ -253,11 +298,12 @@ def main() -> int:
     }
     (INTERIM_DIR / "facility_build_report.json").write_text(json.dumps(meta, indent=2))
 
-    print(f"Facilities: {len(facilities)} ({len(added)} added from phc_locations.csv)")
+    print(f"Facilities: {len(poc)} in the proof of concept, of {len(facilities)} mapped "
+          f"({len(added)} added from phc_locations.csv)")
     print("By type:    " + ", ".join(f"{k}={v}" for k, v in sorted(by_type.items())))
-    print(f"Verified:   {meta['verified']} of {len(facilities)}")
+    print(f"Verified:   {meta['verified']} of {len(poc)}")
     print(f"PHCs:       {phc_count} of {SURVEY_PHC_COUNT} mapped")
-    for line in location_report + correction_problems:
+    for line in location_report + correction_problems + poc_problems:
         print(f"  ! {line}")
     return 0
 

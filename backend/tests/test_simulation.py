@@ -382,3 +382,63 @@ def test_an_approval_limit_works_in_units_when_prices_are_unknown():
     tight = FacilityRules(auto_approval_limit=5)
     result = run(build_scenario(rules=tight, days=90, price=None), ZealoPolicy())
     assert result.metrics.approval_requests > 0
+
+
+# --- map status rule ---------------------------------------------------------------------
+
+def _state_with_stock(stock_by_medicine: dict[str, int], days: int = 30):
+    from zealo.sim.engine import SimulationState
+
+    n = len(stock_by_medicine)
+    scenario = build_scenario(n_facilities=1, n_medicines=n, days=days, opening_days_of_stock=0)
+    state = SimulationState(scenario, "test")
+    for i, (_, units) in enumerate(stock_by_medicine.items()):
+        if units:
+            state.inventories["fac-0"].add(f"med-{i}", units, expiry_day=500)
+    return state
+
+
+def test_a_facility_is_red_below_the_who_80_percent_benchmark():
+    from zealo.sim.engine import facility_status
+
+    stock = {f"m{i}": (1000 if i < 7 else 0) for i in range(10)}  # 70% in stock
+    assert facility_status(_state_with_stock(stock), "fac-0", 0).value == "red"
+
+
+def test_a_facility_is_amber_between_80_and_95_percent():
+    from zealo.sim.engine import facility_status
+
+    stock = {f"m{i}": (1000 if i < 9 else 0) for i in range(10)}  # 90% in stock
+    assert facility_status(_state_with_stock(stock), "fac-0", 0).value == "amber"
+
+
+def test_a_facility_is_green_with_everything_in_stock_and_covered():
+    from zealo.sim.engine import facility_status
+
+    stock = {f"m{i}": 1000 for i in range(10)}
+    assert facility_status(_state_with_stock(stock), "fac-0", 0).value == "green"
+
+
+def test_one_missing_medicine_no_longer_turns_a_large_facility_red():
+    """The old rule made ~53-medicine facilities red whenever a single item ran out."""
+    from zealo.sim.engine import facility_status
+
+    stock = {f"m{i}": (1000 if i else 0) for i in range(40)}  # 39 of 40 = 97.5%
+    assert facility_status(_state_with_stock(stock), "fac-0", 0).value == "green"
+
+
+def test_a_delivery_due_this_week_counts_towards_cover():
+    """Shelf stock dips under a week while a replenishment is on its way: not a risk."""
+    from zealo.sim.engine import facility_status
+    from zealo.sim.models import Delivery, DeliveryKind, NodeKind
+
+    stock = {f"m{i}": 20 for i in range(10)}  # 2 days of cover at 10/day
+    state = _state_with_stock(stock)
+    assert facility_status(state, "fac-0", 0).value == "amber"
+    for i in range(10):
+        state._queue(Delivery(
+            arrival_day=3, facility_id="fac-0", medicine_id=f"med-{i}", quantity=200,
+            expiry_day=700, kind=DeliveryKind.MANUFACTURER_ORDER,
+            source_kind=NodeKind.MANUFACTURER, source_id="mfr-a",
+        ))
+    assert facility_status(state, "fac-0", 0).value == "green"

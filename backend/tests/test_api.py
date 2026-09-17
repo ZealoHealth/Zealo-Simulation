@@ -478,16 +478,30 @@ def test_unmapped_survey_profiles_are_listed(simulation_inputs):
     assert len(data["unmapped_phcs"]) == 15 - mapped
 
 
-def test_a_network_override_can_bring_a_pharmacy_in(simulation_inputs):
-    pharmacy = next(
-        f for f in client.get("/facilities").json()["facilities"]
-        if f["facility_type"] == "pharmacy"
+def test_a_network_override_takes_a_facility_out_and_back_in(simulation_inputs):
+    phc = next(
+        f for f in client.get("/facilities").json()["facilities"] if f["facility_type"] == "phc"
     )
     default = simulate(seed=12)
-    joined = simulate(seed=12, network_overrides={pharmacy["id"]: True})
-    assert default["run_id"] != joined["run_id"]
-    detail = client.get(f"/runs/{joined['run_id']}/facilities/{pharmacy['id']}").json()
-    assert detail["in_network"] is True
+    out = simulate(seed=12, network_overrides={phc["id"]: False})
+    assert default["run_id"] != out["run_id"]
+    detail = client.get(f"/runs/{out['run_id']}/facilities/{phc['id']}").json()
+    assert detail["in_network"] is False
+
+
+def test_the_proof_of_concept_shows_fifteen_facilities():
+    body = client.get("/facilities").json()
+    assert len(body["facilities"]) == 15
+    types = [f["facility_type"] for f in body["facilities"]]
+    assert types.count("phc") == 5
+    assert "other_government" not in types, "the Railway Hospital adds nothing to the simulation"
+    assert any("15 of the" in s for s in body["coverage"]["statements"])
+
+
+def test_facility_rows_report_deliveries_due_within_the_week(simulation_inputs):
+    body = simulate()
+    rows = client.get(f"/runs/{body['run_id']}/facilities/phc-01", params={"day": 40}).json()
+    assert all("incoming_7d" in r for r in rows["medicines"])
 
 
 def test_data_status_lists_every_request_with_its_interim_approach():
@@ -517,3 +531,18 @@ def test_the_nss_source_is_listed_with_its_assumption():
     nss = by_id["nss75_health_karnataka"]
     assert "Table A8" in nss["what_was_taken"]
     assert any("not medicines" in lim for lim in nss["limitations"])
+
+
+def test_poc_demand_is_the_facilitys_share_of_the_whole_taluk(simulation_inputs):
+    """Splitting taluk demand over 15 facilities would inflate each one several times over."""
+    from zealo.data_access import load_facility_universe
+    from zealo.sim.runner import build_scenario
+
+    built = build_scenario(days=365, seed=3, demand_scale=1.0, lead_time_days=21,
+                           express_lead_time_days=5, min_shelf_life_days=180,
+                           near_expiry_share=0.15)
+    universe = load_facility_universe()
+    private_holders = sum(1 for u in universe if u["ownership"] != "government"
+                          and u["medicine_list"] != "none")
+    poc_private = [f for f in built.scenario.facilities if f.ownership != "government"]
+    assert private_holders > len(poc_private) * 5, "the universe must be the full taluk"
