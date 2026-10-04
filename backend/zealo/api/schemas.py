@@ -245,6 +245,9 @@ class MedicineDayRow(BaseModel):
     next_expiry_day: int | None
     status: str
     provenance: str = "estimated"
+    incoming_7d: int = Field(
+        default=0, description="Deliveries due within 7 days; the status's cover counts them."
+    )
 
 
 class MedicineAtFacilitiesResponse(BaseModel):

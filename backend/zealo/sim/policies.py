@@ -38,7 +38,7 @@ def review_alone(day: int, state: SimulationState, facility) -> None:
     """
     rules = facility.rules
     scenario = state.scenario
-    for medicine_id in scenario.carried.get(facility.id, frozenset()):
+    for medicine_id in sorted(scenario.carried.get(facility.id, frozenset())):
         key = (facility.id, medicine_id)
         last = state._last_review.get(key)
         if last is not None and day - last < rules.review_interval_days:
@@ -102,14 +102,16 @@ class ZealoPolicy:
         network = [f for f in state.scenario.facilities if f.in_network]
         outside = [f for f in state.scenario.facilities if not f.in_network]
 
+        # Medicines in sorted order: a frozenset's order changes with the hash seed, and
+        # the event log (and anything ordered by it) must be identical on every run.
         for facility in network:
-            for medicine_id in state.scenario.carried.get(facility.id, frozenset()):
+            for medicine_id in sorted(state.scenario.carried.get(facility.id, frozenset())):
                 self._relieve_shortage(day, state, facility, medicine_id, network)
         for facility in network:
-            for medicine_id in state.scenario.carried.get(facility.id, frozenset()):
+            for medicine_id in sorted(state.scenario.carried.get(facility.id, frozenset())):
                 self._rebalance_near_expiry(day, state, facility, medicine_id, network)
         for facility in network:
-            for medicine_id in state.scenario.carried.get(facility.id, frozenset()):
+            for medicine_id in sorted(state.scenario.carried.get(facility.id, frozenset())):
                 self._refill(day, state, facility, medicine_id)
 
         # A facility outside the network gets no Zealo behaviour at all.

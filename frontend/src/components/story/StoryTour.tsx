@@ -18,8 +18,8 @@ const PLAY_DELAY_MS = 1200;
 const PLAY_STEP_MS = 650;
 
 const TONE: Record<string, string> = {
-  zealo: "text-purple",
-  alone: "text-ink-muted",
+  zealo: "text-scrub",
+  alone: "text-ink-2",
   neutral: "text-ink",
 };
 
@@ -89,46 +89,39 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
           key={chapter.id}
           aria-live="polite"
           aria-label={`Story chapter ${current + 1} of ${chapters.length}`}
-          className="rise pointer-events-auto rounded-2xl bg-surface p-5 shadow-raised"
+          className="rise pointer-events-auto rounded-xl border border-line bg-surface p-5 shadow-[var(--shadow-lift)]"
         >
           <header className="flex items-start justify-between gap-3">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-coral">
-              {chapter.kicker}
-            </p>
-            <button
-              type="button"
-              onClick={() => setChapter(null)}
-              aria-label="Leave the story"
-              className="-mr-1 -mt-1 rounded-md px-2 py-0.5 text-xs font-semibold text-ink-subtle hover:bg-surface-sunken hover:text-ink"
-            >
-              Exit &times;
-            </button>
+            <p className="pt-2.5 text-sm font-bold text-scrub">{chapter.kicker}</p>
+            <Button variant="ghost" onClick={() => setChapter(null)} aria-label="Leave the story">
+              Exit
+            </Button>
           </header>
 
-          <h2 className="mt-1.5 text-xl font-extrabold leading-snug tracking-tight text-ink">
+          <h2 className="mt-1 text-[22px] font-bold leading-snug tracking-[-0.01em] text-ink">
             {chapter.title}
           </h2>
-          <div className="mt-2 space-y-1.5 text-sm leading-relaxed text-ink-muted">
+          <div className="mt-2 space-y-2 text-[15px] leading-relaxed text-ink-2">
             {chapter.body.map((line) => (
               <p key={line}>{line}</p>
             ))}
           </div>
 
           {chapter.stats.length > 0 && (
-            <dl className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-4 grid grid-cols-2 border-t border-line-soft">
               {chapter.stats.map((stat) => (
-                <div key={stat.label} className="rounded-lg bg-surface-sunken px-3 py-1.5">
-                  <dt className="text-[10px] font-medium uppercase tracking-wide text-ink-subtle">
-                    {stat.label}
-                  </dt>
-                  <dd className={`tabular text-base font-bold ${TONE[stat.tone]}`}>{stat.value}</dd>
-                </div>
+                <dl key={stat.label} className="flex flex-col-reverse justify-end pt-3">
+                  <dt className="text-sm text-ink-2">{stat.label}</dt>
+                  <dd className={`tabular text-[26px] font-bold leading-tight ${TONE[stat.tone]}`}>
+                    {stat.value}
+                  </dd>
+                </dl>
               ))}
-            </dl>
+            </div>
           )}
 
-          <footer className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-3">
-            <div className="flex items-center gap-1.5" role="tablist" aria-label="Story chapters">
+          <footer className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <div className="flex items-center" role="tablist" aria-label="Story chapters">
               {chapters.map((c, i) => (
                 <button
                   key={c.id}
@@ -137,22 +130,26 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
                   aria-selected={i === current}
                   aria-label={`Chapter ${i + 1}: ${c.kicker}`}
                   onClick={() => setChapter(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === current ? "w-6 bg-purple" : "w-2 bg-hairline hover:bg-ink-subtle"
-                  }`}
-                />
+                  className="flex h-11 w-6 items-center justify-center"
+                >
+                  <span
+                    className={`block h-2 rounded-full transition-all ${
+                      i === current ? "w-5 bg-scrub" : "w-2 bg-line hover:bg-muted"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
-            <span className="ml-auto flex items-center gap-1.5 text-[10px] text-ink-subtle">
+            <span className="ml-auto flex items-center gap-1.5 text-sm text-muted">
               Simulated <ProvenanceBadge provenance="estimated" />
             </span>
             <div className="flex w-full justify-between gap-2">
               <Button onClick={() => setChapter(current - 1)} disabled={current === 0}>
-                &larr; Back
+                Back
               </Button>
               {current < last ? (
                 <Button variant="primary" onClick={() => setChapter(current + 1)}>
-                  Next &rarr;
+                  Next
                 </Button>
               ) : (
                 <Button variant="primary" onClick={() => setChapter(null)}>
@@ -170,22 +167,24 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
 /** The two worlds side by side on the day the map shows. */
 function Scoreboard({ run, day }: { run: SimulateResponse; day: number }) {
   const rows = [
-    { label: "With Zealo", timeline: run.timeline.with_zealo, accent: "bg-purple" },
-    { label: "On their own", timeline: run.timeline.without_zealo, accent: "bg-ink-subtle" },
+    { label: "With Zealo", timeline: run.timeline.with_zealo, accent: "bg-scrub" },
+    { label: "On their own", timeline: run.timeline.without_zealo, accent: "bg-stone" },
   ];
   const total = Object.keys(run.timeline.with_zealo?.[0]?.status ?? {}).length;
 
   return (
-    <div className="pointer-events-none absolute right-3 top-3 z-[1000] w-[260px] rounded-xl bg-surface/95 p-3 shadow-raised">
-      <p className="tabular text-[11px] font-bold uppercase tracking-wide text-ink-subtle">
+    <div className="pointer-events-none absolute right-3 top-3 z-[1000] w-[280px] rounded-[10px] border border-line bg-surface p-4 shadow-[var(--shadow-float)]">
+      <p className="tabular text-[15px] font-bold text-ink">
         Day {day + 1} of {run.days}
       </p>
-      <table className="mt-2 w-full text-xs">
+      <table className="mt-2 w-full text-sm">
         <thead>
-          <tr className="text-[10px] uppercase tracking-wide text-ink-subtle">
-            <th className="pb-1 text-left font-medium" />
-            <th className="pb-1 text-right font-medium">In red</th>
-            <th className="pb-1 text-right font-medium">In stock</th>
+          <tr className="border-b-2 border-ink text-[13px] text-muted">
+            <th className="pb-1 text-left font-bold">
+              <span className="sr-only">Network</span>
+            </th>
+            <th className="pb-1 text-right font-bold">In the red</th>
+            <th className="pb-1 text-right font-bold">In stock</th>
           </tr>
         </thead>
         <tbody>
@@ -193,37 +192,27 @@ function Scoreboard({ run, day }: { run: SimulateResponse; day: number }) {
             const red = redOn(row.timeline, day).length;
             const rate = row.timeline?.[day]?.availability_rate ?? 0;
             return (
-              <tr key={row.label}>
-                <td className="py-1 font-semibold text-ink">
+              <tr key={row.label} className="border-b border-line-soft last:border-b-0">
+                <td className="py-1.5 font-bold text-ink">
                   <span className={`mr-1.5 inline-block h-2 w-2 rounded-full ${row.accent}`} />
                   {row.label}
                 </td>
                 <td
-                  className={`tabular py-1 text-right font-bold ${
-                    red > 0 ? "text-status-red" : "text-status-green"
+                  className={`tabular py-1.5 text-right font-bold ${
+                    red > 0 ? "text-out-text" : "text-scrub"
                   }`}
                 >
-                  {red} / {total}
+                  {red} of {total}
                 </td>
-                <td className="tabular py-1 text-right font-bold text-ink">{pct(rate)}</td>
+                <td className="tabular py-1.5 text-right font-bold text-ink">{pct(rate)}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <p className="mt-1.5 text-[10px] leading-snug text-ink-subtle">
+      <p className="mt-2 text-[13px] leading-snug text-muted">
         Same facilities, demand and opening stock. Only the network differs.
       </p>
     </div>
-  );
-}
-
-/** Starts the story from the map, for presenters who open the map first. */
-export function StoryLauncher() {
-  const setChapter = useViewStore((s) => s.setStoryChapter);
-  return (
-    <Button variant="danger" size="lg" onClick={() => setChapter(0)} className="shadow-raised">
-      &#9654; Play the story
-    </Button>
   );
 }

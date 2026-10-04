@@ -1,38 +1,48 @@
 /**
- * The inventory map: the site's primary view.
+ * The Map page: the facilities of Gadag taluk, their stock on the day shown, and the
+ * medicine moving between them.
  *
- * Facilities load from the API and render immediately. The simulation is
- * requested separately, so the map is useful even when a run cannot be produced
- * -- which is the current state, since the backend refuses to invent the demand
- * inputs it is missing.
+ * Facilities load from the API and render immediately; the simulation is requested
+ * separately, so the map is useful even when a run cannot be produced. The guided
+ * story takes over the map when it is open: full width, its own spotlight and camera.
  */
 import { useMemo } from "react";
+import { shortMedicineName } from "../api/format";
 import { useFacilities, useFacilityRun, useMedicineRun, useMedicines } from "../api/hooks";
 import type { Facility, Medicine } from "../api/types";
-import { StoryLauncher, StoryTour } from "../components/story/StoryTour";
-import { chapterEvents } from "../components/story/storyLogic";
-import { useStory } from "../components/story/useStory";
-import { EventFeed } from "../components/panels/EventFeed";
-import { FacilityPanel } from "../components/panels/FacilityPanel";
-import { InventoryMap } from "../components/map/InventoryMap";
+import { InventoryMap, MAX_ROUTES_DRAWN } from "../components/map/InventoryMap";
 import { Legend } from "../components/map/Legend";
-import { MedicineSearch } from "../components/panels/MedicineSearch";
-import { MissingInputsNotice } from "../components/MissingInputsNotice";
-import { NetworkTotals } from "../components/NetworkTotals";
-import { Card, CardTitle, Checkbox } from "../ui";
-import { TimeControls } from "../components/TimeControls";
 import {
   eventsForDay,
   filterFacilities,
-  statusesByMedicine,
+  pinStatusesForDay,
+  pinStatusesForMedicine,
   statusesForDay,
+  transferLinesForDay,
 } from "../components/map/mapLogic";
+import { MissingInputsNotice } from "../components/MissingInputsNotice";
+import { EventFeed } from "../components/panels/EventFeed";
+import { FacilityRail } from "../components/panels/FacilityRail";
+import { MedicineSearch } from "../components/panels/MedicineSearch";
+import { StoryTour } from "../components/story/StoryTour";
+import { chapterEvents } from "../components/story/storyLogic";
+import { useStory } from "../components/story/useStory";
+import { TimeControls } from "../components/TimeControls";
 import { useViewStore } from "../state/store";
+import { Button, Checkbox } from "../ui";
 
 // Stable empty arrays: `?? []` would allocate a new array every render and
 // invalidate every memo that depends on it.
 const NO_FACILITIES: Facility[] = [];
 const NO_MEDICINES: Medicine[] = [];
+
+function PlayIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+      <path d="M3 1.5 L12 7 L3 12.5 Z" fill="currentColor" />
+    </svg>
+  );
+}
 
 export function InventoryMapPage() {
   const facilitiesQuery = useFacilities();
@@ -50,17 +60,20 @@ export function InventoryMapPage() {
     originFacilityId,
     selectFacility,
     selectMedicine,
-    setOriginFacility,
     toggleLayer,
     setNetworkOnly,
     setVerifiedOnly,
     setRadiusKm,
+    setStoryChapter,
+    reset,
   } = useViewStore();
 
   const facilities = facilitiesQuery.data?.facilities ?? NO_FACILITIES;
   const medicines = medicinesQuery.data?.medicines ?? NO_MEDICINES;
 
-  const origin = facilities.find((f) => f.id === originFacilityId) ?? null;
+  // Distances are measured from the selected facility.
+  const originId = selectedFacilityId ?? originFacilityId;
+  const origin = facilities.find((f) => f.id === originId) ?? null;
   const visible = useMemo(
     () => filterFacilities(facilities, filters, origin),
     [facilities, filters, origin],
@@ -68,201 +81,243 @@ export function InventoryMapPage() {
 
   const medicineRun = useMedicineRun(runId, selectedMedicineId, mode, day);
   const facilityRun = useFacilityRun(runId, selectedFacilityId, mode, day);
+  const medicineView = Boolean(selectedMedicineId && medicineRun.data);
 
-  const statuses = useMemo(() => {
-    if (selectedMedicineId && medicineRun.data) return statusesByMedicine(medicineRun.data.rows);
-    return statusesForDay(run?.timeline[mode], day);
-  }, [selectedMedicineId, medicineRun.data, run, mode, day]);
+  const pins = useMemo(() => {
+    if (selectedMedicineId && medicineRun.data) {
+      return pinStatusesForMedicine(medicineRun.data.rows, facilities);
+    }
+    return pinStatusesForDay(statusesForDay(run?.timeline[mode], day), facilities);
+  }, [selectedMedicineId, medicineRun.data, facilities, run, mode, day]);
 
-  // The story takes over the map: full width, its own spotlight and camera.
   const chapter =
     storyChapter !== null && chapters.length
       ? chapters[Math.min(storyChapter, chapters.length - 1)]
       : null;
   const storyOn = Boolean(chapter && run);
 
-  const highlighted = useMemo(() => {
-    if (chapter) return chapter.highlight ? new Set(chapter.highlight) : null;
-    if (!selectedMedicineId || !medicineRun.data) return null;
-    return new Set(medicineRun.data.rows.filter((r) => r.in_stock).map((r) => r.facility_id));
-  }, [chapter, selectedMedicineId, medicineRun.data]);
-
+  const highlighted = useMemo(
+    () => (chapter?.highlight ? new Set(chapter.highlight) : null),
+    [chapter],
+  );
   // A chapter decides which movements the map draws; outside it, the whole day's.
   const mapEvents = useMemo(
     () => (chapter ? chapterEvents(chapter, run?.events[mode]) : run?.events[mode]),
     [chapter, run, mode],
   );
-
   const focus = chapter
     ? chapter.zoom && chapter.highlight?.length
       ? { facilityIds: chapter.highlight }
       : ("taluk" as const)
     : undefined;
 
-  const events = useMemo(
-    () => eventsForDay(run?.events[mode], day),
-    [run, mode, day],
-  );
+  const today = useMemo(() => {
+    const all = run?.events[mode] ?? [];
+    const onDay = all.filter((e) => e.day === day);
+    return {
+      feed: eventsForDay(all, day).filter((e) => e.day === day),
+      transfers: onDay.filter(
+        (e) => e.type === "relief_transfer" || e.type === "rebalance_transfer",
+      ).length,
+      express: onDay.filter((e) => e.type === "express_order").length,
+      refills: onDay.filter((e) => e.type === "manufacturer_order").length,
+      routes: transferLinesForDay(all, facilities, day, 0).length,
+    };
+  }, [run, mode, day, facilities]);
 
-  const summary = run?.summaries.find((s) => s.mode === mode);
   const selectedFacility = facilities.find((f) => f.id === selectedFacilityId) ?? null;
+  const selectedMedicine = medicines.find((m) => m.id === selectedMedicineId) ?? null;
   const hasRun = Boolean(run);
-  
+  const coverage = facilitiesQuery.data?.coverage;
+
   return (
-    <div className="flex h-full flex-col">
+    <div className="h-full overflow-y-auto xl:overflow-hidden">
       <div
-        className={`grid h-full min-h-0 ${storyOn ? "grid-cols-1" : "grid-cols-[320px_1fr_380px]"}`}
+        className={`grid gap-5 px-4 py-5 sm:px-6 xl:h-full xl:grid-rows-[minmax(0,1fr)] ${
+          storyOn ? "" : "xl:grid-cols-[330px_minmax(0,1fr)_370px]"
+        }`}
       >
-        {/* Left: filters and medicine search */}
-        <div
-          className={`min-h-0 flex-col gap-3 overflow-y-auto bg-surface-sunken px-3 py-3 ${
-            storyOn ? "hidden" : "flex"
-          }`}
-        >
-          <Card>
-            <CardTitle hint={`Showing ${visible.length} of ${facilities.length} facilities`}>
-              Layers
-            </CardTitle>
-            {(["government", "private", "pharmacy"] as const).map((layer) => (
-              <Checkbox
-                key={layer}
-                checked={filters.layers[layer]}
-                onChange={() => toggleLayer(layer)}
-                label={
-                  <span className="capitalize">
-                    {layer === "pharmacy" ? "Pharmacies" : layer}
-                  </span>
-                }
-              />
-            ))}
-            <Checkbox
-              checked={filters.networkOnly}
-              onChange={setNetworkOnly}
-              label="Zealo network members only"
-            />
-            <Checkbox
-              checked={filters.verifiedOnly}
-              onChange={setVerifiedOnly}
-              label="Verified only"
-            />
-            <p className="sr-only" data-testid="facility-count">
-              Showing {visible.length} of {facilities.length} facilities
-            </p>
-          </Card>
-
-          {facilitiesQuery.data?.coverage && (
-            <Card>
-              <CardTitle>About this map&rsquo;s data</CardTitle>
-              <ul className="space-y-1.5 text-[11px] leading-relaxed text-ink-muted">
-                {facilitiesQuery.data.coverage.statements.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </Card>
-          )}
-
-          <Card className="flex min-h-0 flex-1 flex-col">
+        {/* Left rail: find a medicine, what to show, what the data covers. */}
+        {!storyOn && (
+          <aside
+            aria-label="Map controls"
+            className="rounded-xl border border-line bg-surface p-5 xl:min-h-0 xl:overflow-y-auto"
+          >
             <MedicineSearch
               medicines={medicines}
               selectedMedicineId={selectedMedicineId}
               onSelect={selectMedicine}
               rows={medicineRun.data?.rows}
               facilities={facilities}
-              originFacilityId={originFacilityId}
+              originFacilityId={originId}
               radiusKm={filters.radiusKm}
               onRadiusChange={setRadiusKm}
+              day={day}
             />
-          </Card>
-        </div>
 
-        {/* Centre: the map */}
-        <div className="relative min-h-0">
+            <fieldset className="mt-6 border-t border-line-soft pt-5">
+              <legend className="float-left mb-1 w-full text-lg font-bold text-ink">
+                Show on the map
+              </legend>
+              <div className="clear-both">
+                <Checkbox
+                  checked={filters.layers.government}
+                  onChange={() => toggleLayer("government")}
+                  label="Government facilities"
+                />
+                <Checkbox
+                  checked={filters.layers.private}
+                  onChange={() => toggleLayer("private")}
+                  label="Private hospitals and clinics"
+                />
+                <Checkbox
+                  checked={filters.layers.pharmacy}
+                  onChange={() => toggleLayer("pharmacy")}
+                  label="Pharmacies"
+                />
+                <Checkbox
+                  checked={filters.networkOnly}
+                  onChange={setNetworkOnly}
+                  label="Zealo network only"
+                />
+                <Checkbox
+                  checked={filters.verifiedOnly}
+                  onChange={setVerifiedOnly}
+                  label="Checked locations only"
+                />
+              </div>
+              <p className="mt-1 text-sm text-muted" data-testid="facility-count">
+                Showing {visible.length} of {facilities.length} facilities.
+              </p>
+              <Button variant="ghost" onClick={reset} className="-ml-4 mt-1">
+                Reset the map
+              </Button>
+            </fieldset>
+
+            {coverage && (
+              <section className="mt-6 border-t border-line-soft pt-5">
+                <h2 className="mb-2 text-[15px] font-bold text-ink">What this map covers</h2>
+                <div className="space-y-2 text-sm leading-relaxed text-ink-2">
+                  {coverage.statements.map((s) => (
+                    <p key={s}>{s}</p>
+                  ))}
+                </div>
+              </section>
+            )}
+          </aside>
+        )}
+
+        {/* The map, with its legend and playback bar floating over it. */}
+        <section
+          aria-label="Map of Gadag taluk"
+          className="relative h-[420px] overflow-hidden rounded-xl border border-line sm:h-[600px] xl:h-auto xl:min-h-0"
+        >
           {facilitiesQuery.isLoading && (
-            <p className="p-6 text-sm text-navy/60">Loading facilities&hellip;</p>
+            <p className="p-6 text-[15px] text-muted">Loading facilities&hellip;</p>
           )}
           {facilitiesQuery.isError && (
-            <p className="p-6 text-sm text-status-red">
-              Could not load facilities. Is the backend running?
+            <p className="p-6 text-[15px] text-out-text">
+              Could not load facilities. Check that the backend is running, then reload.
             </p>
           )}
           {facilitiesQuery.data && (
             <InventoryMap
               facilities={visible}
               boundary={facilitiesQuery.data.boundary}
-              statuses={statuses}
+              pins={pins}
               events={mapEvents}
               day={day}
-              selectedFacilityId={selectedFacilityId}
+              selectedFacilityId={storyOn ? null : selectedFacilityId}
               onSelectFacility={selectFacility}
               highlightedFacilityIds={highlighted}
               focus={focus}
-              cluster={!storyOn}
             />
           )}
-          {/* The story panel takes the legend's corner; chapter 1 explains the colours. */}
-          <div
-            className={`pointer-events-none absolute bottom-3 left-3 z-[1000] max-w-xs ${
-              storyOn ? "hidden" : ""
-            }`}
-          >
-            <div className="pointer-events-auto">
-              <Legend hasRun={hasRun} />
-            </div>
-          </div>
+
+          {!storyOn && (
+            <>
+              <div className="absolute right-3 top-3 z-[1000]">
+                <Legend
+                  hasRun={hasRun}
+                  medicineName={
+                    medicineView && selectedMedicine
+                      ? shortMedicineName(selectedMedicine.name, 28)
+                      : null
+                  }
+                />
+              </div>
+              {chapters.length > 0 && (
+                <div className="absolute left-[68px] top-3 z-[1000]">
+                  <Button
+                    variant="secondary"
+                    onClick={() => setStoryChapter(0)}
+                    className="bg-surface shadow-[var(--shadow-float)]"
+                  >
+                    <PlayIcon />
+                    Watch the story
+                  </Button>
+                </div>
+              )}
+              <div className="absolute inset-x-3 bottom-3 z-[1000]">
+                <TimeControls disabled={!hasRun} floating showReset={false} />
+              </div>
+            </>
+          )}
           {storyOn && run && <StoryTour chapters={chapters} run={run} />}
-          {!storyOn && chapters.length > 0 && (
-            <div className="absolute right-3 top-3 z-[1000]">
-              <StoryLauncher />
-            </div>
-          )}
-        </div>
+        </section>
 
-        {/* Right: totals, playback, events, facility detail */}
-        <div
-          className={`min-h-0 flex-col gap-3 overflow-y-auto bg-surface-sunken px-3 py-3 ${
-            storyOn ? "hidden" : "flex"
-          }`}
-        >
-          {missingInputs && runError && <MissingInputsNotice detail={runError.detail} />}
-          {runLoading && (
-            <Card>
-              <p className="text-xs text-ink-muted">
-                Running the simulation&hellip; this takes a moment for 180 days.
+        {/* Right rail: the selected facility, and what happened today. */}
+        {!storyOn && (
+          <div className="flex flex-col gap-5 xl:min-h-0 xl:overflow-y-auto">
+            {missingInputs && runError && <MissingInputsNotice detail={runError.detail} />}
+            {runLoading && (
+              <p className="rounded-xl border border-line bg-surface p-5 text-[15px] text-muted">
+                Running the simulation&hellip;
               </p>
-            </Card>
-          )}
-          {summary && run && (
-            <Card>
-              <CardTitle hint={`All ${run.days} days. The Network page counts up to the day shown.`}>
-                Whole run
-              </CardTitle>
-              <NetworkTotals summary={summary} />
-            </Card>
-          )}
-          <Card padded={false} className="p-2.5">
-            <TimeControls disabled={!hasRun} />
-          </Card>
-          <Card padded={false} className="flex min-h-0 flex-1 flex-col">
-            <h2 className="px-3 pt-3 text-sm font-semibold tracking-tight text-ink">
-              What just happened
-            </h2>
-            <EventFeed events={events} />
-          </Card>
-        </div>
-      </div>
+            )}
 
-      {selectedFacility && (
-        <div className="fixed right-0 top-0 z-[1100] h-full w-[380px]">
-          <FacilityPanel
-            facility={selectedFacility}
-            run={facilityRun.data}
-            medicines={medicines}
-            onClose={() => selectFacility(null)}
-            onUseAsOrigin={() => setOriginFacility(selectedFacility.id)}
-          />
-        </div>
-      )}
+            {selectedFacility ? (
+              <FacilityRail
+                facility={selectedFacility}
+                run={facilityRun.data}
+                facilities={facilities}
+              />
+            ) : (
+              <section className="rounded-xl border border-line bg-surface p-5">
+                <h2 className="text-lg font-bold text-ink">No facility selected</h2>
+                <p className="mt-1 text-[15px] text-ink-2">
+                  Select a pin on the map to see that facility&rsquo;s shelf, and what Zealo is
+                  doing about anything running short.
+                </p>
+              </section>
+            )}
+
+            {hasRun && (
+              <section
+                aria-labelledby="today-heading"
+                className="rounded-xl border border-line bg-surface p-5"
+              >
+                <h2 id="today-heading" className="text-lg font-bold text-ink">
+                  Day {day + 1} in the network
+                </h2>
+                <p className="tabular mt-1 text-sm text-muted">
+                  {today.transfers.toLocaleString()} transfers, {today.express.toLocaleString()}{" "}
+                  express orders and {today.refills.toLocaleString()} routine refill orders.
+                  {today.routes > MAX_ROUTES_DRAWN &&
+                    ` The map draws the ${MAX_ROUTES_DRAWN} busiest of ${today.routes} routes.`}
+                </p>
+                <div className="mt-2">
+                  <EventFeed
+                    events={today.feed}
+                    showDay={false}
+                    empty={`Nothing moved on day ${day + 1}.`}
+                  />
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-

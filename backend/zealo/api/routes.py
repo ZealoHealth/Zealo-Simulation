@@ -616,6 +616,7 @@ def get_medicine_run(
                     days_of_cover=_days_of_cover(on_hand, forecast),
                     next_expiry_day=next_expiry,
                     status=_row_status(on_hand, forecast, next_expiry, day, incoming),
+                    incoming_7d=incoming,
                 )
             )
     if not rows:

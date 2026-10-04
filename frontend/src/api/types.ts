@@ -286,6 +286,8 @@ export interface MedicineDayRow {
   days_of_cover: number | null;
   next_expiry_day: number | null;
   status: FacilityStatus;
+  /** Deliveries due within 7 days; the status's cover counts them. */
+  incoming_7d?: number;
 }
 
 export interface MedicineAtFacilitiesResponse {

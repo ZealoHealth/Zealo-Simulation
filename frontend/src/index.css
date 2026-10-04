@@ -105,6 +105,80 @@ body {
   box-shadow: var(--shadow-float) !important;
 }
 
+/* The medicine search has its own labelled clear button; hide the browser's. */
+.zealo-search::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* --- Map ---------------------------------------------------------------- */
+
+/* The base map recedes behind the data. */
+.zealo-map .leaflet-tile-pane {
+  filter: saturate(0.35) contrast(0.95) brightness(1.04);
+}
+/* Path colours from the tokens (classes set through Leaflet's className option). */
+.leaflet-container path.zealo-transfer {
+  stroke: var(--color-move);
+}
+.leaflet-container path.zealo-manufacturer {
+  stroke: var(--color-muted);
+}
+.leaflet-container path.zealo-boundary {
+  stroke: var(--color-scrub);
+  fill: var(--color-scrub);
+}
+.zealo-pin,
+.zealo-arrow {
+  background: none;
+  border: none;
+}
+.zealo-maker-chip {
+  border-radius: 5px;
+  background: var(--color-ink);
+  color: #fff;
+  font: 700 13px/26px var(--font-sans);
+  text-align: center;
+  white-space: nowrap;
+}
+.leaflet-tooltip {
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  color: var(--color-ink);
+  font: 14px/1.4 var(--font-sans);
+  box-shadow: var(--shadow-float);
+}
+.leaflet-tooltip.zealo-label {
+  padding: 1px 7px;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.leaflet-tooltip.zealo-label::before {
+  display: none;
+}
+.zealo-map .leaflet-control-zoom a {
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  font-size: 22px !important;
+}
+/* Attribution stays visible above the floating playback bar. */
+.zealo-map .leaflet-bottom.leaflet-right {
+  bottom: 76px;
+}
+.zealo-legend-transfer {
+  stroke: var(--color-move);
+  stroke-width: 4;
+  stroke-dasharray: 6 4;
+  stroke-linecap: round;
+}
+.zealo-legend-maker {
+  stroke: var(--color-muted);
+  stroke-width: 2;
+  stroke-dasharray: 3 4;
+}
+
 /* A transfer in progress: the one place motion carries meaning. */
 @keyframes zealo-flow {
   to {

@@ -1,20 +1,29 @@
 /**
  * The Leaflet street map of Gadag taluk.
  *
- * Tile policy: standard OpenStreetMap tiles, with the required attribution
- * always visible and the tile URL read from an environment variable so the
- * provider can be swapped without a code change if traffic grows. No tiles are
- * pre-fetched or bulk downloaded.
+ * Tile policy: standard OpenStreetMap tiles, with the required attribution always
+ * visible and the tile URL read from an environment variable so the provider can be
+ * swapped without a code change. No tiles are pre-fetched or bulk downloaded. The
+ * tiles are muted in CSS so the facilities and movements read first.
+ *
+ * Colours come from CSS classes on the paths (index.css), not hex values here.
  */
-import { useEffect, useMemo, useRef, type ReactNode } from "react";
+import { Fragment, useEffect, useMemo, useRef } from "react";
 import { GeoJSON, MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import type { Facility, FacilityStatus, SimulationEvent } from "../../api/types";
-import type { GeoJsonBoundary } from "../../api/types";
+import type { Facility, GeoJsonBoundary, SimulationEvent } from "../../api/types";
 import { prefersReducedMotion } from "../../ui/motion";
-import { facilityIcon, TYPE_LABELS } from "./icons";
-import { manufacturerActivityForDay, transferLinesForDay } from "./mapLogic";
+import { facilityIcon, TYPE_LABELS, type PinStatus } from "./icons";
+import {
+  along,
+  bearingDeg,
+  edgePoint,
+  labelledFacilityIds,
+  manufacturerActivityForDay,
+  transferLinesForDay,
+  type Bounds,
+} from "./mapLogic";
 
 const TILE_URL =
   (import.meta.env.VITE_TILE_URL as string | undefined) ??
@@ -23,7 +32,7 @@ const TILE_URL =
 // Most transfer routes and express deliveries drawn on one day. On the first days the
 // network closes the gaps in its opening stock all at once, and drawing every route
 // turned the map into a solid block of lines. The largest are drawn; the rest are
-// counted on the chip, and every movement stays in the event feed.
+// counted in the day's summary, and every movement stays in the event feed.
 export const MAX_ROUTES_DRAWN = 25;
 export const MAX_EXPRESS_DRAWN = 12;
 
@@ -35,11 +44,9 @@ const GADAG_CENTRE: [number, number] = [15.42, 75.63];
 const DEFAULT_ZOOM = 11;
 
 /**
- * Keep Leaflet's idea of its size in step with the layout.
- *
- * The map mounts inside a CSS grid that settles after first paint, so Leaflet measured
- * a smaller box and only tiled part of the view. Re-measuring whenever the container
- * resizes fixes it for good, including when the side panels open or close.
+ * Keep Leaflet's idea of its size in step with the layout. The map mounts inside a
+ * grid that settles after first paint, so Leaflet measured a smaller box and only
+ * tiled part of the view.
  */
 function KeepSizeInSync() {
   const map = useMap();
@@ -52,31 +59,7 @@ function KeepSizeInSync() {
   return null;
 }
 
-function FitToBoundary({ boundary }: { boundary: GeoJsonBoundary | null }) {
-  const map = useMap();
-  useEffect(() => {
-    if (!boundary?.features?.length) return;
-    const ring = boundary.features[0].geometry.coordinates[0];
-    if (!ring?.length) return;
-    const lats = ring.map((p) => p[1]);
-    const lons = ring.map((p) => p[0]);
-    // Wait a frame so the grid has laid out before measuring the bounds.
-    const frame = requestAnimationFrame(() => {
-      map.invalidateSize();
-      map.fitBounds(
-        [
-          [Math.min(...lats), Math.min(...lons)],
-          [Math.max(...lats), Math.max(...lons)],
-        ],
-        { padding: [16, 16] },
-      );
-    });
-    return () => cancelAnimationFrame(frame);
-  }, [boundary, map]);
-  return null;
-}
-
-function boundaryBounds(boundary: GeoJsonBoundary | null): [[number, number], [number, number]] | null {
+function boundaryBounds(boundary: GeoJsonBoundary | null): Bounds | null {
   const ring = boundary?.features?.[0]?.geometry.coordinates[0];
   if (!ring?.length) return null;
   const lats = ring.map((p) => p[1]);
@@ -85,6 +68,33 @@ function boundaryBounds(boundary: GeoJsonBoundary | null): [[number, number], [n
     [Math.min(...lats), Math.min(...lons)],
     [Math.max(...lats), Math.max(...lons)],
   ];
+}
+
+/**
+ * Leave room for the playback bar along the bottom. The legend starts folded into a
+ * small chip unless the screen is wide, so it is not padded for.
+ */
+function overlayPadding(map: L.Map) {
+  const wide = map.getSize().x >= 700;
+  return {
+    paddingTopLeft: (wide ? [20, 20] : [16, 16]) as [number, number],
+    paddingBottomRight: (wide ? [20, 80] : [16, 90]) as [number, number],
+  };
+}
+
+function FitToBoundary({ boundary }: { boundary: GeoJsonBoundary | null }) {
+  const map = useMap();
+  useEffect(() => {
+    const bounds = boundaryBounds(boundary);
+    if (!bounds) return;
+    // Wait a frame so the grid has laid out before measuring the bounds.
+    const frame = requestAnimationFrame(() => {
+      map.invalidateSize();
+      map.fitBounds(bounds, overlayPadding(map));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [boundary, map]);
+  return null;
 }
 
 /**
@@ -114,7 +124,7 @@ function FocusOn({
     let bounds = boundaryBounds(boundary);
     if (focus) {
       // "taluk" frames every facility rather than the whole boundary: with room left
-      // for the story card, the boundary only fits a zoom level further out.
+      // for the story panel, the boundary only fits a zoom level further out.
       const points = facilities
         .filter((f) => focus === "taluk" || focus.facilityIds.includes(f.id))
         .map((f) => [f.lat, f.lon] as [number, number]);
@@ -127,11 +137,11 @@ function FocusOn({
     }
     if (!bounds) return;
     // The story panel covers the left of the map (or the bottom, on a narrow screen),
-    // and the scoreboard the top right; frame the facilities in what is left.
-    // On leaving the story there is no panel, so the taluk is centred as on load.
+    // and the scoreboard the top right; frame the facilities in what is left. On
+    // leaving the story the taluk is framed as on load.
     const wide = map.getSize().x >= 900;
     const options = !focus
-      ? { padding: [16, 16] as [number, number] }
+      ? overlayPadding(map)
       : {
           paddingTopLeft: (wide ? [470, 50] : [40, 230]) as [number, number],
           paddingBottomRight: (wide ? [60, 40] : [40, 300]) as [number, number],
@@ -145,66 +155,80 @@ function FocusOn({
   return null;
 }
 
-function MaybeCluster({ cluster, children }: { cluster: boolean; children: ReactNode }) {
-  if (!cluster) return <>{children}</>;
-  return (
-    <MarkerClusterGroup chunkedLoading maxClusterRadius={45}>
-      {children}
-    </MarkerClusterGroup>
-  );
+/** An arrowhead on a route, pointing at the receiving facility. */
+function arrowIcon(bearing: number) {
+  return L.divIcon({
+    className: "zealo-arrow",
+    html: `<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(${bearing}deg)"><path d="M8 1 L14 14 L8 10.5 L2 14 Z" fill="var(--color-move)" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+  });
 }
+
+const MANUFACTURER_CHIP = L.divIcon({
+  className: "zealo-maker-chip",
+  html: "Manufacturer A",
+  iconSize: [118, 26],
+  iconAnchor: [59, 13],
+});
 
 export interface InventoryMapProps {
   facilities: Facility[];
   boundary: GeoJsonBoundary | null;
-  statuses: Record<string, FacilityStatus>;
+  /** Pin state per facility: by facility status, or by the selected medicine. */
+  pins: Record<string, PinStatus>;
   events: SimulationEvent[] | undefined;
   day: number;
   selectedFacilityId: string | null;
   onSelectFacility: (id: string) => void;
-  /** When a medicine is selected, facilities without it are dimmed rather than hidden. */
+  /** Set by the guided story: facilities outside it are dimmed. */
   highlightedFacilityIds: Set<string> | null;
   /** Set only by the guided story. */
   focus?: MapFocus;
-  /**
-   * Group nearby markers. The story turns this off: the facilities a chapter
-   * spotlights must stay visible, not fold into a numbered cluster.
-   */
-  cluster?: boolean;
 }
 
 export function InventoryMap({
   facilities,
   boundary,
-  statuses,
+  pins,
   events,
   day,
   selectedFacilityId,
   onSelectFacility,
   highlightedFacilityIds,
   focus,
-  cluster = true,
 }: InventoryMapProps) {
-  const allTransfers = useMemo(
-    () => transferLinesForDay(events, facilities, day),
-    [events, facilities, day],
-  );
   const transfers = useMemo(
-    () => [...allTransfers].sort((a, b) => b.quantity - a.quantity).slice(0, MAX_ROUTES_DRAWN),
-    [allTransfers],
-  );
-  const manufacturer = useMemo(
-    () => manufacturerActivityForDay(events, facilities, day),
+    () =>
+      transferLinesForDay(events, facilities, day)
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, MAX_ROUTES_DRAWN),
     [events, facilities, day],
+  );
+  const express = useMemo(
+    () => manufacturerActivityForDay(events, facilities, day).express.slice(0, MAX_EXPRESS_DRAWN),
+    [events, facilities, day],
+  );
+  const edge = useMemo<Bounds | null>(() => {
+    const bounds = boundaryBounds(boundary);
+    if (!bounds) return null;
+    const margin = 0.03;
+    return [
+      [bounds[0][0] - margin, bounds[0][1] - margin],
+      [bounds[1][0] + margin, bounds[1][1] + margin],
+    ];
+  }, [boundary]);
+  const labelled = useMemo(
+    () => new Set(labelledFacilityIds(selectedFacilityId, transfers, pins)),
+    [selectedFacilityId, transfers, pins],
   );
 
   return (
-    <>
     <MapContainer
       center={GADAG_CENTRE}
       zoom={DEFAULT_ZOOM}
       scrollWheelZoom
-      className="h-full w-full"
+      className="zealo-map h-full w-full"
       data-testid="inventory-map"
     >
       <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} maxZoom={19} />
@@ -215,124 +239,112 @@ export function InventoryMap({
       {boundary && (
         <GeoJSON
           data={boundary as never}
-          style={{ color: "#6A4CA8", weight: 2, fillOpacity: 0.04, dashArray: "6 4" }}
+          pathOptions={{
+            className: "zealo-boundary",
+            weight: 1.5,
+            dashArray: "6 5",
+            fillOpacity: 0.03,
+          }}
         />
       )}
 
-      {/* Express orders only, as arrows from the map edge: manufacturers' locations are
-          not in this dataset, so none is placed on the map. */}
-      {manufacturer.express.slice(0, MAX_EXPRESS_DRAWN).map((arrow) => (
-        <Polyline
-          key={`express-${arrow.id}`}
-          positions={[[arrow.to[0] + 0.12, arrow.to[1] - 0.16], arrow.to]}
-          pathOptions={{ color: "#F0674A", weight: 2, opacity: 0.7, dashArray: "2 5" }}
-        >
-          <Tooltip sticky>{arrow.message}</Tooltip>
-        </Polyline>
-      ))}
+      {/* Manufacturer orders come in from the nearest edge: manufacturers' locations are
+          not in this dataset, so none is placed on the map. Express orders only. */}
+      {edge &&
+        express.map((arrow, index) => {
+          const start = edgePoint(arrow.to, edge);
+          return (
+            <Fragment key={`express-${arrow.id}`}>
+              <Polyline
+                positions={[start, arrow.to]}
+                pathOptions={{ className: "zealo-manufacturer", weight: 2, dashArray: "4 6" }}
+              >
+                <Tooltip sticky>{arrow.message}</Tooltip>
+              </Polyline>
+              {index === 0 && (
+                <Marker
+                  position={start}
+                  icon={MANUFACTURER_CHIP}
+                  interactive={false}
+                  keyboard={false}
+                />
+              )}
+            </Fragment>
+          );
+        })}
 
       {transfers.map((line) => (
-        <Polyline
-          key={line.id}
-          positions={[line.from, line.to]}
-          className="zealo-transfer-line"
-          pathOptions={{
-            color: line.kind === "relief" ? "#F0674A" : "#1F9D55",
-            weight: 3,
-            opacity: 0.9,
-            dashArray: "8 6",
-          }}
-        >
-          <Tooltip sticky>{line.message}</Tooltip>
-        </Polyline>
+        <Fragment key={line.id}>
+          <Polyline
+            positions={[line.from, line.to]}
+            pathOptions={{
+              className: "zealo-transfer",
+              weight: 4.5,
+              lineCap: "round",
+              dashArray: "10 10",
+            }}
+          >
+            <Tooltip sticky>{line.message}</Tooltip>
+          </Polyline>
+          <Marker
+            position={along(line.from, line.to, 0.78)}
+            icon={arrowIcon(bearingDeg(line.from, line.to))}
+            interactive={false}
+            keyboard={false}
+          />
+        </Fragment>
       ))}
 
-      <MaybeCluster cluster={cluster}>
-        {facilities.map((facility) => {
-          const dimmed = highlightedFacilityIds
-            ? !highlightedFacilityIds.has(facility.id)
-            : false;
-          return (
-            <Marker
-              key={facility.id}
-              position={[facility.lat, facility.lon]}
-              // Spotlit markers sit above dimmed neighbours they overlap.
-              zIndexOffset={highlightedFacilityIds && !dimmed ? 1000 : 0}
-              icon={facilityIcon(facility.facility_type, statuses[facility.id] ?? null, {
-                selected: facility.id === selectedFacilityId,
-                dimmed,
-                approximate: facility.location_precision !== "exact",
-              })}
-              eventHandlers={{ click: () => onSelectFacility(facility.id) }}
-            >
-              <Tooltip direction="top" offset={[0, -12]}>
-                <span className="font-semibold">{facility.display_label}</span>
+      {facilities.map((facility) => {
+        const dimmed = highlightedFacilityIds ? !highlightedFacilityIds.has(facility.id) : false;
+        const selected = facility.id === selectedFacilityId;
+        const permanent = labelled.has(facility.id) && !dimmed;
+        return (
+          <Marker
+            key={facility.id}
+            position={[facility.lat, facility.lon]}
+            icon={facilityIcon(facility.facility_type, pins[facility.id] ?? "unknown", {
+              selected,
+              dimmed,
+              approximate: facility.location_precision !== "exact",
+            })}
+            // Selected and spotlit pins sit above the neighbours they overlap.
+            zIndexOffset={selected ? 2000 : highlightedFacilityIds && !dimmed ? 1000 : 0}
+            title={facility.display_label}
+            eventHandlers={{ click: () => onSelectFacility(facility.id) }}
+          >
+            {permanent ? (
+              <Tooltip
+                key="label"
+                permanent
+                direction="right"
+                offset={[10, 0]}
+                className="zealo-label"
+              >
+                {facility.display_label}
+              </Tooltip>
+            ) : (
+              <Tooltip key="hover" direction="top" offset={[0, -12]} className="zealo-tooltip">
+                <strong>{facility.display_label}</strong>
                 <br />
                 {TYPE_LABELS[facility.facility_type] ?? facility.facility_type}
                 {!facility.verified && (
                   <>
                     <br />
-                    <span style={{ color: "#D97706" }}>Location unverified</span>
+                    Location not yet checked
                   </>
                 )}
                 {facility.location_precision !== "exact" && (
                   <>
                     <br />
-                    <span style={{ color: "#D97706" }}>Approximate: village centre</span>
+                    Approximate: village centre
                   </>
                 )}
               </Tooltip>
-            </Marker>
-          );
-        })}
-      </MaybeCluster>
+            )}
+          </Marker>
+        );
+      })}
     </MapContainer>
-    <MovementChip
-      routineOrders={manufacturer.routineOrders}
-      routineFacilities={manufacturer.routineFacilities}
-      express={manufacturer.express.length}
-      routes={allTransfers.length}
-    />
-    </>
-  );
-}
-
-/** What moved today, summarised at the map edge rather than drawn line by line. */
-function MovementChip({
-  routineOrders,
-  routineFacilities,
-  express,
-  routes,
-}: {
-  routineOrders: number;
-  routineFacilities: number;
-  express: number;
-  routes: number;
-}) {
-  if (!routineOrders && !express && !routes) return null;
-  const hiddenRoutes = Math.max(0, routes - MAX_ROUTES_DRAWN);
-  const hiddenExpress = Math.max(0, express - MAX_EXPRESS_DRAWN);
-  return (
-    <div className="pointer-events-none absolute left-14 top-3 z-[1000] rounded-lg bg-surface/95 px-3 py-2 text-[11px] leading-snug shadow-card">
-      {routes > 0 && (
-        <p className="font-semibold text-ink">
-          {routes} transfer route{routes === 1 ? "" : "s"} active
-          {hiddenRoutes > 0 && (
-            <span className="font-normal text-ink-subtle"> &middot; largest {MAX_ROUTES_DRAWN} drawn</span>
-          )}
-        </p>
-      )}
-      {(routineOrders > 0 || express > 0) && (
-        <p className="text-ink-muted">
-          Manufacturer A (off map): {routineOrders} refill orders to {routineFacilities} facilities
-        </p>
-      )}
-      {express > 0 && (
-        <p className="font-medium text-coral">
-          {express} express deliveries
-          {hiddenExpress > 0 && <span className="font-normal"> &middot; {MAX_EXPRESS_DRAWN} drawn</span>}
-        </p>
-      )}
-    </div>
   );
 }

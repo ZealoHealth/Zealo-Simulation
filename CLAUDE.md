@@ -264,6 +264,26 @@ Direct equivalents:
   stock within 90 days of expiry, so only a caller that knows which can say "Under a week".
 - Gotcha: `hidden sm:inline-flex` on an element whose class also contains `inline-flex` stays
   visible on phones. Wrap it in `<span className="hidden sm:contents">` instead.
+- **Map (milestone 2):** pins are built by the pure `pinHtml` in `components/map/icons.ts`
+  (shape = type, fill + glyph = stock; `none` = doesn't carry the selected medicine). Stock
+  words come from `api/stock.ts` (`stockState`: out / under a week / ok / spare, cover counts
+  deliveries due this week); use it, not the backend's amber, wherever "under a week" is said,
+  because amber also means near expiry. Path colours are CSS classes (`zealo-transfer`,
+  `zealo-manufacturer`, `zealo-boundary`), not hex in components. No marker clustering any more
+  (clusters hid the statuses). Whole-run totals sit in the disclaimer strip via `RunTotals`.
+  "Has spare" = over 30 days of stock (the Network rule): the medicine view has no reorder point,
+  so no spare *quantity* is shown. `FacilityPanel` and `NetworkTotals` were removed; the old
+  panel's beds / "should carry vs carries" content moves to the Facility page in milestone 3.
+
+## Determinism across processes (fixed 2026-10-04)
+
+- **Never iterate a `set`/`frozenset` of ids in the simulation without `sorted()`.** Python
+  randomises string hashing per process, so the order changes on every restart. Opening stock
+  drew from the RNG in `frozenset` order, so the same seed gave a different run each time the API
+  started (5 processes: 230–249 transfers). In-process tests could never see it.
+  `tests/test_reproducibility.py` runs the simulation under two `PYTHONHASHSEED`s in subprocesses
+  and must stay. The default run's figures changed when this was fixed: 99.03% in stock, 258
+  transfers, 13,002 units moved, 13 expired; on their own 95.35%.
 
 ## "With Zealo" only (decided 2026-09-17)
 

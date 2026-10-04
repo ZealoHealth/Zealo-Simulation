@@ -10,6 +10,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { SHOW_WITHOUT_ZEALO } from "../config";
 import { DataStatusLink, DataStatusPanel } from "./DataStatusPanel";
 import { DisclaimerStrip } from "./Disclaimer";
+import { RunTotals } from "./map/RunTotals";
 import { SHARE_PARAM, decodeShareState } from "../state/scenario";
 import { useViewStore } from "../state/store";
 import { LogoMark } from "../ui";
@@ -140,7 +141,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
         )}
       </header>
-      <DisclaimerStrip />
+      <DisclaimerStrip aside={pathname === "/map" ? <RunTotals /> : undefined} />
 
       <main className="min-h-0 flex-1">{children}</main>
       <DataStatusPanel />

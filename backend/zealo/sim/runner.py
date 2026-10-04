@@ -279,7 +279,9 @@ def build_scenario(
     profiles = {p["phc_number"]: p for p in load_phc_profiles()}
     opening: dict[tuple[str, str], list[Batch]] = {}
     for f in facilities:
-        for mid in carried[f.id]:
+        # Sorted: this loop draws from the RNG, and a frozenset's order changes with each
+        # process's hash seed -- unsorted, the same seed gave a different run per restart.
+        for mid in sorted(carried[f.id]):
             series = demand.get((f.id, mid))
             if series is None:
                 continue

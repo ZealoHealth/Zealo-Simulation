@@ -236,6 +236,24 @@ def test_medicine_detail_lists_where_it_is_in_stock(simulation_inputs):
     assert rows and all(r["on_hand"] >= 0 for r in rows)
 
 
+def test_medicine_rows_report_deliveries_due_this_week(simulation_inputs):
+    """The map's "under a week" counts incoming stock, so the rows must carry it."""
+    body = simulate()
+    run_id = body["run_id"]
+    medicine_id = client.get("/medicines?survey_linked_only=true").json()["medicines"][0]["id"]
+    for day in (0, 5):
+        rows = client.get(
+            f"/runs/{run_id}/medicines/{medicine_id}", params={"mode": "with_zealo", "day": day}
+        ).json()["rows"]
+        for row in rows:
+            detail = client.get(
+                f"/runs/{run_id}/facilities/{row['facility_id']}",
+                params={"mode": "with_zealo", "day": day},
+            ).json()
+            same = next(m for m in detail["medicines"] if m["medicine_id"] == medicine_id)
+            assert row["incoming_7d"] == same["incoming_7d"]
+
+
 def test_a_day_beyond_the_run_is_clamped_rather_than_erroring(simulation_inputs):
     body = simulate(days=10)
     response = client.get(
@@ -432,10 +450,14 @@ def test_shortage_counts_deliveries_due_this_week(simulation_inputs):
         row = rows[b["medicine_id"]]
         assert b["name"] == row["name"]
         assert b["incoming_7d"] == row["incoming_7d"]
-        if row["forecast"] > 0:
-            # The facility endpoint rounds forecast to 3 dp, hence a relative tolerance.
-            expected = (row["on_hand"] + row["incoming_7d"]) / row["forecast"]
-            assert b["days_of_cover"] == pytest.approx(expected, rel=0.02, abs=0.02)
+        if row["forecast"] > 0.0005:
+            # The facility endpoint rounds forecast to 3 dp, so the true forecast lies
+            # within half a unit of the last place; for a slow mover that moves cover a
+            # lot (4 units at 0.0073/day is 546 days, at 0.007 it is 571).
+            stock = row["on_hand"] + row["incoming_7d"]
+            lowest = stock / (row["forecast"] + 0.0005)
+            highest = stock / (row["forecast"] - 0.0005)
+            assert lowest - 0.05 <= b["days_of_cover"] <= highest + 0.05
             assert (b["position"] == "short") == (b["days_of_cover"] < 7)
 
 

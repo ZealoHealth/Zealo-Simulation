@@ -12,6 +12,8 @@ import type {
   SimulationEvent,
 } from "../../api/types";
 import type { MapFilters } from "../../state/store";
+import { medicineRowState } from "../../api/stock";
+import { pinStatusForFacility, type PinStatus } from "./icons";
 
 const GOVERNMENT_TYPES = new Set([
   "phc",
@@ -133,6 +135,98 @@ export function rankByDistance(
   });
 }
 
+/**
+ * Pin states for one medicine. A facility with no row does not carry it (stone);
+ * "under a week" counts deliveries due this week, as the facility colours do.
+ */
+export function pinStatusesForMedicine(
+  rows: MedicineDayRow[],
+  facilities: Facility[],
+): Record<string, PinStatus> {
+  const byFacility = new Map(rows.map((r) => [r.facility_id, r]));
+  const out: Record<string, PinStatus> = {};
+  for (const facility of facilities) {
+    const row = byFacility.get(facility.id);
+    if (!row) {
+      out[facility.id] = "none";
+      continue;
+    }
+    const state = medicineRowState(row);
+    out[facility.id] = state === "out" ? "out" : state === "low" ? "low" : "ok";
+  }
+  return out;
+}
+
+/** Facility-level pin states for a day (the share-based green/amber/red rule). */
+export function pinStatusesForDay(
+  statuses: Record<string, FacilityStatus>,
+  facilities: Facility[],
+): Record<string, PinStatus> {
+  const out: Record<string, PinStatus> = {};
+  for (const facility of facilities) out[facility.id] = pinStatusForFacility(statuses[facility.id]);
+  return out;
+}
+
+/**
+ * Facilities that get a permanent name label: the selected one, the ends of the
+ * busiest routes, then those in trouble -- capped, because labels on every pin in the
+ * town centre overlap into noise. The rest are named on hover or focus.
+ */
+export function labelledFacilityIds(
+  selectedId: string | null,
+  routes: Array<{ fromId: string; toId: string; quantity: number }>,
+  pins: Record<string, PinStatus>,
+  limit = 6,
+): string[] {
+  const chosen: string[] = [];
+  const add = (id: string | null | undefined) => {
+    if (id && !chosen.includes(id) && chosen.length < limit) chosen.push(id);
+  };
+  add(selectedId);
+  for (const route of [...routes].sort((a, b) => b.quantity - a.quantity).slice(0, 2)) {
+    add(route.toId);
+    add(route.fromId);
+  }
+  for (const id of Object.keys(pins).sort()) if (pins[id] === "out") add(id);
+  return chosen;
+}
+
+/**
+ * Compass bearing from one point to another in degrees (0 = north, clockwise), on the
+ * map's projection, for rotating an arrowhead along a route.
+ */
+export function bearingDeg(from: [number, number], to: [number, number]): number {
+  const dx = (to[1] - from[1]) * Math.cos(((from[0] + to[0]) / 2) * (Math.PI / 180));
+  const dy = to[0] - from[0];
+  const angle = (Math.atan2(dx, dy) * 180) / Math.PI;
+  return (angle + 360) % 360;
+}
+
+/** A point part of the way along a straight line, for placing a route's arrowhead. */
+export function along(from: [number, number], to: [number, number], t: number): [number, number] {
+  return [from[0] + (to[0] - from[0]) * t, from[1] + (to[1] - from[1]) * t];
+}
+
+export type Bounds = [[number, number], [number, number]];
+
+/**
+ * Where a manufacturer line enters: the point on the box's nearest edge. Manufacturers'
+ * locations are not in the dataset, so the line comes from the edge rather than from
+ * an invented point.
+ */
+export function edgePoint(point: [number, number], bounds: Bounds): [number, number] {
+  const [[south, west], [north, east]] = bounds;
+  const [lat, lon] = point;
+  const distances: Array<[number, [number, number]]> = [
+    [north - lat, [north, lon]],
+    [lat - south, [south, lon]],
+    [east - lon, [lat, east]],
+    [lon - west, [lat, west]],
+  ];
+  distances.sort((a, b) => a[0] - b[0]);
+  return distances[0][1];
+}
+
 /** Recolour markers by one medicine's stock rather than the facility's overall status. */
 export function statusesByMedicine(rows: MedicineDayRow[]): Record<string, FacilityStatus> {
   const map: Record<string, FacilityStatus> = {};
@@ -142,6 +236,8 @@ export function statusesByMedicine(rows: MedicineDayRow[]): Record<string, Facil
 
 export interface TransferLine {
   id: string;
+  fromId: string;
+  toId: string;
   from: [number, number];
   to: [number, number];
   kind: "relief" | "rebalance";
@@ -183,6 +279,8 @@ export function transferLinesForDay(
     } else {
       routes.set(id, {
         id,
+        fromId: from.id,
+        toId: to.id,
         from: [from.lat, from.lon],
         to: [to.lat, to.lon],
         kind: event.type === "relief_transfer" ? "relief" : "rebalance",

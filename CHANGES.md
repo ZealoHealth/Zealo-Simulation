@@ -4,6 +4,88 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Dispensary redesign, milestone 2 of 7: Map page, plus a reproducibility fix — 2026-10-04
+
+**Status:** complete. Nothing committed.
+
+### Bug fixed: the simulation was not reproducible across restarts
+- **Found** while adding the map's medicine field: an API test passed or failed from one run to
+  the next. With the same seed, five separate processes produced 230, 244, 249, 247 and 242
+  transfers.
+- **Cause:** opening stock for non-PHC facilities draws from the random number generator once
+  per medicine, looping over a `frozenset` of medicine codes. Python's set order depends on a
+  per-process hash seed, so each API restart handed the random draws to medicines in a different
+  order.
+- **Fix:** sorted iteration in `runner.py`, `engine.py` and `policies.py`. The engine and policy
+  loops didn't change results, but they did change the order of the event log.
+- **Guarded by** `test_reproducibility.py`. It runs the simulation under two different hash seeds
+  in subprocesses and compares the metrics and the event log. It fails without the fix.
+- **The default run's figures changed.** They are now stable: 99.03% of medicine-days in stock,
+  258 transfers, 13,002 units moved, 13 expired; 95.35% on their own; 10 of 15 facilities red
+  on day 1. Earlier figures (99.1%, 274 transfers, "9 of 15") came from whatever hash seed the
+  server started with. The pitch page and story compute from the run, so they updated themselves.
+- The old flaky test had a second, latent weakness: the API rounds forecasts to 3 decimals, which
+  distorts cover badly for slow-moving medicines. It now checks against the exact range the
+  rounding allows.
+
+### API
+- Each medicine row (`/runs/{id}/medicines/{mid}`) now includes `incoming_7d`, the deliveries due
+  this week, so the map's "under a week" counts incoming stock the way the facility colours do.
+  Tested against the facility endpoint.
+
+### Map page
+- **Layout:** left rail 330 px, the map, right rail 370 px. Below 1280 px they stack, and the map
+  stays at least 420 px tall. The whole-run totals sit inline in the disclaimer strip.
+- **Pins:**
+  - Shape shows the facility type: hospitals are rounded squares, PHCs and CHCs diamonds,
+    clinics circles, pharmacies small circles, and other government facilities dashed squares.
+  - Fill and a glyph both show stock: green; amber with a dot (under a week); red with a bar
+    (out); stone grey when the facility doesn't carry the selected medicine. Every pin has a
+    white outline.
+  - The selected facility gets a ring.
+  - Up to six name labels appear: the selected facility, the ends of the busiest routes, and
+    facilities out of stock. Everything else is named on hover.
+  - Clustering is gone, because it hid statuses.
+  - The base map tiles are muted.
+- **Movement:** blue animated dashed transfers with arrowheads. Express orders come in from the
+  nearest map edge as thin dashed lines, with a "Manufacturer A" chip. Animation is off under
+  reduced motion.
+- **Legend:** three groups (stock, facility type, movement). The stock group switches to "Stock
+  of {medicine}" with a "Doesn't carry it" row when a medicine is selected. It's collapsed by
+  default below 1600 px so it doesn't cover the map.
+- **Left rail:**
+  - "Find a medicine" search. Picking one gives the summary sentence "Carried by N… N have stock
+    on day D", then the five nearest facilities with stock (distance, days of stock, a chip),
+    with an optional radius.
+  - "Show on the map" checkboxes, with "Checked locations only" replacing "Verified only", and
+    "Reset the map".
+  - Coverage notes from the data.
+- **Right rail:**
+  - The selected facility: name, type, network membership and badge, the warning chips, a shelf
+    bar with "N carried. N in stock, N under a week, N out."
+  - "Needs attention": days left, plus what Zealo is doing. That's a transfer (they arrive the
+    next day), an express order, deliveries due, or "No delivery due this week".
+  - A link to the full inventory.
+  - "Day N in the network": that day's counts and the event feed in plain sentences.
+- **Playback bar:** play with an icon, previous/next, the day label, the slider, and speeds of
+  1×, 4× and 20×. It floats over the map. The slider is named "Simulation day", and screen
+  readers hear "Day 4 of 180" as its value.
+- **Story:** restyled to match. Sentence-case kickers, bordered panel, 44 px chapter targets, and
+  a register-style scoreboard. Started from "Watch the story" beside the zoom buttons.
+
+### Couldn't match exactly
+- "Can spare N" became "Has spare" (over a month of stock), because the medicine view has no
+  reorder point to compute a quantity from.
+- "Reset" left the floating playback bar on the map, so the bar fits on one line. It's in the
+  left rail instead.
+
+### Checked
+- 1440 px with a facility and a medicine selected, and the story; 390 px for stacking and
+  horizontal overflow. No console errors.
+- Backend 249 tests (+2), ruff clean. Frontend 108 tests (+18), lint and typecheck clean.
+
+---
+
 ## Dispensary redesign, milestone 1 of 7: foundations — 2026-10-04
 
 **Status:** complete. Nothing committed. The pages' own layouts are restyled in milestones 2–7.

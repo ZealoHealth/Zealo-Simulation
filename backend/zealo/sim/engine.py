@@ -168,7 +168,7 @@ class SimulationState:
                 self._starting_units += batch.quantity
 
         for fid, medicine_ids in scenario.carried.items():
-            for mid in medicine_ids:
+            for mid in sorted(medicine_ids):
                 self.forecasters[(fid, mid)] = self.make_forecaster(fid, mid)
                 self.history[(fid, mid)] = {
                     key: np.zeros(scenario.days, dtype=np.int32)
@@ -494,7 +494,8 @@ def _serve_demand(state: SimulationState, day: int) -> None:
     scenario = state.scenario
     for facility_id, medicine_ids in scenario.carried.items():
         inventory = state.inventories[facility_id]
-        for medicine_id in medicine_ids:
+        # Sorted so the event log's order does not depend on the hash seed.
+        for medicine_id in sorted(medicine_ids):
             key = (facility_id, medicine_id)
             series = scenario.demand.get(key)
             wanted = int(series[day]) if series is not None else 0
