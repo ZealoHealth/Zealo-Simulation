@@ -242,13 +242,53 @@ Direct equivalents:
 - Recharts is **lazily loaded**: the two chart pages are `React.lazy` routes so the map, the
   page a judge lands on, does not pay for it.
 
+## "Dispensary" redesign (in progress, from 2026-10-04)
+
+- Spec: the "Restyle Zealo: the dispensary redesign" brief (scrub green on off-white, register
+  tables, blister-pack logo). Visual and copy only: no change to simulation, API behaviour,
+  pipeline, provenance logic or URLs, except as the brief allows. Worked in 7 milestones; the
+  user commits after each.
+- **Decided with the user:** the disclaimer stays **verbatim** (hard rule 5) in the new slim
+  `DisclaimerStrip`, on every page including Home; fonts load from **Google Fonts** in
+  `index.html` (no npm dependency); the Facility chart's reorder-point and projected-stock lines
+  come from a **small read-only API addition** (milestone 3); the **guided story is kept** and
+  stays prominent (the brief wanted it reduced to a link).
+- Tokens live in `@theme` in `src/index.css` (Tailwind 4 has no `tailwind.config`). Old token
+  names (`purple`, `coral`, `navy`, `lavender`, `ink-muted`, `ink-subtle`, `surface-sunken`,
+  `hairline`, `status-*`) are **temporary aliases** onto the new palette so unrestyled pages keep
+  rendering. Don't use them in new code; delete them in the polish milestone.
+- Components stay in `src/ui/` (the brief says `src/components/ui/`; kept for consistency).
+  Button looks are in `ui/buttonStyles.ts` (`buttonClass` for links styled as buttons) so
+  `ui/index.tsx` exports only components.
+- `StatusPill` takes an optional `label`: a medicine's amber means under a week of cover **or**
+  stock within 90 days of expiry, so only a caller that knows which can say "Under a week".
+- Gotcha: `hidden sm:inline-flex` on an element whose class also contains `inline-flex` stays
+  visible on phones. Wrap it in `<span className="hidden sm:contents">` instead.
+
 ## "With Zealo" only (decided 2026-09-17)
 
 - The UI shows the Zealo network only. The mode toggle and the Compare page are hidden behind
   `VITE_SHOW_WITHOUT_ZEALO` (`frontend/src/config.ts`, default off); `/compare` redirects to the
   map. **The backend still runs both modes** and every baseline test stays — hiding is UI-only,
   so the comparison can come back without code changes. Don't delete `ComparisonPage`.
-- Copy must not refer to "both modes" or "without Zealo" outside flag-gated UI.
+- Copy must not refer to "both modes" or "without Zealo" outside flag-gated UI. **Exception
+  (decided 2026-10-04):** the pitch page and the story may quote the baseline as "on their own"
+  for contrast, always with "same facilities, demand and opening stock".
+
+## Pitch page and story (2026-10-04)
+
+- `/` is the pitch page (`pages/StoryPage.tsx`); the map is at **`/map`**. The map page is lazy
+  and prefetched from `App.tsx`. Keep the pitch page free of Leaflet and Recharts.
+- **Every story number is computed from the run** in `components/story/storyLogic.ts` (survey
+  figures come from `/survey-summary`). Never type a result into copy: a new seed or setting
+  must change the story with it. A chapter whose moment did not happen is omitted.
+- Chapters are in day order. Each sets `day`, optional `playTo`, `highlight`, `zoom` and
+  `movement` ("none" on the problem chapter, so the solution is not shown before it is told).
+- The worked example prefers a day-1 move into a red facility ≥ 0.5 km away: several facilities
+  share a site (< 100 m), and their markers overlap.
+- During the story the map is unclustered, full width, legend hidden; the card is a left panel
+  (a bottom card cost a zoom level), and `FocusOn` pads for it. The approval limit applies to
+  **manufacturer orders**, not transfers — the copy says so; keep it that way.
 
 ## Network page and per-day queries (2026-09-17)
 

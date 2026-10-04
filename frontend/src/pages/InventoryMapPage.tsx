@@ -8,8 +8,10 @@
  */
 import { useMemo } from "react";
 import { useFacilities, useFacilityRun, useMedicineRun, useMedicines } from "../api/hooks";
-import { useRun } from "../api/useRun";
 import type { Facility, Medicine } from "../api/types";
+import { StoryLauncher, StoryTour } from "../components/story/StoryTour";
+import { chapterEvents } from "../components/story/storyLogic";
+import { useStory } from "../components/story/useStory";
 import { EventFeed } from "../components/panels/EventFeed";
 import { FacilityPanel } from "../components/panels/FacilityPanel";
 import { InventoryMap } from "../components/map/InventoryMap";
@@ -35,12 +37,13 @@ const NO_MEDICINES: Medicine[] = [];
 export function InventoryMapPage() {
   const facilitiesQuery = useFacilities();
   const medicinesQuery = useMedicines(true);
-  const { run, isLoading: runLoading, error: runError, missingInputs } = useRun();
+  const { run, chapters, isLoading: runLoading, error: runError, missingInputs } = useStory();
 
   const {
     mode,
     day,
     runId,
+    storyChapter,
     filters,
     selectedFacilityId,
     selectedMedicineId,
@@ -71,10 +74,30 @@ export function InventoryMapPage() {
     return statusesForDay(run?.timeline[mode], day);
   }, [selectedMedicineId, medicineRun.data, run, mode, day]);
 
+  // The story takes over the map: full width, its own spotlight and camera.
+  const chapter =
+    storyChapter !== null && chapters.length
+      ? chapters[Math.min(storyChapter, chapters.length - 1)]
+      : null;
+  const storyOn = Boolean(chapter && run);
+
   const highlighted = useMemo(() => {
+    if (chapter) return chapter.highlight ? new Set(chapter.highlight) : null;
     if (!selectedMedicineId || !medicineRun.data) return null;
     return new Set(medicineRun.data.rows.filter((r) => r.in_stock).map((r) => r.facility_id));
-  }, [selectedMedicineId, medicineRun.data]);
+  }, [chapter, selectedMedicineId, medicineRun.data]);
+
+  // A chapter decides which movements the map draws; outside it, the whole day's.
+  const mapEvents = useMemo(
+    () => (chapter ? chapterEvents(chapter, run?.events[mode]) : run?.events[mode]),
+    [chapter, run, mode],
+  );
+
+  const focus = chapter
+    ? chapter.zoom && chapter.highlight?.length
+      ? { facilityIds: chapter.highlight }
+      : ("taluk" as const)
+    : undefined;
 
   const events = useMemo(
     () => eventsForDay(run?.events[mode], day),
@@ -87,9 +110,15 @@ export function InventoryMapPage() {
   
   return (
     <div className="flex h-full flex-col">
-      <div className="grid h-full min-h-0 grid-cols-[320px_1fr_380px]">
+      <div
+        className={`grid h-full min-h-0 ${storyOn ? "grid-cols-1" : "grid-cols-[320px_1fr_380px]"}`}
+      >
         {/* Left: filters and medicine search */}
-        <div className="flex min-h-0 flex-col gap-3 overflow-y-auto bg-surface-sunken px-3 py-3">
+        <div
+          className={`min-h-0 flex-col gap-3 overflow-y-auto bg-surface-sunken px-3 py-3 ${
+            storyOn ? "hidden" : "flex"
+          }`}
+        >
           <Card>
             <CardTitle hint={`Showing ${visible.length} of ${facilities.length} facilities`}>
               Layers
@@ -161,22 +190,39 @@ export function InventoryMapPage() {
               facilities={visible}
               boundary={facilitiesQuery.data.boundary}
               statuses={statuses}
-              events={run?.events[mode]}
+              events={mapEvents}
               day={day}
               selectedFacilityId={selectedFacilityId}
               onSelectFacility={selectFacility}
               highlightedFacilityIds={highlighted}
+              focus={focus}
+              cluster={!storyOn}
             />
           )}
-          <div className="pointer-events-none absolute bottom-3 left-3 z-[1000] max-w-xs">
+          {/* The story panel takes the legend's corner; chapter 1 explains the colours. */}
+          <div
+            className={`pointer-events-none absolute bottom-3 left-3 z-[1000] max-w-xs ${
+              storyOn ? "hidden" : ""
+            }`}
+          >
             <div className="pointer-events-auto">
               <Legend hasRun={hasRun} />
             </div>
           </div>
+          {storyOn && run && <StoryTour chapters={chapters} run={run} />}
+          {!storyOn && chapters.length > 0 && (
+            <div className="absolute right-3 top-3 z-[1000]">
+              <StoryLauncher />
+            </div>
+          )}
         </div>
 
         {/* Right: totals, playback, events, facility detail */}
-        <div className="flex min-h-0 flex-col gap-3 overflow-y-auto bg-surface-sunken px-3 py-3">
+        <div
+          className={`min-h-0 flex-col gap-3 overflow-y-auto bg-surface-sunken px-3 py-3 ${
+            storyOn ? "hidden" : "flex"
+          }`}
+        >
           {missingInputs && runError && <MissingInputsNotice detail={runError.detail} />}
           {runLoading && (
             <Card>

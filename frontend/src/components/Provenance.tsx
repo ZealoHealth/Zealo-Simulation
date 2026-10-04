@@ -10,22 +10,22 @@ import type { Provenance } from "../api/types";
 const STYLES: Record<Provenance, { label: string; className: string; title: string }> = {
   real: {
     label: "Real",
-    className: "bg-status-green/15 text-status-green border-status-green/30",
+    className: "border-scrub bg-scrub text-white",
     title: "Taken directly from a published source, unmodified.",
   },
   derived: {
     label: "Derived",
-    className: "bg-purple/15 text-purple border-purple/30",
+    className: "border-move text-move",
     title: "Calculated from real data using a formula documented in METHODS.md.",
   },
   estimated: {
     label: "Estimated",
-    className: "bg-coral/15 text-coral border-coral/40",
+    className: "border-dashed border-muted text-ink-2",
     title: "Modelled. Not observed in any source.",
   },
   unknown: {
     label: "Unknown",
-    className: "bg-navy/10 text-navy/60 border-navy/20",
+    className: "border-dotted border-line text-muted",
     title: "No source records this value, so it is not shown as a number.",
   },
 };
@@ -41,7 +41,7 @@ export function ProvenanceBadge({
   return (
     <span
       title={style.title}
-      className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.className} ${className}`}
+      className={`inline-flex items-center whitespace-nowrap rounded border-[1.5px] px-1.5 py-px text-[13px] font-bold leading-snug ${style.className} ${className}`}
     >
       {style.label}
     </span>
@@ -59,9 +59,9 @@ export function ProvenanceRow({
   provenance: Provenance;
 }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 py-1">
-      <span className="text-xs text-navy/60">{label}</span>
-      <span className="flex items-center gap-2 text-sm font-medium">
+    <div className="flex items-baseline justify-between gap-3 border-b border-line-soft py-2">
+      <span className="text-sm text-muted">{label}</span>
+      <span className="flex items-center gap-2 text-[15px] font-bold text-ink">
         {value}
         <ProvenanceBadge provenance={provenance} />
       </span>

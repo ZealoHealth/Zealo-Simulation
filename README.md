@@ -17,7 +17,8 @@ Built for an ideathon by **Shriyans Nayak and Sanjana Srinivas**. It is a proof 
 
 | Page | What it shows |
 |---|---|
-| **Map** | 15 real facilities, coloured by stock status, with day-by-day playback. You can search for a medicine to see which facilities hold it, nearest first. Transfers appear as lines between facilities. A feed lists stockouts, transfers and express orders. |
+| **Story** (`/`) | The pitch: the real problem from the Gadag PHC survey, how Zealo works, the simulated results against the same facilities on their own, and the chapters of the guided story. |
+| **Map** (`/map`) | 15 real facilities, coloured by stock status, with day-by-day playback. You can search for a medicine to see which facilities hold it, nearest first. Transfers appear as lines between facilities. A feed lists stockouts, transfers and express orders. |
 | **Facility** | One facility's full inventory: stock, days of cover, deliveries due, expiry alerts, a stock history chart and the approval queue. You can also take the facility in or out of the network here. |
 | **Network** | What the network has moved up to the selected day (transfers, units, distance, the medicines moved most), and which facilities are short or have surplus that day. |
 | **Settings** | Run length, lead times, facility rules, network membership and approval limits, plus a share link that reproduces the exact scenario. |
@@ -25,6 +26,25 @@ Built for an ideathon by **Shriyans Nayak and Sanjana Srinivas**. It is a proof 
 | **About** | What Zealo is, and what this demo does and does not show. |
 
 A quiet **Data status** link in the header lists the data that is still interim (see below).
+
+### Presenting the demo
+
+Open the Story page and press **Start the story**. It plays seven chapters on the live map:
+
+1. The problem
+2. The medicine is already nearby
+3. Zealo connects facilities
+4. An express order only when no neighbour can help
+5. The map turns green
+6. Six months later
+7. What a hospital gets
+
+Step through with the arrow keys or a presentation clicker (Page Up / Page Down), and press Esc
+to leave. A scoreboard compares the Zealo network with the same facilities on their own, on the
+day shown.
+
+Every number in the story is computed from the run on screen, or taken from the published survey.
+None is typed in, so changing a setting or the seed changes the story with it.
 
 ### Map colours
 
@@ -71,8 +91,9 @@ without further requests.
 ### Showing the "without Zealo" baseline
 
 The app shows the Zealo network only. The backend still simulates a baseline on identical
-demand and opening stock, where every facility manages stock alone. To bring back the mode
-toggle and the Compare page, set this in `frontend/.env` and restart the dev server:
+demand and opening stock, where every facility manages stock alone. The Story page and the guided
+story quote it as "on their own" for contrast. To bring back the mode toggle and the Compare
+page, set this in `frontend/.env` and restart the dev server:
 
 ```bash
 VITE_SHOW_WITHOUT_ZEALO=true

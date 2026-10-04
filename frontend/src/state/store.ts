@@ -39,6 +39,8 @@ export interface ViewState {
    */
   networkOverrides: Record<string, boolean>;
   dataStatusOpen: boolean;
+  /** Open chapter of the guided story on the map, or null outside the story. */
+  storyChapter: number | null;
   /** The committed scenario. Changing it changes the run. */
   scenario: ScenarioSettings;
   /** "<day>:<facility>:<medicine>" -> approve | reject. Also part of the scenario. */
@@ -62,6 +64,7 @@ export interface ViewState {
   setNetworkMembership: (facilityId: string, inNetwork: boolean, defaultValue: boolean) => void;
   setVerifiedOnly: (value: boolean) => void;
   setDataStatusOpen: (open: boolean) => void;
+  setStoryChapter: (chapter: number | null) => void;
   setScenario: (scenario: ScenarioSettings) => void;
   hydrate: (state: ShareableState) => void;
   resetScenario: () => void;
@@ -91,6 +94,7 @@ export const useViewStore = create<ViewState>((set) => ({
   filters: INITIAL_FILTERS,
   networkOverrides: {},
   dataStatusOpen: false,
+  storyChapter: null,
   scenario: DEFAULT_SCENARIO,
   approvalDecisions: {},
 
@@ -128,6 +132,14 @@ export const useViewStore = create<ViewState>((set) => ({
   setVerifiedOnly: (verifiedOnly) =>
     set((s) => ({ filters: { ...s.filters, verifiedOnly } })),
   setDataStatusOpen: (dataStatusOpen) => set({ dataStatusOpen }),
+  // The story drives the day itself, so ordinary playback stops while it is open.
+  // The story tells the Zealo network's run, so it always opens on that mode.
+  setStoryChapter: (storyChapter) =>
+    set(
+      storyChapter === null
+        ? { storyChapter, playing: false }
+        : { storyChapter, playing: false, mode: "with_zealo" },
+    ),
   setScenario: (scenario) => set({ scenario, day: 0, playing: false }),
   hydrate: ({ scenario, networkOverrides, approvalDecisions }) =>
     set({ scenario, networkOverrides, approvalDecisions, day: 0, playing: false }),

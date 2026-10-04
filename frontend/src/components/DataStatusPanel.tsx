@@ -31,13 +31,18 @@ export function DataStatusLink() {
     <button
       type="button"
       onClick={() => setOpen(true)}
-      className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-surface-sunken hover:text-ink"
+      className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap px-1 text-[15px] text-ink-2 underline-offset-4 hover:text-ink hover:underline"
     >
+      <span
+        aria-hidden="true"
+        className={`h-2 w-2 rounded-full ${pending > 0 ? "bg-low" : "bg-scrub"}`}
+      />
       Data status
       {pending > 0 && (
-        <span className="rounded-full bg-status-amber/15 px-1.5 text-[10px] font-semibold text-status-amber">
-          {pending} interim
-        </span>
+        <>
+          <span className="hidden text-muted sm:inline">({pending} interim)</span>
+          <span className="sr-only sm:hidden">, {pending} interim</span>
+        </>
       )}
     </button>
   );

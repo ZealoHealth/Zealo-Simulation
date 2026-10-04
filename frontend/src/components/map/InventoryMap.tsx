@@ -6,12 +6,13 @@
  * provider can be swapped without a code change if traffic grows. No tiles are
  * pre-fetched or bulk downloaded.
  */
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { GeoJSON, MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import type { Facility, FacilityStatus, SimulationEvent } from "../../api/types";
 import type { GeoJsonBoundary } from "../../api/types";
+import { prefersReducedMotion } from "../../ui/motion";
 import { facilityIcon, TYPE_LABELS } from "./icons";
 import { manufacturerActivityForDay, transferLinesForDay } from "./mapLogic";
 
@@ -75,6 +76,83 @@ function FitToBoundary({ boundary }: { boundary: GeoJsonBoundary | null }) {
   return null;
 }
 
+function boundaryBounds(boundary: GeoJsonBoundary | null): [[number, number], [number, number]] | null {
+  const ring = boundary?.features?.[0]?.geometry.coordinates[0];
+  if (!ring?.length) return null;
+  const lats = ring.map((p) => p[1]);
+  const lons = ring.map((p) => p[0]);
+  return [
+    [Math.min(...lats), Math.min(...lons)],
+    [Math.max(...lats), Math.max(...lons)],
+  ];
+}
+
+/**
+ * Where the guided story points the camera: a set of facilities, or the whole
+ * taluk. Undefined outside the story, so ordinary panning is never overridden.
+ */
+export type MapFocus = { facilityIds: string[] } | "taluk" | undefined;
+
+function FocusOn({
+  focus,
+  facilities,
+  boundary,
+}: {
+  focus: MapFocus;
+  facilities: Facility[];
+  boundary: GeoJsonBoundary | null;
+}) {
+  const map = useMap();
+  const key = focus === undefined ? "" : focus === "taluk" ? "taluk" : focus.facilityIds.join(",");
+  const previous = useRef("");
+
+  useEffect(() => {
+    const was = previous.current;
+    previous.current = key;
+    // Leaving the story returns to the taluk once; outside it the user owns the view.
+    if (!key && !was) return;
+    let bounds = boundaryBounds(boundary);
+    if (focus) {
+      // "taluk" frames every facility rather than the whole boundary: with room left
+      // for the story card, the boundary only fits a zoom level further out.
+      const points = facilities
+        .filter((f) => focus === "taluk" || focus.facilityIds.includes(f.id))
+        .map((f) => [f.lat, f.lon] as [number, number]);
+      if (points.length) {
+        bounds = [
+          [Math.min(...points.map((p) => p[0])), Math.min(...points.map((p) => p[1]))],
+          [Math.max(...points.map((p) => p[0])), Math.max(...points.map((p) => p[1]))],
+        ];
+      }
+    }
+    if (!bounds) return;
+    // The story panel covers the left of the map (or the bottom, on a narrow screen),
+    // and the scoreboard the top right; frame the facilities in what is left.
+    // On leaving the story there is no panel, so the taluk is centred as on load.
+    const wide = map.getSize().x >= 900;
+    const options = !focus
+      ? { padding: [16, 16] as [number, number] }
+      : {
+          paddingTopLeft: (wide ? [470, 50] : [40, 230]) as [number, number],
+          paddingBottomRight: (wide ? [60, 40] : [40, 300]) as [number, number],
+          maxZoom: 14,
+        };
+    if (prefersReducedMotion()) map.fitBounds(bounds, options);
+    else map.flyToBounds(bounds, { ...options, duration: 1.1 });
+    // `focus` is summarised by `key`; facilities and boundary are stable per run.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, map]);
+  return null;
+}
+
+function MaybeCluster({ cluster, children }: { cluster: boolean; children: ReactNode }) {
+  if (!cluster) return <>{children}</>;
+  return (
+    <MarkerClusterGroup chunkedLoading maxClusterRadius={45}>
+      {children}
+    </MarkerClusterGroup>
+  );
+}
 
 export interface InventoryMapProps {
   facilities: Facility[];
@@ -86,6 +164,13 @@ export interface InventoryMapProps {
   onSelectFacility: (id: string) => void;
   /** When a medicine is selected, facilities without it are dimmed rather than hidden. */
   highlightedFacilityIds: Set<string> | null;
+  /** Set only by the guided story. */
+  focus?: MapFocus;
+  /**
+   * Group nearby markers. The story turns this off: the facilities a chapter
+   * spotlights must stay visible, not fold into a numbered cluster.
+   */
+  cluster?: boolean;
 }
 
 export function InventoryMap({
@@ -97,6 +182,8 @@ export function InventoryMap({
   selectedFacilityId,
   onSelectFacility,
   highlightedFacilityIds,
+  focus,
+  cluster = true,
 }: InventoryMapProps) {
   const allTransfers = useMemo(
     () => transferLinesForDay(events, facilities, day),
@@ -123,6 +210,7 @@ export function InventoryMap({
       <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} maxZoom={19} />
       <KeepSizeInSync />
       <FitToBoundary boundary={boundary} />
+      <FocusOn focus={focus} facilities={facilities} boundary={boundary} />
 
       {boundary && (
         <GeoJSON
@@ -159,7 +247,7 @@ export function InventoryMap({
         </Polyline>
       ))}
 
-      <MarkerClusterGroup chunkedLoading maxClusterRadius={45}>
+      <MaybeCluster cluster={cluster}>
         {facilities.map((facility) => {
           const dimmed = highlightedFacilityIds
             ? !highlightedFacilityIds.has(facility.id)
@@ -168,6 +256,8 @@ export function InventoryMap({
             <Marker
               key={facility.id}
               position={[facility.lat, facility.lon]}
+              // Spotlit markers sit above dimmed neighbours they overlap.
+              zIndexOffset={highlightedFacilityIds && !dimmed ? 1000 : 0}
               icon={facilityIcon(facility.facility_type, statuses[facility.id] ?? null, {
                 selected: facility.id === selectedFacilityId,
                 dimmed,
@@ -195,7 +285,7 @@ export function InventoryMap({
             </Marker>
           );
         })}
-      </MarkerClusterGroup>
+      </MaybeCluster>
     </MapContainer>
     <MovementChip
       routineOrders={manufacturer.routineOrders}

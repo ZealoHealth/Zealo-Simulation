@@ -3,10 +3,15 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { AppShell } from "./components/AppShell";
 import { SHOW_WITHOUT_ZEALO } from "./config";
-import { InventoryMapPage } from "./pages/InventoryMapPage";
+import { StoryPage } from "./pages/StoryPage";
 
-// The two chart-heavy pages pull in Recharts, which is large. Loading them on
-// demand keeps the map -- the page a judge lands on -- as small as possible.
+// The pitch page is where a demo starts, so it is the only page loaded up front.
+// The map (Leaflet) and the chart pages (Recharts) load on demand; the map's chunk
+// is fetched while the presenter is still on the pitch page.
+const loadMap = () =>
+  import("./pages/InventoryMapPage").then((m) => ({ default: m.InventoryMapPage }));
+const InventoryMapPage = lazy(loadMap);
+void loadMap();
 const FacilityDashboardPage = lazy(() =>
   import("./pages/FacilityDashboardPage").then((m) => ({ default: m.FacilityDashboardPage })),
 );
@@ -44,13 +49,14 @@ export default function App() {
         <AppShell>
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              <Route path="/" element={<InventoryMapPage />} />
+              <Route path="/" element={<StoryPage />} />
+              <Route path="/map" element={<InventoryMapPage />} />
               <Route path="/facility" element={<FacilityDashboardPage />} />
               <Route path="/facility/:facilityId" element={<FacilityDashboardPage />} />
               <Route path="/network" element={<NetworkRedistributionPage />} />
               <Route
                 path="/compare"
-                element={SHOW_WITHOUT_ZEALO ? <ComparisonPage /> : <Navigate to="/" replace />}
+                element={SHOW_WITHOUT_ZEALO ? <ComparisonPage /> : <Navigate to="/map" replace />}
               />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/sources" element={<DataSourcesPage />} />

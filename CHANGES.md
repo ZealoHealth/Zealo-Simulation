@@ -4,6 +4,108 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Dispensary redesign, milestone 1 of 7: foundations — 2026-10-04
+
+**Status:** complete. Nothing committed. The pages' own layouts are restyled in milestones 2–7.
+
+### Decided with the user before starting
+- The disclaimer stays verbatim, in the new slim strip on every page, including Home.
+- Fonts load from Google Fonts, so there's no new dependency.
+- The Facility chart's reorder-point and projected-stock lines will come from a small read-only
+  API addition (milestone 3).
+- The guided story stays, and stays prominent.
+
+### Changed
+- **Palette and type:**
+  - The design tokens are in `@theme` (`index.css`): ink, muted, paper, wash, line, scrub, move,
+    low and out, each with its tints.
+  - The type is Atkinson Hyperlegible, with IBM Plex Mono for printed codes (`.code`).
+  - One focus ring: 3 px blue on `:focus-visible`.
+  - Panels have a border and no shadow.
+- **Logo and favicon:** a blister pack with one empty slot replaces the gradient "Z" tile and
+  Vite's default favicon.
+- **Header:**
+  - Plain-text nav: How it works, Map, Facilities, Network, Data and methods, About. The active
+    link is bold green with a 3 px bar, and carries `aria-current`.
+  - Right of the nav: "Data status" as a quiet link with a status dot, then "Open the Gadag map"
+    on Home or "Simulation settings" elsewhere.
+  - Under 1024 px a "Menu" button replaces the nav.
+- **Disclaimer strip:** the verbatim text on a pale green strip with a "How this was built" link.
+  It replaces the grey line under the header.
+- **Components:**
+  - Buttons come in primary, secondary, quiet, ghost, danger and inverse, all at least 44 px
+    tall.
+  - Chips always carry words.
+  - Provenance badges: Real is solid green, Derived has a blue border, Estimated a dashed one.
+  - New: `Stat` / `StatRow` (number above label).
+  - Tables have a register header (a 2 px ink rule) and 15 px rows.
+  - Sentence-case field labels; 44 px inputs, selects and checkboxes.
+- The old palette names temporarily point at the new colours, so every page still renders until
+  it's redone.
+
+### Checked
+- Every page at 1440 px; the header and menu at 390 px.
+- Fixed: at 390 px the header's main button showed and "Data status" wrapped onto three lines.
+- No console errors. Frontend tests 90, lint and typecheck clean.
+
+---
+
+## Pitch page and guided story — 2026-10-04
+
+**Status:** complete. Nothing committed.
+
+A demo for presenting Zealo to hospitals: a pitch page and a chaptered story played on the live
+map. Every number either comes from the published survey (badged Real) or is computed from the
+run the page is showing (badged Estimated). None is typed in by hand.
+
+### Decided with the user
+- The story **may quote the "on their own" baseline** as contrast (same facilities, demand and
+  opening stock, each managing stock alone). The mode toggle and Compare page stay hidden.
+- Format: a pitch landing page plus a guided tour on the map.
+
+### Pitch page (`/`, `pages/StoryPage.tsx`)
+- Hero: "The medicine a patient needs is often a few kilometres away", with the headline result
+  (80% fewer stockout days: 1,249 against 6,275).
+- The problem in real survey figures: 74.2% availability across 15 PHCs, 45.5% at the worst,
+  2 of 104 medicines missing everywhere, drawn against the 80% WHO/HAI benchmark.
+- How Zealo works (3 steps), the simulated results (stockout days −80%, units not supplied −83%,
+  no red facility by day 6 against day 22, 99.1% against 95.3% in stock), the chapter list, the
+  data sources, and the team.
+- The map moved to **`/map`**. `/compare` and the Settings share link point there now.
+
+### Guided story on the map (`components/story/`)
+- `storyLogic.ts` builds the facts and chapters from the run. A chapter whose moment didn't
+  happen in the run is left out. There is no expiry chapter because the default run has no
+  near-expiry moves and no expiries.
+- 7 chapters in day order: the problem (9 of 15 red) → the medicine is nearby (PHC 2 →
+  Clinic 2, 0.7 km) → 241 transfers on day 1 → an express order only when no neighbour can help
+  → plays days 1–6 until no facility is red → day 180 results → what a hospital gets.
+- Each chapter sets the day, spotlights and zooms to its facilities, and chooses which movements
+  are drawn. The problem chapter draws none, so the solution doesn't show before it's told.
+- A live scoreboard compares "With Zealo" and "On their own" on the day shown.
+- Arrow keys and presentation clickers (Page Up / Page Down) step through; Esc exits. A
+  "Play the story" button on the map starts it too.
+
+### Found while checking in the browser
+- The shortest day-1 move was between two facilities **0.1 km apart** (the same site), whose
+  markers overlap. The example now prefers a move into a red facility at least 0.5 km away.
+- On chapter 1, clustering folded the spotlit red facilities into numbered clusters. Clustering
+  is off during the story.
+- A bottom-centre card cost the map a whole zoom level, because the taluk is taller than it is
+  wide. The card became a left side panel.
+- The express chapter (day 1) originally came after the day 1–6 replay. It was moved so the
+  story runs in day order.
+
+### Also
+- Header: gradient mark, "Shared medicine inventory" tagline, logo links home.
+- `Button` gains `size="lg"` and an `inverse` variant. `ui/motion.ts` holds the reduced-motion
+  check, and every script animation (camera, counters, story playback) honours it.
+- The map page is lazy-loaded and prefetched from the pitch page. The main bundle went from
+  491.6 kB to 297.8 kB, and the >500 kB warning is gone.
+- Tests: frontend 90 (+18).
+
+---
+
 ## "With Zealo" only, a steady Network page, README — 2026-09-17
 
 **Status:** complete. Nothing committed.

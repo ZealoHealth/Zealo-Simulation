@@ -82,7 +82,7 @@ export function SettingsPage() {
         networkOverrides: store.networkOverrides,
         approvalDecisions: store.approvalDecisions,
       },
-      window.location.origin + "/",
+      window.location.origin + "/map",
     );
     await navigator.clipboard.writeText(url);
     setCopied(true);

@@ -1,36 +1,60 @@
 @import "tailwindcss";
 
-/* A real typeface. Inter for UI text, with tabular figures so numbers in tables
-   and stat tiles stop shifting as they change during playback. */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+/* Fonts load from index.html (Atkinson Hyperlegible, IBM Plex Mono). */
 
+/*
+ * The "dispensary register" palette. Surgical-scrub green on clean off-white; the
+ * only bright colours are stock warnings (low, out) and medicine movement (move).
+ * Use these tokens in components -- never a hex value.
+ */
 @theme {
-  /* Zealo's palette. */
-  --color-navy: #231C44;
-  --color-purple: #6A4CA8;
-  --color-coral: #F0674A;
-  --color-lavender: #F3F1F8;
+  --color-ink: #10231f;
+  --color-ink-2: #33463f;
+  --color-muted: #4a5e58;
+  --color-paper: #f6f8f7;
+  --color-surface: #ffffff;
+  --color-wash: #e6efeb;
+  --color-line: #c9d6d0;
+  --color-line-soft: #e3eae6;
+  --color-grid: #eef3f0;
+  --color-scrub: #14503f;
+  --color-scrub-dark: #0b3a2d;
+  --color-scrub-tint: #ddebe5;
+  --color-move: #1f5fa8;
+  --color-low: #d99a1e;
+  --color-low-tint: #fbefd3;
+  --color-low-text: #6b4800;
+  --color-out: #b3261e;
+  --color-out-tint: #f7dedb;
+  --color-out-row: #fdf4f3;
+  --color-out-text: #8e1e17;
+  --color-stone: #9fb3ab;
 
-  /* Tints derived from the brand colours, so surfaces have depth without
-     introducing greys that fight the palette. */
-  --color-ink: #231C44;
-  --color-ink-muted: #5B5474;
-  --color-ink-subtle: #8C86A3;
-  --color-surface: #FFFFFF;
-  --color-surface-sunken: #F7F6FB;
-  --color-hairline: #E6E2F0;
+  /*
+   * Legacy names from the first design, pointed at the new palette so pages not yet
+   * restyled keep rendering. Removed in the polish milestone; don't use them in new code.
+   */
+  --color-navy: #10231f;
+  --color-purple: #14503f;
+  --color-coral: #b3261e;
+  --color-lavender: #e6efeb;
+  --color-ink-muted: #33463f;
+  --color-ink-subtle: #4a5e58;
+  --color-surface-sunken: #f6f8f7;
+  --color-hairline: #e3eae6;
+  --color-status-green: #14503f;
+  --color-status-amber: #6b4800;
+  --color-status-red: #b3261e;
 
-  --color-status-green: #1F9D55;
-  --color-status-amber: #D97706;
-  --color-status-red: #DC2626;
+  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-
-  /* Soft, low-contrast elevation. Separation comes from shadow and spacing
-     rather than a border on every edge, which is what made the first pass look
-     like a wireframe. */
-  --shadow-card: 0 1px 2px rgba(35, 28, 68, 0.04), 0 2px 8px rgba(35, 28, 68, 0.06);
-  --shadow-raised: 0 2px 6px rgba(35, 28, 68, 0.08), 0 12px 28px rgba(35, 28, 68, 0.10);
+  /* Only floating things get a shadow: map overlays and the home transfer card. */
+  --shadow-float: 0 6px 18px rgba(16, 35, 31, 0.1);
+  --shadow-lift: 0 12px 32px rgba(16, 35, 31, 0.14);
+  /* Legacy shadow names: panels are separated by a border now, not a shadow. */
+  --shadow-card: none;
+  --shadow-raised: 0 6px 18px rgba(16, 35, 31, 0.1);
 }
 
 html,
@@ -40,11 +64,18 @@ body,
 }
 
 body {
-  background: var(--color-surface-sunken);
+  background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-feature-settings: "cv11", "ss01";
+  font-size: 16px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+}
+
+/* One visible focus ring for every interactive element. */
+:focus-visible {
+  outline: 3px solid var(--color-move);
+  outline-offset: 2px;
 }
 
 /* Numbers that change during playback must not reflow their column. */
@@ -52,59 +83,87 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Printed codes only: indent drug codes, batch numbers, file names. */
+.code {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
-  background: #f4f2f8;
+  background: var(--color-grid);
   font-family: var(--font-sans);
 }
 
-/* Leaflet's default control chrome is boxy; soften it to match the cards. */
 .leaflet-control-zoom a {
   border-radius: 8px !important;
   color: var(--color-ink) !important;
 }
 .leaflet-bar {
-  border: none !important;
-  box-shadow: var(--shadow-card) !important;
+  border: 1px solid var(--color-line) !important;
+  box-shadow: var(--shadow-float) !important;
 }
 
-@keyframes zealo-dash {
+/* A transfer in progress: the one place motion carries meaning. */
+@keyframes zealo-flow {
   to {
-    stroke-dashoffset: -24;
+    stroke-dashoffset: -40;
   }
 }
-
+.zealo-transfer,
 .zealo-transfer-line {
-  animation: zealo-dash 1s linear infinite;
+  stroke-dasharray: 10 10;
+  animation: zealo-flow 1.4s linear infinite;
 }
 
-/* Custom range track, because the default one is the single strongest "cheap" tell. */
 input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--color-hairline);
-  outline: none;
+  accent-color: var(--color-scrub);
 }
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 999px;
-  background: var(--color-purple);
-  box-shadow: 0 1px 4px rgba(35, 28, 68, 0.3);
-  cursor: pointer;
+
+/* Temporary: the old home hero, until the new Home page replaces it. */
+.hero-surface {
+  background: var(--color-scrub);
 }
-input[type="range"]:disabled::-webkit-slider-thumb {
-  background: var(--color-ink-subtle);
-  cursor: not-allowed;
+
+/* Story tour card entrance. */
+@keyframes zealo-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: zealo-rise 0.4s ease-out both;
+}
+
+/* Loading placeholder. */
+@keyframes zealo-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--color-grid) 25%,
+    var(--color-wash) 50%,
+    var(--color-grid) 75%
+  );
+  background-size: 200% 100%;
+  animation: zealo-shimmer 1.4s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .zealo-transfer-line {
+  .zealo-transfer,
+  .zealo-transfer-line,
+  .rise,
+  .skeleton {
     animation: none;
   }
   * {
