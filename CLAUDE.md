@@ -242,7 +242,7 @@ Direct equivalents:
 - Recharts is **lazily loaded**: the two chart pages are `React.lazy` routes so the map, the
   page a judge lands on, does not pay for it.
 
-## "Dispensary" redesign (in progress, from 2026-10-04)
+## "Dispensary" redesign (complete, 2026-10-04 to 2026-10-05)
 
 - Spec: the "Restyle Zealo: the dispensary redesign" brief (scrub green on off-white, register
   tables, blister-pack logo). Visual and copy only: no change to simulation, API behaviour,
@@ -253,10 +253,11 @@ Direct equivalents:
   `index.html` (no npm dependency); the Facility chart's reorder-point and projected-stock lines
   come from a **small read-only API addition** (milestone 3); the **guided story is kept** and
   stays prominent (the brief wanted it reduced to a link).
-- Tokens live in `@theme` in `src/index.css` (Tailwind 4 has no `tailwind.config`). Old token
-  names (`purple`, `coral`, `navy`, `lavender`, `ink-muted`, `ink-subtle`, `surface-sunken`,
-  `hairline`, `status-*`) are **temporary aliases** onto the new palette so unrestyled pages keep
-  rendering. Don't use them in new code; delete them in the polish milestone.
+- Tokens live in `@theme` in `src/index.css` (Tailwind 4 has no `tailwind.config`). The old
+  palette names (`purple`, `coral`, `navy`, `lavender`, `ink-muted`, `ink-subtle`,
+  `surface-sunken`, `hairline`, `status-*`) were aliases during the redesign and are **gone**: a
+  class using them now silently renders no colour. Every text/background pair in use has been
+  checked at 4.5:1 or better (lowest: muted on wash, 5.90).
 - Components stay in `src/ui/` (the brief says `src/components/ui/`; kept for consistency).
   Button looks are in `ui/buttonStyles.ts` (`buttonClass` for links styled as buttons) so
   `ui/index.tsx` exports only components.
@@ -274,6 +275,37 @@ Direct equivalents:
   "Has spare" = over 30 days of stock (the Network rule): the medicine view has no reorder point,
   so no spare *quantity* is shown. `FacilityPanel` and `NetworkTotals` were removed; the old
   panel's beds / "should carry vs carries" content moves to the Facility page in milestone 3.
+
+- **Facilities page (milestone 3):** ordering and the chart's labels are pure in
+  `components/facility/shelfLogic.ts` ("problems first": out, under a week, near expiry, rest,
+  survey-only last). "What Zealo is doing" is one rule, `components/panels/zealoAction.ts`, used by
+  the map rail and the shelf table. The chart's policy lines come from the API: `on_the_way`
+  (a recorded series: everything in transit, orders *and* transfers) and `reorder_point`
+  (computed per day with the policy's own formula, `ceil(forecast x (lead time + safety days))`).
+  Same-day transfers share one chart label. Recharts colours come from `ui/tokens.ts`, which reads
+  the CSS variables (SVG attributes can't use `var()` reliably).
+- A facility "carries" its modelled items **plus** its availability-only survey items. Counting
+  only the modelled ones made a PHC look short of half its state list.
+- Gotcha: a CSS grid with no column template sizes its implicit column to content, so a wide table
+  pushes the page sideways on a phone. Use `grid-cols-1` (minmax(0, 1fr)) as the base.
+
+- **Network (milestone 4):** the centrepiece is the shortage grid (`shortageGrid` in
+  `networkLogic.ts`: medicines with a shortage first, then most spare); busiest routes come from
+  the event log (`busiestRoutes`). Playback is a hook, `state/usePlayback.ts`, mounted by whichever
+  control a page shows (the full bar or the Network page's compact "Replay").
+- **Home (milestone 5):** the hero transfer is chosen in `components/home/heroTransfer.ts`: the
+  first relief transfer into a PHC within two days of running out, judged from that PHC's own
+  shelf that day. The card says "Sends N", not "Can spare N": no spare quantity is computed. The
+  shelf matrix reads survey item numbers (`survey_sl_no`) and rounds % x 15. The guided story keeps
+  a full section on Home (the user asked for it to stay prominent).
+- **Data and methods, Settings, About (milestone 6):** survey groups get plain names in
+  `PLAIN_GROUP` (the survey's own name stays on hover). "What this proof of concept can't tell you
+  yet" is built from the data-status items and coverage statements. The Settings panel the brief
+  called "Without Zealo" is "Facilities outside the network" (copy rule). About has no contact
+  section: no contact details were given.
+- Gotcha: a visually hidden (`sr-only`) element is absolutely positioned; inside a horizontally
+  scrolling table with no positioned ancestor it escapes the scroller and widens the whole page.
+  Give the cell `relative`.
 
 ## Determinism across processes (fixed 2026-10-04)
 

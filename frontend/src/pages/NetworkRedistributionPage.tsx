@@ -1,62 +1,130 @@
 /**
- * Where stock is surplus, where it is short, and how much has moved.
+ * The Network page: what has moved between facilities so far, and who is short and who
+ * has spare on the day shown.
  *
- * Surplus and shortage are measured in **days of cover**, not units: a hundred
- * tablets is a month's supply at one PHC and a day's at the taluk hospital, so
- * comparing raw counts across facilities would be meaningless.
- *
- * Everything on the page counts up to the selected day, like the map. Movement
- * figures come from the run's event log, so they advance with playback at no
- * cost; only the day's positions are fetched, and the previous day's stay on
- * screen while the next arrive, so the page never blanks between days.
+ * Movement figures come from the run's event log (the map's source), so they count up
+ * to the selected day and cost no request. Short and spare are positions on that day,
+ * in days of cover rather than units -- a hundred tablets is a month at one PHC and a
+ * day at the district hospital -- with deliveries due this week counted, as the map does.
  */
 import { useMemo, useState } from "react";
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceDot,
   ResponsiveContainer,
-  Tooltip as ChartTooltip,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
 import { shortMedicineName } from "../api/format";
-import { useMedicines, useRedistribution } from "../api/hooks";
-import type { FacilityBalance, Medicine } from "../api/types";
+import { useFacilities, useRedistribution, useSurveySummary } from "../api/hooks";
+import type { FacilityBalance } from "../api/types";
 import { useRun } from "../api/useRun";
-import { Disclaimer } from "../components/Disclaimer";
 import { MissingInputsNotice } from "../components/MissingInputsNotice";
 import { ProvenanceBadge } from "../components/Provenance";
-import { TimeControls } from "../components/TimeControls";
-import { networkActivity } from "../components/network/networkLogic";
-import { Card, CardTitle, EmptyState, Field, Select, StatTile, StatusPill, Table, Td, Th } from "../ui";
+import {
+  busiestRoutes,
+  networkActivity,
+  shortageGrid,
+  type GridCell,
+} from "../components/network/networkLogic";
 import { useViewStore } from "../state/store";
+import { usePlaybackClock } from "../state/usePlayback";
+import { Button, Card, CardTitle, Stat, StatRow, Table, Td, Th } from "../ui";
+import { token } from "../ui/tokens";
 
-const POSITION_ORDER: Record<string, number> = { short: 0, surplus: 1, balanced: 2 };
-const MAX_POSITIONS_LISTED = 60;
-const NO_MEDICINES: Medicine[] = [];
+const GRID_ROWS_SHOWN = 12;
 const NO_BALANCES: FacilityBalance[] = [];
 
-const TOOLTIP_STYLE = {
-  fontSize: 11,
-  borderRadius: 8,
-  border: "none",
-  boxShadow: "0 4px 16px rgba(35,28,68,.15)",
+function DayControl({ disabled }: { disabled: boolean }) {
+  const { day, totalDays, playing, setDay, play, pause } = useViewStore();
+  usePlaybackClock(disabled);
+  return (
+    <div className="flex flex-wrap items-center gap-3 rounded-[10px] border border-line bg-surface px-3.5 py-2">
+      <span
+        aria-hidden="true"
+        className="tabular whitespace-nowrap text-[15px] font-bold text-ink"
+      >
+        Day {totalDays ? day + 1 : 0} of {totalDays}
+      </span>
+      <input
+        type="range"
+        min={0}
+        max={Math.max(0, totalDays - 1)}
+        value={day}
+        disabled={disabled}
+        aria-label="Simulation day"
+        aria-valuetext={`Day ${day + 1} of ${totalDays}`}
+        onChange={(e) => setDay(Number(e.target.value))}
+        className="h-11 w-44 cursor-pointer"
+      />
+      <Button
+        variant="secondary"
+        disabled={disabled}
+        onClick={() => {
+          if (playing) {
+            pause();
+          } else {
+            setDay(0);
+            play();
+          }
+        }}
+      >
+        {playing ? "Pause" : "Replay"}
+      </Button>
+    </div>
+  );
+}
+
+const CELL_STYLE: Record<GridCell, string> = {
+  short: "bg-out text-white",
+  normal: "bg-grid",
+  spare: "bg-scrub text-white",
+  none: "border border-dashed border-stone bg-surface",
 };
+
+const CELL_GLYPH: Record<GridCell, string> = { short: "−", normal: "", spare: "+", none: "" };
+
+const units = (n: number) => `${n.toLocaleString()} unit${n === 1 ? "" : "s"}`;
+
+/**
+ * A cell in words. Days of stock count deliveries due this week (the map's rule), so a
+ * shelf can be empty yet have weeks of stock on the way; the text says so rather than
+ * printing "0 units, 21 days of stock".
+ */
+function cellText(label: string, cell: GridCell, balance: FacilityBalance | null): string {
+  if (!balance) return `${label}: doesn't carry it`;
+  const shelf = `${units(balance.on_hand)} on the shelf`;
+  const due = balance.incoming_7d > 0 ? ` and ${units(balance.incoming_7d)} due this week` : "";
+  const days =
+    balance.days_of_cover == null
+      ? "no use expected"
+      : `${Math.floor(balance.days_of_cover)} days of stock`;
+  const state =
+    cell === "short" ? ", under a week" : cell === "spare" ? ", over a month spare" : "";
+  return `${label}: ${shelf}${due}, ${days}${state}`;
+}
+
+function KeySwatch({ cell, glyph }: { cell: GridCell; glyph?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex h-5 w-5 items-center justify-center rounded font-bold ${CELL_STYLE[cell]}`}
+    >
+      {glyph}
+    </span>
+  );
+}
 
 export function NetworkRedistributionPage() {
   const mode = useViewStore((s) => s.mode);
   const day = useViewStore((s) => s.day);
   const { run, isLoading, error, missingInputs } = useRun();
-  const medicinesQuery = useMedicines(true);
-  const [medicineId, setMedicineId] = useState<string>("");
-
-  // Availability-only survey items have no modelled stock, so no positions to list.
-  const medicines = medicinesQuery.data?.medicines ?? NO_MEDICINES;
-  const modelled = useMemo(() => medicines.filter((m) => m.quantity_modelled), [medicines]);
-  const names = useMemo(() => new Map(medicines.map((m) => [m.id, m.name])), [medicines]);
+  const facilities = useFacilities().data?.facilities;
+  const itemsAssessed = useSurveySummary().data?.items_assessed;
+  const [showAllRows, setShowAllRows] = useState(false);
 
   const events = run?.events[mode];
   const totalDays = run?.days ?? 0;
@@ -64,273 +132,334 @@ export function NetworkRedistributionPage() {
     () => networkActivity(events, day, totalDays),
     [events, day, totalDays],
   );
+  const routes = useMemo(() => busiestRoutes(events, day), [events, day]);
 
-  const positions = useRedistribution(run?.run_id ?? null, mode, day, medicineId || null);
+  const positions = useRedistribution(run?.run_id ?? null, mode, day, null);
   const data = positions.data;
   const balances = data?.balances ?? NO_BALANCES;
 
-  const notable = useMemo(
-    () =>
-      balances
-        .filter((b) => b.position !== "balanced")
-        .sort(
-          (a, b) =>
-            POSITION_ORDER[a.position] - POSITION_ORDER[b.position] ||
-            (a.days_of_cover ?? 0) - (b.days_of_cover ?? 0),
-        )
-        .slice(0, MAX_POSITIONS_LISTED),
-    [balances],
+  const labels = useMemo(
+    () => new Map((facilities ?? []).map((f) => [f.id, f.display_label])),
+    [facilities],
   );
-
-  const topMedicines = activity.topMedicines.map((m) => ({
-    name: shortMedicineName(names.get(m.medicineId) ?? m.medicineId, 24),
-    relief: m.relief,
-    rebalance: m.rebalance,
-  }));
+  const columns = useMemo(() => {
+    const ids = new Set(balances.map((b) => b.facility_id));
+    return (facilities ?? []).filter((f) => ids.has(f.id) && f.in_network).map((f) => f.id);
+  }, [balances, facilities]);
+  const grid = useMemo(() => shortageGrid(balances, columns), [balances, columns]);
+  const gridRows = showAllRows ? grid : grid.slice(0, GRID_ROWS_SHOWN);
 
   const short = data ? balances.filter((b) => b.position === "short").length : null;
-  const surplus = data ? balances.filter((b) => b.position === "surplus").length : null;
+  const spare = data ? balances.filter((b) => b.position === "surplus").length : null;
+
+  // Units moved so far, with the day-1 opening rebalance called out when it is most of
+  // the movement: otherwise the jump on day 1 looks like an error.
+  const points = activity.cumulative;
+  const dayOneUnits = points.find((p) => p.day === 1)?.units ?? 0;
+  const openingRebalance = activity.units > 0 && dayOneUnits / activity.units > 0.5;
+  const colours = {
+    line: token("scrub"),
+    grid: token("line-soft"),
+    tick: token("muted"),
+    ink: token("ink"),
+  };
+  const chartSummary =
+    `Units moved between network facilities, day 1 to day ${day + 1}: ` +
+    `${activity.units.toLocaleString()} in ${activity.transfers.toLocaleString()} transfers` +
+    (openingRebalance ? `, ${dayOneUnits.toLocaleString()} of them on day 1.` : ".");
 
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <div className="mx-auto max-w-[1400px] space-y-4">
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto max-w-[1360px] space-y-6 px-4 py-6 sm:px-6">
         {missingInputs && error && <MissingInputsNotice detail={error.detail} />}
-        <Card padded={false} className="p-3">
-          <TimeControls disabled={!run} />
-        </Card>
 
-        {isLoading && (
-          <Card>
-            <p className="text-sm text-ink-muted">Running the simulation&hellip;</p>
-          </Card>
-        )}
+        <header className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-[40px] font-bold leading-[1.04] tracking-[-0.025em] text-ink sm:text-[52px]">
+              Network
+            </h1>
+            <p className="mt-2 max-w-2xl text-[17px] text-ink-2">
+              What has moved between the facilities in the Zealo network, and where stock is short
+              or spare on the day shown.
+            </p>
+          </div>
+          <DayControl disabled={!run} />
+        </header>
 
         {mode === "without_zealo" && run && (
-          <Card className="bg-lavender/60">
-            <p className="text-xs leading-relaxed text-ink-muted">
-              <strong className="text-ink">Without Zealo there is no network.</strong> Each
-              facility manages stock alone, so nothing is redistributed however much surplus
-              sits a few kilometres from a shortage. Switch to <em>With Zealo</em> to see the
-              movement.
-            </p>
-          </Card>
+          <p className="rounded-xl border border-line bg-wash p-4 text-[15px] text-ink-2">
+            Without Zealo there is no network: each facility manages its stock alone, so nothing
+            moves between them.
+          </p>
+        )}
+
+        {isLoading && (
+          <p className="rounded-xl border border-line bg-surface p-5 text-[15px] text-muted">
+            Running the simulation&hellip;
+          </p>
         )}
 
         {run && (
           <>
-            <Card>
-              <CardTitle
-                hint={`Up to day ${day + 1} of ${totalDays}. Shortage and surplus are positions on that day.`}
-              >
-                Network so far
-              </CardTitle>
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-6">
-                <StatTile label="Transfers" value={activity.transfers.toLocaleString()} />
-                <StatTile label="Units moved" value={activity.units.toLocaleString()} />
-                <StatTile label="Distance" value={`${activity.distanceKm.toLocaleString()} km`} />
-                <StatTile label="Expired units" value={activity.expiredUnits.toLocaleString()} />
-                <StatTile
-                  label="Short today"
-                  value={short === null ? "—" : short.toLocaleString()}
-                  sub="under a week of cover"
+            <div>
+              <StatRow>
+                <Stat label="Transfers" value={activity.transfers.toLocaleString()} />
+                <Stat label="Units moved" value={activity.units.toLocaleString()} />
+                <Stat label="Kilometres travelled" value={activity.distanceKm.toLocaleString()} />
+                <Stat label="Units lost to expiry" value={activity.expiredUnits.toLocaleString()} />
+                <Stat
+                  label="Shelves under a week today"
+                  value={short == null ? "—" : short.toLocaleString()}
+                  tone="out"
                 />
-                <StatTile
-                  label="Surplus today"
-                  value={surplus === null ? "—" : surplus.toLocaleString()}
-                  sub="over a month of cover"
+                <Stat
+                  label="Shelves with over a month spare"
+                  value={spare == null ? "—" : spare.toLocaleString()}
+                  tone="scrub"
                 />
-              </div>
-              <p className="mt-2 flex items-center gap-1.5 text-[10px] text-ink-subtle">
-                Derived from simulated stock <ProvenanceBadge provenance="derived" />
+              </StatRow>
+              <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted">
+                Up to day {day + 1} of {totalDays}. A shelf is one medicine at one facility.
+                Simulated <ProvenanceBadge provenance="estimated" />
               </p>
-            </Card>
-
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Card>
-                <CardTitle hint="Cumulative units moved between network facilities.">
-                  Transfers over time
-                </CardTitle>
-                <div className="h-64">
-                  {activity.transfers === 0 ? (
-                    <EmptyState title="No transfers yet" />
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                        data={activity.cumulative}
-                        margin={{ top: 4, right: 8, bottom: 0, left: -18 }}
-                      >
-                        <defs>
-                          <linearGradient id="unitsFill" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#6A4CA8" stopOpacity={0.35} />
-                            <stop offset="100%" stopColor="#6A4CA8" stopOpacity={0.02} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid stroke="#E6E2F0" strokeDasharray="3 3" />
-                        <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#8C86A3" }} />
-                        <YAxis tick={{ fontSize: 10, fill: "#8C86A3" }} />
-                        <ChartTooltip contentStyle={TOOLTIP_STYLE} />
-                        <Area
-                          type="monotone"
-                          dataKey="units"
-                          stroke="#6A4CA8"
-                          strokeWidth={2}
-                          fill="url(#unitsFill)"
-                          name="Units moved"
-                          isAnimationActive={false}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </Card>
-
-              <Card>
-                <CardTitle hint="Units moved to cover shortages, and to use stock before it expires.">
-                  Medicines moved most
-                </CardTitle>
-                <div className="h-64">
-                  {topMedicines.length === 0 ? (
-                    <EmptyState title="Nothing has moved yet" />
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart
-                        data={topMedicines}
-                        layout="vertical"
-                        margin={{ top: 4, right: 8, bottom: 0, left: 8 }}
-                      >
-                        <CartesianGrid stroke="#E6E2F0" strokeDasharray="3 3" horizontal={false} />
-                        <XAxis type="number" tick={{ fontSize: 10, fill: "#8C86A3" }} />
-                        <YAxis
-                          type="category"
-                          dataKey="name"
-                          width={140}
-                          tick={{ fontSize: 10, fill: "#5B5474" }}
-                        />
-                        <ChartTooltip contentStyle={TOOLTIP_STYLE} />
-                        <Bar
-                          dataKey="relief"
-                          stackId="a"
-                          fill="#F0674A"
-                          name="Shortage relief"
-                          isAnimationActive={false}
-                        />
-                        <Bar
-                          dataKey="rebalance"
-                          stackId="a"
-                          fill="#1F9D55"
-                          name="Near-expiry rebalancing"
-                          isAnimationActive={false}
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </Card>
             </div>
 
+            {/* The centrepiece: who is short and who has spare */}
             <Card>
               <CardTitle
-                hint={`On day ${(data?.day ?? day) + 1}. Days of cover, not units: the same count is a month at one facility and a day at another. Cover counts deliveries due within the week, as the map does.`}
+                hint="Each row is a medicine, each column a facility. Zealo pairs a short cell with the nearest spare one in the same row."
                 action={
-                  <div className="w-64">
-                    <Field label="Medicine">
-                      <Select
-                        value={medicineId}
-                        aria-label="Filter by medicine"
-                        onChange={(e) => setMedicineId(e.target.value)}
-                      >
-                        <option value="">All medicines</option>
-                        {modelled.map((m) => (
-                          <option key={m.id} value={m.id}>
-                            {shortMedicineName(m.name)}
-                          </option>
-                        ))}
-                      </Select>
-                    </Field>
-                  </div>
+                  <ul className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-2" aria-label="Key">
+                    <li className="flex items-center gap-1.5">
+                      <KeySwatch cell="short" glyph="−" /> Under a week
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <KeySwatch cell="normal" /> A week to a month
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <KeySwatch cell="spare" glyph="+" /> Over a month spare
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <KeySwatch cell="none" /> Doesn&rsquo;t carry it
+                    </li>
+                  </ul>
                 }
               >
-                Surplus and shortage
+                Who is short and who has spare, today
               </CardTitle>
-              <div className="h-[360px] overflow-y-auto">
-                {!data ? (
-                  <p className="text-xs text-ink-muted">Loading positions&hellip;</p>
-                ) : notable.length === 0 ? (
-                  <EmptyState title="Every facility is within a normal range">
-                    Nothing is below a week of cover or above a month of it on this day.
-                  </EmptyState>
+              {!data ? (
+                <p className="text-[15px] text-muted">Loading positions&hellip;</p>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="border-separate border-spacing-1 text-left">
+                      <thead>
+                        <tr>
+                          <th className="w-[260px] min-w-[200px] pb-1 text-[13px] font-bold text-muted">
+                            Medicine
+                          </th>
+                          {columns.map((id) => (
+                            <th
+                              key={id}
+                              scope="col"
+                              className="min-w-[56px] pb-1 align-bottom text-[13px] font-bold leading-tight text-ink-2"
+                            >
+                              {labels.get(id)}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {gridRows.map((row) => (
+                          <tr key={row.medicineId}>
+                            <th
+                              scope="row"
+                              className="pr-2 text-[15px] font-bold text-ink"
+                              title={row.name}
+                            >
+                              {shortMedicineName(row.name, 34)}
+                            </th>
+                            {row.cells.map((cell) => {
+                              const text = cellText(
+                                labels.get(cell.facilityId) ?? "",
+                                cell.state,
+                                cell.balance,
+                              );
+                              return (
+                                <td key={cell.facilityId} className="p-0">
+                                  <span
+                                    tabIndex={0}
+                                    title={text}
+                                    // relative: keeps the visually hidden text inside the scrolling grid, or it widens the page.
+                                    className={`relative flex h-10 items-center justify-center rounded text-lg font-bold ${CELL_STYLE[cell.state]}`}
+                                  >
+                                    <span aria-hidden="true">{CELL_GLYPH[cell.state]}</span>
+                                    <span className="sr-only">{text}</span>
+                                  </span>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {grid.length > GRID_ROWS_SHOWN && (
+                    <Button
+                      variant="ghost"
+                      className="mt-2"
+                      onClick={() => setShowAllRows((v) => !v)}
+                    >
+                      {showAllRows ? "Show the first twelve" : `Show all ${grid.length} medicines`}
+                    </Button>
+                  )}
+                  <ul className="mt-3 space-y-1 text-sm text-muted">
+                    {data.caveats.map((caveat) => (
+                      <li key={caveat}>{caveat}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </Card>
+
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+              <Card>
+                <CardTitle hint="Between network facilities, up to the day shown.">
+                  Units moved so far
+                </CardTitle>
+                <div role="img" aria-label={chartSummary} className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={points} margin={{ top: 24, right: 72, bottom: 0, left: -6 }}>
+                      <CartesianGrid stroke={colours.grid} vertical={false} />
+                      <XAxis
+                        dataKey="day"
+                        tick={{ fontSize: 12, fill: colours.tick }}
+                        tickLine={false}
+                        axisLine={{ stroke: colours.grid }}
+                      />
+                      <YAxis
+                        tick={{ fontSize: 12, fill: colours.tick }}
+                        tickLine={false}
+                        axisLine={false}
+                        width={60}
+                      />
+                      <Tooltip
+                        content={({ active, payload, label }) =>
+                          active && payload?.length && payload[0].value != null ? (
+                            <div className="rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink shadow-[var(--shadow-float)]">
+                              <p className="font-bold">Day {label}</p>
+                              <p className="tabular">
+                                {Number(payload[0].value).toLocaleString()} units moved so far
+                              </p>
+                            </div>
+                          ) : null
+                        }
+                      />
+                      <Line
+                        type="stepAfter"
+                        dataKey="units"
+                        stroke={colours.line}
+                        strokeWidth={2.5}
+                        dot={false}
+                        isAnimationActive={false}
+                      />
+                      {openingRebalance && (
+                        <ReferenceDot
+                          x={1}
+                          y={dayOneUnits}
+                          r={4}
+                          fill={colours.line}
+                          stroke="white"
+                          label={{
+                            value: "Opening rebalance",
+                            position: "right",
+                            fill: colours.ink,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            stroke: "white",
+                            strokeWidth: 4,
+                            paintOrder: "stroke",
+                          }}
+                        />
+                      )}
+                      {activity.units > 0 && day > 0 && (
+                        <ReferenceDot
+                          x={day + 1}
+                          y={activity.units}
+                          r={4}
+                          fill={colours.line}
+                          stroke="white"
+                          label={{
+                            value: activity.units.toLocaleString(),
+                            position: "right",
+                            fill: colours.ink,
+                            fontSize: 12,
+                            fontWeight: 700,
+                          }}
+                        />
+                      )}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+
+              <Card>
+                <CardTitle hint="By units moved, up to the day shown.">Busiest routes</CardTitle>
+                {routes.length === 0 ? (
+                  <p className="text-[15px] text-muted">Nothing has moved yet.</p>
                 ) : (
                   <Table>
                     <thead>
                       <tr>
-                        <Th>Facility</Th>
-                        <Th>Medicine</Th>
-                        <Th align="right">Stock</Th>
-                        <Th align="right">Days cover</Th>
-                        <Th align="right">Position</Th>
+                        <Th>From and to</Th>
+                        <Th align="right">Transfers</Th>
+                        <Th align="right">Units</Th>
+                        <Th align="right">Distance</Th>
                       </tr>
                     </thead>
                     <tbody>
-                      {notable.map((b) => (
-                        <tr key={`${b.facility_id}-${b.medicine_id}`}>
-                          <Td>{b.display_label}</Td>
-                          <Td className="text-ink-muted">
-                            <span title={b.name}>{shortMedicineName(b.name)}</span>
+                      {routes.map((route) => (
+                        <tr key={`${route.fromId}-${route.toId}`}>
+                          <Td>
+                            <span className="font-bold text-ink">{labels.get(route.fromId)}</span>
+                            <span className="text-muted"> to </span>
+                            <span className="font-bold text-ink">{labels.get(route.toId)}</span>
                           </Td>
-                          <Td align="right">
-                            {b.on_hand.toLocaleString()}
-                            {b.incoming_7d > 0 && (
-                              <span className="ml-1 text-[10px] text-ink-subtle">
-                                +{b.incoming_7d.toLocaleString()} due
-                              </span>
-                            )}
-                          </Td>
-                          <Td align="right">{b.days_of_cover?.toFixed(1) ?? "—"}</Td>
-                          <Td align="right">
-                            <StatusPill status={b.position} />
-                          </Td>
+                          <Td align="right">{route.transfers.toLocaleString()}</Td>
+                          <Td align="right">{route.units.toLocaleString()}</Td>
+                          <Td align="right">{route.distanceKm.toFixed(1)} km</Td>
                         </tr>
                       ))}
                     </tbody>
                   </Table>
                 )}
-              </div>
-              {data && (
-                <ul className="mt-3 space-y-0.5 text-[10px] text-ink-subtle">
-                  {data.caveats.map((caveat) => (
-                    <li key={caveat}>&middot; {caveat}</li>
-                  ))}
-                </ul>
-              )}
-            </Card>
+              </Card>
+            </div>
 
             {data && data.unmapped_phcs.length > 0 && (
               <Card>
-                <CardTitle hint="Survey PHCs with no public location in our sources. Their availability profiles still count in taluk-wide statistics.">
-                  Unmapped PHCs ({data.unmapped_phcs.length})
+                <CardTitle hint="These PHCs were surveyed but have no public location in our sources yet, so they are not on the map. Their survey results still count in taluk-wide figures.">
+                  {data.unmapped_phcs.length} surveyed PHCs without a location
                 </CardTitle>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                <ul className="flex flex-wrap gap-2">
                   {data.unmapped_phcs.map((phc) => (
-                    <div key={phc.phc_number} className="rounded-lg bg-surface-sunken px-3 py-2">
-                      <p className="text-[10px] font-medium uppercase tracking-wide text-ink-subtle">
-                        Survey profile {phc.phc_number}
-                      </p>
-                      <p className="tabular text-sm font-bold text-ink">
-                        {phc.availability_pct.toFixed(1)}%
-                      </p>
-                      <p className="flex items-center gap-1 text-[10px] text-ink-subtle">
-                        {phc.items_in_stock} of 104 items
-                        <ProvenanceBadge provenance={phc.provenance} />
-                      </p>
-                    </div>
+                    <li
+                      key={phc.phc_number}
+                      className="flex items-center gap-2 rounded-lg border-[1.5px] border-dashed border-stone px-3 py-2 text-sm text-ink-2"
+                    >
+                      <span>
+                        <span className="font-bold text-ink">Survey profile {phc.phc_number}</span>
+                        : {phc.availability_pct.toFixed(1)}%, {phc.items_in_stock}
+                        {itemsAssessed ? ` of ${itemsAssessed}` : ""} items
+                      </span>
+                      <ProvenanceBadge provenance={phc.provenance} />
+                    </li>
                   ))}
-                </div>
+                </ul>
               </Card>
             )}
           </>
         )}
-
-        <Disclaimer />
       </div>
     </div>
   );

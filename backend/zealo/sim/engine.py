@@ -173,7 +173,7 @@ class SimulationState:
                 self.history[(fid, mid)] = {
                     key: np.zeros(scenario.days, dtype=np.int32)
                     for key in ("on_hand", "demand", "dispensed", "unmet", "next_expiry",
-                                "incoming_7d")
+                                "incoming_7d", "on_the_way")
                 }
                 self.history[(fid, mid)]["forecast"] = np.zeros(scenario.days, dtype=np.float32)
                 # -1 means "nothing on hand", which is distinct from "expires today".
@@ -624,8 +624,11 @@ def run(scenario: Scenario, policy: Policy) -> RunResult:
         policy.decide(day, state)
         # Deliveries due within the cover window, after today's orders are placed -- the
         # same quantity the status rule counts, so the facility panel agrees with the map.
+        # Also everything still on its way, orders and transfers alike, for the
+        # dashboard's "shelf plus deliveries on the way" line. Recorded, never read back.
         for (fid, mid), record in state.history.items():
             record["incoming_7d"][day] = state.arrivals_within(fid, mid, LOW_COVER_DAYS)
+            record["on_the_way"][day] = state.arrivals_within(fid, mid, scenario.days)
 
         statuses = {
             f.id: facility_status(state, f.id, day).value for f in scenario.facilities

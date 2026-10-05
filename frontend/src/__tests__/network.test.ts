@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { keepWhileOnlyDayChanges } from "../api/placeholder";
-import type { SimulationEvent } from "../api/types";
-import { networkActivity } from "../components/network/networkLogic";
+import type { FacilityBalance, SimulationEvent } from "../api/types";
+import {
+  busiestRoutes,
+  networkActivity,
+  shortageGrid,
+} from "../components/network/networkLogic";
 
 function event(overrides: Partial<SimulationEvent> & { day: number; type: string }): SimulationEvent {
   return {
@@ -87,5 +91,63 @@ describe("keepWhileOnlyDayChanges", () => {
   it("has nothing to keep on the first load", () => {
     const next = keepWhileOnlyDayChanges(["redistribution", "run1", "with_zealo", 0, null], 3);
     expect(next(undefined, undefined)).toBeUndefined();
+  });
+});
+
+describe("busiestRoutes", () => {
+  it("adds up each direction of travel up to the day, busiest first", () => {
+    const events = [
+      ...EVENTS,
+      event({ day: 1, type: "relief_transfer", from_facility_id: "phc-02", to_facility_id: "phc-01", quantity: 50 }),
+    ];
+    expect(busiestRoutes(events, 2)).toEqual([
+      { fromId: "phc-02", toId: "phc-01", transfers: 1, units: 50, distanceKm: 5 },
+      { fromId: "phc-01", toId: "phc-02", transfers: 2, units: 28, distanceKm: 4 },
+    ]);
+  });
+
+  it("leaves out manufacturer orders and anything after the day", () => {
+    expect(busiestRoutes(EVENTS, 0)).toEqual([
+      { fromId: "phc-01", toId: "phc-02", transfers: 1, units: 20, distanceKm: 4 },
+    ]);
+  });
+});
+
+function balance(facility_id: string, medicine_id: string, position: FacilityBalance["position"]): FacilityBalance {
+  return {
+    facility_id,
+    display_label: facility_id,
+    medicine_id,
+    name: medicine_id,
+    on_hand: 10,
+    incoming_7d: 0,
+    days_of_cover: 10,
+    position,
+  };
+}
+
+describe("shortageGrid", () => {
+  const balances = [
+    balance("a", "spare-only", "surplus"),
+    balance("b", "spare-only", "surplus"),
+    balance("a", "one-short", "short"),
+    balance("b", "one-short", "surplus"),
+    balance("a", "two-short", "short"),
+    balance("b", "two-short", "short"),
+    balance("a", "quiet", "balanced"),
+  ];
+
+  it("lists medicines with a shortage first, most short first, then the most spare", () => {
+    expect(shortageGrid(balances, ["a", "b"]).map((r) => r.medicineId)).toEqual([
+      "two-short",
+      "one-short",
+      "spare-only",
+      "quiet",
+    ]);
+  });
+
+  it("marks a facility that does not carry the medicine", () => {
+    const quiet = shortageGrid(balances, ["a", "b"]).find((r) => r.medicineId === "quiet")!;
+    expect(quiet.cells.map((c) => c.state)).toEqual(["normal", "none"]);
   });
 });

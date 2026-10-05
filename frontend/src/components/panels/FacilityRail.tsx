@@ -2,51 +2,20 @@
  * The selected facility, in the map's right rail: what it is, how its shelf looks on
  * the day shown, and what Zealo is doing about the medicines that are short.
  *
- * Every line here comes from the run. "What Zealo is doing" reads the facility's own
- * events: a transfer placed today arrives tomorrow (transfers take a day), an express
- * order comes from the manufacturer, and otherwise the week's deliveries are counted.
+ * Every line here comes from the run; "what Zealo is doing" is `zealoAction`, the same
+ * rule the Facility page's shelf table uses.
  */
 import { Link } from "react-router";
 import { shortMedicineName } from "../../api/format";
 import { daysLeft, facilityRowState, shelfCounts } from "../../api/stock";
-import type { Facility, FacilityMedicineRow, FacilityRunResponse } from "../../api/types";
+import type { Facility, FacilityRunResponse } from "../../api/types";
 import { buttonClass } from "../../ui/buttonStyles";
 import { Chip } from "../../ui";
 import { ProvenanceBadge } from "../Provenance";
 import { TYPE_LABELS } from "../map/icons";
+import { zealoAction } from "./zealoAction";
 
 const ATTENTION_SHOWN = 6;
-
-function doing(
-  row: FacilityMedicineRow,
-  run: FacilityRunResponse,
-  labels: Map<string, string>,
-): { text: string; move: boolean } {
-  const here = run.events.filter(
-    (e) => e.medicine_id === row.medicine_id && (e.day === run.day || e.day === run.day - 1),
-  );
-  const transfer = here.find(
-    (e) =>
-      (e.type === "relief_transfer" || e.type === "rebalance_transfer") &&
-      e.to_facility_id === run.facility_id,
-  );
-  if (transfer) {
-    const from = labels.get(transfer.from_facility_id ?? "") ?? "a neighbour";
-    return {
-      text: `Transfer of ${transfer.quantity.toLocaleString()} from ${from}, ${
-        transfer.day === run.day ? "arrives tomorrow" : "arrived today"
-      }`,
-      move: true,
-    };
-  }
-  if (here.some((e) => e.type === "express_order" && e.day === run.day)) {
-    return { text: "Express order placed with Manufacturer A", move: false };
-  }
-  if (row.incoming_7d > 0) {
-    return { text: `${row.incoming_7d.toLocaleString()} units due this week`, move: false };
-  }
-  return { text: "No delivery due this week", move: false };
-}
 
 function ShelfBar({
   inStock,
@@ -140,7 +109,15 @@ export function FacilityRail({
             <ul className="mt-1">
               {attention.slice(0, ATTENTION_SHOWN).map(({ row, state }) => {
                 const left = daysLeft(row.on_hand, row.forecast) ?? 0;
-                const action = doing(row, run, labels);
+                const action = zealoAction({
+                  row,
+                  state,
+                  nearExpiry: false,
+                  events: run.events,
+                  facilityId: run.facility_id,
+                  day: run.day,
+                  labels,
+                });
                 return (
                   <li
                     key={row.medicine_id}
@@ -158,9 +135,13 @@ export function FacilityRail({
                         {state === "out" ? "Out" : left === 1 ? "1 day left" : `${left} days left`}
                       </span>
                     </div>
-                    <p className={`text-sm ${action.move ? "font-bold text-move" : "text-muted"}`}>
-                      {action.text}
-                    </p>
+                    {action && (
+                      <p
+                        className={`text-sm ${action.move ? "font-bold text-move" : "text-muted"}`}
+                      >
+                        {action.text}
+                      </p>
+                    )}
                   </li>
                 );
               })}

@@ -1,136 +1,160 @@
 /**
- * One facility's inventory in full: every medicine, a chart of one of them over
- * time, expiry alerts, the approval queue and its Zealo network membership.
+ * One facility's shelf in full: what it is, every medicine it holds on the day shown,
+ * a chart of one of them, and what has happened there.
  *
- * Rule changes and approve/reject decisions alter the scenario, so they produce
- * a new run rather than editing the current one -- the comparison between modes
- * only means anything if both sides come from the same settings.
+ * Network membership and approve/reject decisions alter the scenario, so they produce a
+ * new run rather than editing the current one.
  */
 import { useMemo, useState } from "react";
 import { useParams } from "react-router";
-import {
-  CartesianGrid,
-  Legend as ChartLegend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip as ChartTooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { useFacilities, useFacilityRun } from "../api/hooks";
+import { shortMedicineName } from "../api/format";
+import { useFacilities, useFacilityRun, useMedicines } from "../api/hooks";
+import { daysLeft, shelfCounts } from "../api/stock";
+import type { Facility, FacilityMedicineRow, SimulationEvent } from "../api/types";
 import { useRun } from "../api/useRun";
-import type { FacilityMedicineRow, SimulationEvent } from "../api/types";
-import { Disclaimer } from "../components/Disclaimer";
+import { StockChart } from "../components/facility/StockChart";
+import { shelfItems, type ShelfFilter, type ShelfItem } from "../components/facility/shelfLogic";
+import { groupRoutineOrders } from "../components/map/mapLogic";
+import { TYPE_LABELS } from "../components/map/icons";
 import { MissingInputsNotice } from "../components/MissingInputsNotice";
+import { EventFeed } from "../components/panels/EventFeed";
+import { zealoAction } from "../components/panels/zealoAction";
 import { ProvenanceBadge } from "../components/Provenance";
 import { TimeControls } from "../components/TimeControls";
-import { TYPE_LABELS } from "../components/map/icons";
+import { useViewStore } from "../state/store";
 import {
   Button,
   Card,
   CardTitle,
   Checkbox,
+  Chip,
   EmptyState,
   Field,
   Select,
-  StatTile,
-  StatusPill,
+  Stat,
+  StatRow,
   Table,
   Td,
   Th,
+  type ChipTone,
 } from "../ui";
-import { useViewStore } from "../state/store";
 
-type SortKey = "name" | "on_hand" | "days_of_cover" | "status";
-
-const STATUS_ORDER: Record<string, number> = { red: 0, amber: 1, green: 2 };
+const ROWS_FIRST_SHOWN = 10;
 
 // Stable empty arrays: `?? []` allocates a new one every render and defeats the memos below.
 const NO_ROWS: FacilityMedicineRow[] = [];
+const NO_FACILITIES: Facility[] = [];
 const NO_EVENTS: SimulationEvent[] = [];
+
+/** A government facility's level picks the state medicine list it should carry. */
+const GOVERNMENT_LEVEL_COLUMN: Record<string, string> = {
+  phc: "phc",
+  chc: "chc",
+  taluk_hospital: "taluk_hospital",
+  district_hospital: "district_hospital",
+  government_level_unknown: "phc",
+};
+
+function statusChip(item: ShelfItem): { tone: ChipTone; label: string } {
+  if (item.kind === "survey") return { tone: "plain", label: "Availability only" };
+  if (item.state === "out") return { tone: "out", label: "Out" };
+  if (item.state === "low") return { tone: "low", label: "Under a week" };
+  if (item.nearExpiry) return { tone: "low", label: "Near expiry" };
+  return { tone: "scrub", label: "In stock" };
+}
+
+function Fact({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="mt-0.5 flex flex-wrap items-center gap-2 text-[15px] font-bold text-ink">
+        {children}
+      </dd>
+    </div>
+  );
+}
 
 export function FacilityDashboardPage() {
   const params = useParams();
   const { mode, day, selectedFacilityId, selectFacility, networkOverrides, setNetworkMembership } =
     useViewStore();
   const facilitiesQuery = useFacilities();
+  const medicinesQuery = useMedicines(true);
   const { run, isLoading, error, missingInputs } = useRun();
 
   const facilityId = params.facilityId ?? selectedFacilityId ?? "phc-01";
-  const [sortKey, setSortKey] = useState<SortKey>("status");
   const [groupFilter, setGroupFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [chartMedicineId, setChartMedicineId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<ShelfFilter>("problems");
+  const [showAll, setShowAll] = useState(false);
+  const [chosenMedicineId, setChosenMedicineId] = useState<string | null>(null);
 
-  const detail = useFacilityRun(run?.run_id ?? null, facilityId, mode, day, chartMedicineId);
-  const facilities = facilitiesQuery.data?.facilities ?? [];
+  const facilities = facilitiesQuery.data?.facilities ?? NO_FACILITIES;
   const facility = facilities.find((f) => f.id === facilityId);
+  const labels = useMemo(
+    () => new Map(facilities.map((f) => [f.id, f.display_label])),
+    [facilities],
+  );
 
-  const rows = detail.data?.medicines ?? NO_ROWS;
+  // The shelf comes first; the chart's series is a second request once a row is known.
+  const shelf = useFacilityRun(run?.run_id ?? null, facilityId, mode, day);
+  const rows = shelf.data?.medicines ?? NO_ROWS;
+  const availability = shelf.data?.availability_only;
+  const events = shelf.data?.events ?? NO_EVENTS;
+
+  const items = useMemo(
+    () =>
+      shelfItems({
+        rows,
+        availability: availability ?? [],
+        day,
+        filter: statusFilter,
+        group: groupFilter,
+      }),
+    [rows, availability, day, statusFilter, groupFilter],
+  );
   const groups = useMemo(
     () => Array.from(new Set(rows.map((r) => r.therapeutic_group))).sort(),
     [rows],
   );
 
-  const visible = useMemo(() => {
-    const filtered = rows.filter(
-      (r) =>
-        (!groupFilter || r.therapeutic_group === groupFilter) &&
-        (!statusFilter || r.status === statusFilter),
-    );
-    const sorted = [...filtered];
-    sorted.sort((a, b) => {
-      switch (sortKey) {
-        case "on_hand":
-          return b.on_hand - a.on_hand;
-        case "days_of_cover":
-          return (a.days_of_cover ?? Infinity) - (b.days_of_cover ?? Infinity);
-        case "status":
-          return STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || a.name.localeCompare(b.name);
-        default:
-          return a.name.localeCompare(b.name);
-      }
-    });
-    return sorted;
-  }, [rows, groupFilter, statusFilter, sortKey]);
+  // Chart the chosen medicine, or the first problem on the shelf until one is chosen.
+  const firstModelled = items.find((i) => i.kind === "modelled")?.id ?? rows[0]?.medicine_id;
+  const chartMedicineId = chosenMedicineId ?? firstModelled ?? null;
+  const chart = useFacilityRun(run?.run_id ?? null, facilityId, mode, day, chartMedicineId);
+  const series = chart.data?.series ?? null;
 
-  const chartData = useMemo(() => {
-    const series = detail.data?.series;
-    if (!series) return [];
-    return series.days.map((d, i) => ({
-      day: d + 1,
-      stock: series.on_hand[i],
-      demand: series.demand[i],
-      forecast: series.forecast[i],
-    }));
-  }, [detail.data?.series]);
+  const counts = shelfCounts(rows);
+  const shown = showAll ? items : items.slice(0, ROWS_FIRST_SHOWN);
+  const activity = useMemo(
+    () =>
+      groupRoutineOrders(events.filter((e) => e.day <= day))
+        .sort((a, b) => b.day - a.day)
+        .slice(0, 25),
+    [events, day],
+  );
+  const approvals = events.filter((e) => e.type === "approval_requested");
 
-  const facilityEvents = detail.data?.events ?? NO_EVENTS;
-  const approvals = facilityEvents.filter((e) => e.type === "approval_requested");
-  const refills = facilityEvents.filter(
-    (e) => e.type === "manufacturer_order" || e.type === "express_order",
-  );
-  const transfers = facilityEvents.filter(
-    (e) => e.type === "relief_transfer" || e.type === "rebalance_transfer",
-  );
-  const alerts = detail.data?.expiry_alerts ?? [];
+  const level = facility ? GOVERNMENT_LEVEL_COLUMN[facility.facility_type] : undefined;
+  const medicines = medicinesQuery.data?.medicines ?? [];
+  const shouldCarry = level ? medicines.filter((m) => m.levels.includes(level)).length : 0;
+  const inNetwork = facility ? (networkOverrides[facility.id] ?? facility.in_network) : false;
 
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <div className="mx-auto max-w-[1400px] space-y-4">
+    <div className="h-full overflow-y-auto">
+      <div className="mx-auto max-w-[1360px] space-y-6 px-4 py-6 sm:px-6">
         {missingInputs && error && <MissingInputsNotice detail={error.detail} />}
-        {/* Facility picker and identity */}
-        <Card>
-          <div className="flex flex-wrap items-end gap-4">
-            <div className="min-w-56">
+
+        {/* Which facility, and what it is */}
+        <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <div>
+            <div className="w-full max-w-xs">
               <Field label="Facility">
                 <Select
                   value={facilityId}
-                  aria-label="Select a facility"
                   onChange={(e) => {
                     selectFacility(e.target.value);
-                    setChartMedicineId(null);
+                    setChosenMedicineId(null);
+                    setShowAll(false);
                   }}
                 >
                   {facilities.map((f) => (
@@ -141,342 +165,356 @@ export function FacilityDashboardPage() {
                 </Select>
               </Field>
             </div>
+            <h1 className="mt-4 text-[40px] font-bold leading-[1.04] tracking-[-0.025em] text-ink sm:text-[52px]">
+              {facility?.display_label ?? "Facility"}
+            </h1>
             {facility && (
-              <>
-                {detail.data?.survey_profile != null && (
-                  <div>
-                    <p className="text-[11px] uppercase tracking-wide text-ink-subtle">Stock pattern</p>
-                    <p className="flex items-center gap-2 text-sm font-medium">
-                      Survey profile {detail.data.survey_profile}
-                      <span className="text-[10px] font-normal text-ink-subtle">(illustrative)</span>
-                    </p>
-                  </div>
+              <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-3">
+                <Fact label="Type">
+                  {TYPE_LABELS[facility.facility_type] ?? facility.facility_type}
+                  <ProvenanceBadge provenance={facility.provenance.facility_type ?? "derived"} />
+                </Fact>
+                <Fact label="Ownership">
+                  <span className="capitalize">{facility.ownership}</span>
+                  <ProvenanceBadge provenance={facility.provenance.ownership ?? "derived"} />
+                </Fact>
+                {shelf.data?.survey_profile != null && (
+                  <Fact label="Stock pattern">
+                    Survey profile {shelf.data.survey_profile} (illustrative)
+                    <ProvenanceBadge provenance="derived" />
+                  </Fact>
                 )}
-                <div>
-                  <p className="text-[11px] uppercase tracking-wide text-ink-subtle">Type</p>
-                  <p className="flex items-center gap-2 text-sm font-medium">
-                    {TYPE_LABELS[facility.facility_type] ?? facility.facility_type}
-                    <ProvenanceBadge provenance={facility.provenance.facility_type ?? "derived"} />
-                  </p>
-                  {(facility.level_unconfirmed || !facility.verified) && (
-                    <p className="text-[10px] text-status-amber">
-                      {facility.level_unconfirmed ? "Level unconfirmed" : "Location unverified"}
-                    </p>
+                <Fact label="Location">
+                  {facility.verified ? (
+                    "Checked"
+                  ) : (
+                    <span className="text-low-text">Not yet checked</span>
                   )}
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-wide text-ink-subtle">Ownership</p>
-                  <p className="flex items-center gap-2 text-sm font-medium capitalize">
-                    {facility.ownership}
-                    <ProvenanceBadge provenance={facility.provenance.ownership ?? "derived"} />
-                  </p>
-                </div>
-                <div className="ml-auto">
-                  <Checkbox
-                    label="In the Zealo network"
-                    checked={networkOverrides[facility.id] ?? facility.in_network}
-                    onChange={(value) =>
-                      setNetworkMembership(facility.id, value, facility.in_network)
-                    }
-                  />
-                  <p className="px-1.5 text-[10px] text-ink-subtle">
-                    Changing this re-runs the scenario.
-                  </p>
-                </div>
-              </>
+                  <ProvenanceBadge provenance={facility.provenance.lat ?? "real"} />
+                </Fact>
+                <Fact label="Beds">
+                  {facility.beds ?? "Not recorded"}
+                  <ProvenanceBadge provenance={facility.beds == null ? "unknown" : "real"} />
+                </Fact>
+                {level && shelf.data && (
+                  <Fact label="State medicine list">
+                    {/* Carried = modelled items plus availability-only survey items; counting
+                        only the modelled ones made a PHC look short of half its list. */}
+                    Carries {rows.length + (availability?.length ?? 0)} of the {shouldCarry} on
+                    its level&rsquo;s list
+                    <ProvenanceBadge provenance="real" />
+                  </Fact>
+                )}
+              </dl>
+            )}
+            {facility?.level_unconfirmed && (
+              <p className="mt-3 max-w-3xl text-sm text-muted">
+                {facility.facility_type === "other_government"
+                  ? "Probably run outside the state health department, so it is kept out of the Zealo network with no state medicine list until confirmed."
+                  : "Its level (PHC, CHC or taluk hospital) is not stated in our sources. It carries the PHC medicine list, the most conservative choice, until confirmed."}
+              </p>
+            )}
+            {facility?.ownership === "private" && (
+              <p className="mt-3 max-w-3xl text-sm text-muted">
+                No public inventory data exists for private facilities. This stock is modelled from
+                the taluk-hospital medicine list as a documented proxy.
+              </p>
             )}
           </div>
-        </Card>
+
+          {facility && (
+            <div className="rounded-xl border border-line bg-surface p-5">
+              <Checkbox
+                label="In the Zealo network"
+                checked={inNetwork}
+                onChange={(value) => setNetworkMembership(facility.id, value, facility.in_network)}
+              />
+              <p className="mt-1 text-sm text-muted">
+                Turning this off re-runs the simulation with {facility.display_label} managing
+                stock on its own.
+              </p>
+            </div>
+          )}
+        </section>
 
         {isLoading && (
-          <Card>
-            <p className="text-sm text-ink-muted">Running the simulation&hellip;</p>
-          </Card>
+          <p className="rounded-xl border border-line bg-surface p-5 text-[15px] text-muted">
+            Running the simulation&hellip;
+          </p>
         )}
 
         {run && (
           <>
-            <Card padded={false} className="p-3">
-              <TimeControls disabled={!run} />
-            </Card>
+            <TimeControls disabled={!run} />
 
-            <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-              {/* Medicine table */}
+            <StatRow>
+              <Stat label="Medicines carried" value={counts.carried.toLocaleString()} />
+              <Stat
+                label="A week of stock or more"
+                value={counts.inStock.toLocaleString()}
+                tone="scrub"
+              />
+              <Stat label="Under a week" value={counts.underAWeek.toLocaleString()} tone="low" />
+              <Stat label="Out of stock" value={counts.out.toLocaleString()} tone="out" />
+            </StatRow>
+
+            {/* grid-cols-1 (minmax(0, 1fr)) lets the table scroll inside its card on a phone;
+                an implicit column grew to the table's width and scrolled the page sideways. */}
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+              {/* The shelf */}
               <Card>
                 <CardTitle
-                  hint={`${visible.length} of ${rows.length} medicines on day ${day + 1}`}
+                  hint="Select a medicine to chart it."
+                  action={
+                    <div className="flex flex-wrap gap-3">
+                      <div className="w-56">
+                        <Field label="Group">
+                          <Select
+                            value={groupFilter}
+                            onChange={(e) => {
+                              setGroupFilter(e.target.value);
+                              setShowAll(false);
+                            }}
+                          >
+                            <option value="">All groups</option>
+                            {groups.map((g) => (
+                              <option key={g} value={g}>
+                                {g}
+                              </option>
+                            ))}
+                          </Select>
+                        </Field>
+                      </div>
+                      <div className="w-44">
+                        <Field label="Status">
+                          <Select
+                            value={statusFilter}
+                            onChange={(e) => {
+                              setStatusFilter(e.target.value as ShelfFilter);
+                              setShowAll(false);
+                            }}
+                          >
+                            <option value="problems">Problems first</option>
+                            <option value="out">Out of stock</option>
+                            <option value="low">Under a week</option>
+                            <option value="near">Near expiry</option>
+                            <option value="ok">In stock</option>
+                            <option value="survey">Availability only</option>
+                          </Select>
+                        </Field>
+                      </div>
+                    </div>
+                  }
                 >
-                  Inventory
+                  Shelf on day {day + 1}
                 </CardTitle>
-                <div className="mb-3 flex flex-wrap gap-2">
-                  <Select
-                    value={groupFilter}
-                    aria-label="Filter by therapeutic group"
-                    onChange={(e) => setGroupFilter(e.target.value)}
-                    className="max-w-56"
-                  >
-                    <option value="">All therapeutic groups</option>
-                    {groups.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </Select>
-                  <Select
-                    value={statusFilter}
-                    aria-label="Filter by status"
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="max-w-40"
-                  >
-                    <option value="">Any status</option>
-                    <option value="red">Out of stock</option>
-                    <option value="amber">Low or near expiry</option>
-                    <option value="green">Healthy</option>
-                  </Select>
-                </div>
 
-                {visible.length === 0 ? (
+                {!shelf.data ? (
+                  <p className="text-[15px] text-muted">Loading the shelf&hellip;</p>
+                ) : items.length === 0 ? (
                   <EmptyState title="Nothing matches those filters" />
                 ) : (
-                  <div className="max-h-[420px] overflow-y-auto">
+                  <>
                     <Table>
                       <thead>
                         <tr>
-                          <Th onClick={() => setSortKey("name")} active={sortKey === "name"}>
-                            Medicine
-                          </Th>
-                          <Th
-                            align="right"
-                            onClick={() => setSortKey("on_hand")}
-                            active={sortKey === "on_hand"}
-                          >
-                            Stock
-                          </Th>
-                          <Th
-                            align="right"
-                            onClick={() => setSortKey("days_of_cover")}
-                            active={sortKey === "days_of_cover"}
-                          >
-                            Days cover
-                          </Th>
+                          <Th>Medicine</Th>
+                          <Th align="right">Units</Th>
+                          <Th align="right">Days left</Th>
                           <Th align="right">Next expiry</Th>
-                          <Th
-                            align="right"
-                            onClick={() => setSortKey("status")}
-                            active={sortKey === "status"}
-                          >
-                            Status
-                          </Th>
+                          <Th>Status</Th>
+                          <Th>What Zealo is doing</Th>
                         </tr>
                       </thead>
                       <tbody>
-                        {visible.map((row: FacilityMedicineRow) => (
-                          <tr
-                            key={row.medicine_id}
-                            onClick={() => setChartMedicineId(row.medicine_id)}
-                            className={`cursor-pointer transition hover:bg-surface-sunken ${
-                              chartMedicineId === row.medicine_id ? "bg-lavender/60" : ""
-                            }`}
-                          >
-                            <Td>{row.name}</Td>
-                            <Td align="right">
-                              {row.on_hand}
-                              {row.incoming_7d > 0 && (
-                                <span className="ml-1 text-[10px] text-purple" title="Due within 7 days">
-                                  +{row.incoming_7d}
+                        {shown.map((item) => {
+                          const chip = statusChip(item);
+                          if (item.kind === "survey") {
+                            return (
+                              <tr key={item.id}>
+                                <Td>
+                                  <span className="font-bold text-ink">{item.item.name}</span>
+                                  <span className="block text-[13px] text-muted">
+                                    Survey item, no quantity data
+                                  </span>
+                                </Td>
+                                <Td align="right">&mdash;</Td>
+                                <Td align="right">&mdash;</Td>
+                                <Td align="right">&mdash;</Td>
+                                <Td>
+                                  <Chip tone={chip.tone}>{chip.label}</Chip>
+                                  <span className="ml-2 text-sm text-ink-2">
+                                    {item.item.in_stock ? "In stock" : "Out"}
+                                  </span>
+                                </Td>
+                                <Td>&mdash;</Td>
+                              </tr>
+                            );
+                          }
+                          const { row } = item;
+                          const left = daysLeft(row.on_hand, row.forecast);
+                          const action = zealoAction({
+                            row,
+                            state: item.state,
+                            nearExpiry: item.nearExpiry,
+                            events,
+                            facilityId,
+                            day,
+                            labels,
+                          });
+                          const selected = row.medicine_id === chartMedicineId;
+                          return (
+                            <tr
+                              key={item.id}
+                              className={
+                                selected ? "bg-wash" : item.state === "out" ? "bg-out-row" : ""
+                              }
+                            >
+                              <Td>
+                                <button
+                                  type="button"
+                                  onClick={() => setChosenMedicineId(row.medicine_id)}
+                                  aria-pressed={selected}
+                                  title={`Chart ${row.name}`}
+                                  className="min-h-11 text-left font-bold text-ink underline-offset-4 hover:underline"
+                                >
+                                  {shortMedicineName(row.name)}
+                                </button>
+                                <span className="code block text-xs text-muted">
+                                  {row.medicine_id}
                                 </span>
-                              )}
-                            </Td>
-                            <Td align="right">{row.days_of_cover?.toFixed(1) ?? "—"}</Td>
-                            <Td align="right">
-                              {row.next_expiry_day != null
-                                ? `day ${row.next_expiry_day}`
-                                : "—"}
-                            </Td>
-                            <Td align="right">
-                              <StatusPill status={row.status} />
-                            </Td>
-                          </tr>
-                        ))}
+                              </Td>
+                              <Td align="right">
+                                {row.on_hand.toLocaleString()}
+                                {row.incoming_7d > 0 && (
+                                  <span className="block whitespace-nowrap text-[13px] text-muted">
+                                    +{row.incoming_7d.toLocaleString()} due
+                                  </span>
+                                )}
+                              </Td>
+                              <Td align="right">{left == null ? "—" : left.toLocaleString()}</Td>
+                              <Td align="right">
+                                {row.next_expiry_day == null ? (
+                                  "—"
+                                ) : (
+                                  <span
+                                    className={item.nearExpiry ? "font-bold text-low-text" : ""}
+                                  >
+                                    Day {row.next_expiry_day + 1}
+                                  </span>
+                                )}
+                              </Td>
+                              <Td>
+                                <Chip tone={chip.tone}>{chip.label}</Chip>
+                              </Td>
+                              <Td
+                                className={
+                                  action?.move ? "font-bold text-move" : "text-sm text-ink-2"
+                                }
+                              >
+                                {action?.text ?? ""}
+                              </Td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
-                  </div>
-                )}
-                <p className="mt-2 flex items-center gap-1.5 text-[10px] text-ink-subtle">
-                  Stock is modelled <ProvenanceBadge provenance="estimated" /> &middot; the
-                  medicine list is from the Karnataka annual indent{" "}
-                  <ProvenanceBadge provenance="real" />
-                </p>
-                {(detail.data?.availability_only.length ?? 0) > 0 && (
-                  <details className="mt-3 rounded-lg bg-surface-sunken px-3 py-2">
-                    <summary className="cursor-pointer text-xs font-semibold text-ink">
-                      Availability only ({detail.data!.availability_only.length} survey items)
-                    </summary>
-                    <p className="mt-1 text-[11px] text-ink-subtle">
-                      Not yet matched to the state indent, so in or out of stock with no quantities.
-                    </p>
-                    <ul className="mt-1.5 grid max-h-48 grid-cols-1 gap-x-4 gap-y-0.5 overflow-y-auto text-[11px] sm:grid-cols-2">
-                      {detail.data!.availability_only.map((item) => (
-                        <li key={item.medicine_id} className="flex justify-between gap-2">
-                          <span className="truncate">{item.name}</span>
-                          <span className={item.in_stock ? "text-status-green" : "text-status-red"}>
-                            {item.in_stock ? "in stock" : "out"}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                )}
-              </Card>
-
-              {/* Chart */}
-              <Card>
-                <CardTitle hint="Click a medicine in the table to plot it.">
-                  Stock, demand and forecast
-                </CardTitle>
-                {chartData.length === 0 ? (
-                  <EmptyState title="No medicine selected">
-                    Pick a row from the inventory table to see how its stock, demand and
-                    forecast move over the run.
-                  </EmptyState>
-                ) : (
-                  <div className="h-72">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={chartData} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
-                        <CartesianGrid stroke="#E6E2F0" strokeDasharray="3 3" />
-                        <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#8C86A3" }} />
-                        <YAxis tick={{ fontSize: 10, fill: "#8C86A3" }} />
-                        <ChartTooltip
-                          contentStyle={{
-                            fontSize: 11,
-                            borderRadius: 8,
-                            border: "none",
-                            boxShadow: "0 4px 16px rgba(35,28,68,.15)",
-                          }}
-                        />
-                        <ChartLegend wrapperStyle={{ fontSize: 11 }} />
-                        <Line
-                          type="monotone"
-                          dataKey="stock"
-                          stroke="#6A4CA8"
-                          strokeWidth={2}
-                          dot={false}
-                          name="Stock on hand"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="demand"
-                          stroke="#F0674A"
-                          strokeWidth={1.5}
-                          dot={false}
-                          name="Demand"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="forecast"
-                          stroke="#1F9D55"
-                          strokeWidth={1.5}
-                          strokeDasharray="4 3"
-                          dot={false}
-                          name="Forecast"
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
-              </Card>
-            </div>
-
-            <div className="grid gap-4 lg:grid-cols-3">
-              {/* Expiry alerts */}
-              <Card>
-                <CardTitle hint="Batches expiring within 30, 60 and 90 days.">
-                  Expiry alerts
-                </CardTitle>
-                {alerts.length === 0 ? (
-                  <EmptyState title="Nothing expiring soon" />
-                ) : (
-                  <ul className="max-h-56 space-y-1 overflow-y-auto">
-                    {alerts.map((alert) => (
-                      <li
-                        key={alert.medicine_id}
-                        className="flex items-center justify-between gap-2 rounded-lg bg-surface-sunken px-2 py-1.5 text-xs"
+                    {items.length > ROWS_FIRST_SHOWN && (
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowAll((v) => !v)}
+                        className="mt-2"
                       >
-                        <span className="truncate">{alert.name}</span>
-                        <span className="shrink-0 tabular text-ink-muted">
-                          {alert.on_hand} units &middot; {alert.days_until_expiry} d
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+                        {showAll
+                          ? "Show the first ten"
+                          : `Show all ${items.length.toLocaleString()} medicines`}
+                      </Button>
+                    )}
+                    <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted">
+                      Stock is simulated <ProvenanceBadge provenance="estimated" /> The medicine
+                      list is from the Karnataka annual indent <ProvenanceBadge provenance="real" />
+                    </p>
+                  </>
                 )}
               </Card>
 
-              {/* Approvals */}
-              <Card>
-                <CardTitle hint="Orders above this facility's auto-approval limit.">
-                  Approval queue
-                </CardTitle>
-                {approvals.length === 0 ? (
-                  <EmptyState title="No approvals needed">
-                    Set an auto-approval limit in Settings to see orders held for a decision.
-                  </EmptyState>
-                ) : (
-                  <ul className="max-h-56 space-y-1.5 overflow-y-auto">
-                    {approvals.slice(0, 20).map((event, i) => {
-                      const key = `${event.day}:${facilityId}:${event.medicine_id}`;
-                      return (
-                        <li key={`${key}-${i}`} className="rounded-lg bg-surface-sunken p-2 text-xs">
-                          <p className="mb-1.5 leading-snug">{event.message}</p>
-                          <div className="flex gap-1.5">
-                            <Button
-                              variant="primary"
-                              onClick={() => useViewStore.getState().decideApproval(key, "approve")}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              variant="danger"
-                              onClick={() => useViewStore.getState().decideApproval(key, "reject")}
-                            >
-                              Reject
-                            </Button>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </Card>
+              {/* One medicine over time, and what happened here */}
+              <div className="space-y-6">
+                <Card>
+                  <CardTitle hint={series ? shortMedicineName(series.name) : undefined}>
+                    Stock over the run
+                  </CardTitle>
+                  {series ? (
+                    <StockChart
+                      series={series}
+                      events={events}
+                      facilityId={facilityId}
+                      facilityLabel={facility?.display_label ?? ""}
+                      labels={labels}
+                      day={day}
+                    />
+                  ) : (
+                    <p className="text-[15px] text-muted">
+                      {chartMedicineId ? "Loading the chart…" : "Select a medicine to chart it."}
+                    </p>
+                  )}
+                </Card>
 
-              {/* Movement log */}
-              <Card>
-                <CardTitle hint="Refills from manufacturers and transfers with the network.">
-                  Movement log
-                </CardTitle>
-                <div className="grid grid-cols-2 gap-2">
-                  <StatTile label="Refills" value={refills.length} />
-                  <StatTile label="Transfers" value={transfers.length} />
-                </div>
-                <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto text-[11px]">
-                  {[...refills, ...transfers]
-                    .sort((a, b) => b.day - a.day)
-                    .slice(0, 25)
-                    .map((event, i) => (
-                      <li key={`${event.day}-${event.medicine_id}-${i}`} className="leading-snug">
-                        <span className="mr-1 font-semibold text-ink-subtle">
-                          Day {event.day + 1}
-                        </span>
-                        {event.message}
-                      </li>
-                    ))}
-                </ul>
-              </Card>
+                <Card>
+                  <CardTitle hint="Newest first, up to the day shown.">
+                    Activity at {facility?.display_label ?? "this facility"}
+                  </CardTitle>
+                  <div className="max-h-[420px] overflow-y-auto">
+                    <EventFeed events={activity} />
+                  </div>
+                </Card>
+
+                <Card>
+                  <CardTitle hint="Orders above this facility's approval limit wait here.">
+                    Approval queue
+                  </CardTitle>
+                  {approvals.length === 0 ? (
+                    <p className="text-[15px] text-muted">
+                      Nothing is waiting. Set an approval limit in Simulation settings to hold large
+                      orders for sign-off.
+                    </p>
+                  ) : (
+                    <ul>
+                      {approvals.slice(0, 20).map((event, i) => {
+                        const key = `${event.day}:${facilityId}:${event.medicine_id}`;
+                        return (
+                          <li
+                            key={`${key}-${i}`}
+                            className="border-b border-line-soft py-3 last:border-b-0"
+                          >
+                            <p className="text-[15px] leading-snug text-ink">{event.message}</p>
+                            <div className="mt-2 flex gap-2">
+                              <Button
+                                variant="primary"
+                                onClick={() =>
+                                  useViewStore.getState().decideApproval(key, "approve")
+                                }
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                onClick={() =>
+                                  useViewStore.getState().decideApproval(key, "reject")
+                                }
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </Card>
+              </div>
             </div>
           </>
         )}
-
-        <Disclaimer />
       </div>
     </div>
   );

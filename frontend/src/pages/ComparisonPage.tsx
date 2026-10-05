@@ -89,7 +89,7 @@ export function ComparisonPage() {
         {missingInputs && error && <MissingInputsNotice detail={error.detail} />}
         {isLoading && (
           <Card>
-            <p className="text-sm text-ink-muted">Running both modes&hellip;</p>
+            <p className="text-sm text-ink-2">Running both modes&hellip;</p>
           </Card>
         )}
 
@@ -104,7 +104,7 @@ export function ComparisonPage() {
               <div className="overflow-x-auto">
                 <table className="w-full border-separate border-spacing-0 text-sm">
                   <thead>
-                    <tr className="text-[10px] uppercase tracking-wide text-ink-subtle">
+                    <tr className="text-[13px] text-muted">
                       <th className="pb-2 text-left font-semibold">Measure</th>
                       <th className="pb-2 text-right font-semibold">Without Zealo</th>
                       <th className="pb-2 text-right font-semibold">With Zealo</th>
@@ -120,20 +120,20 @@ export function ComparisonPage() {
                         change == null || metric.neutral ? null : metric.lowerIsBetter ? change < 0 : change > 0;
                       return (
                         <tr key={metric.key}>
-                          <td className="border-t border-hairline py-2 text-ink">{metric.label}</td>
-                          <td className="tabular border-t border-hairline py-2 text-right text-ink-muted">
+                          <td className="border-t border-line-soft py-2 text-ink">{metric.label}</td>
+                          <td className="tabular border-t border-line-soft py-2 text-right text-ink-2">
                             {metric.format(a)}
                           </td>
-                          <td className="tabular border-t border-hairline py-2 text-right font-semibold text-ink">
+                          <td className="tabular border-t border-line-soft py-2 text-right font-semibold text-ink">
                             {metric.format(b)}
                           </td>
                           <td
-                            className={`tabular border-t border-hairline py-2 text-right text-xs font-semibold ${
+                            className={`tabular border-t border-line-soft py-2 text-right text-xs font-semibold ${
                               better == null || change === 0
-                                ? "text-ink-subtle"
+                                ? "text-muted"
                                 : better
-                                  ? "text-status-green"
-                                  : "text-status-red"
+                                  ? "text-scrub"
+                                  : "text-out-text"
                             }`}
                           >
                             {change == null ? "new" : `${change > 0 ? "+" : ""}${change.toFixed(1)}%`}
@@ -144,9 +144,9 @@ export function ComparisonPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-3 flex items-center gap-1.5 text-[10px] text-ink-subtle">
+              <p className="mt-3 flex items-center gap-1.5 text-[13px] text-muted">
                 Simulated from estimated stock and demand <ProvenanceBadge provenance="estimated" />
-                &middot; all figures in units
+                All figures are in units.
               </p>
             </Card>
 
@@ -163,15 +163,15 @@ export function ComparisonPage() {
                     <div key={label}>
                       <div className="mb-1 flex justify-between text-xs">
                         <span className="font-medium text-ink">{label}</span>
-                        <span className="tabular text-ink-muted">
-                          {(s.green * 100).toFixed(0)}% green &middot; {(s.amber * 100).toFixed(0)}% amber &middot;{" "}
+                        <span className="tabular text-ink-2">
+                          {(s.green * 100).toFixed(0)}% green, {(s.amber * 100).toFixed(0)}% amber,{" "}
                           {(s.red * 100).toFixed(0)}% red
                         </span>
                       </div>
-                      <div className="flex h-3 overflow-hidden rounded-full bg-surface-sunken" aria-hidden="true">
-                        <span className="bg-status-green" style={{ width: `${s.green * 100}%` }} />
-                        <span className="bg-status-amber" style={{ width: `${s.amber * 100}%` }} />
-                        <span className="bg-status-red" style={{ width: `${s.red * 100}%` }} />
+                      <div className="flex h-3 overflow-hidden rounded-full bg-paper" aria-hidden="true">
+                        <span className="bg-scrub" style={{ width: `${s.green * 100}%` }} />
+                        <span className="bg-low" style={{ width: `${s.amber * 100}%` }} />
+                        <span className="bg-out" style={{ width: `${s.red * 100}%` }} />
                       </div>
                     </div>
                   ))}

@@ -287,6 +287,17 @@ class MedicineSeries(BaseModel):
     dispensed: list[int]
     unmet: list[int]
     forecast: list[float]
+    on_the_way: list[int] = Field(
+        default_factory=list,
+        description="Units still on their way at the end of each day: orders and transfers.",
+    )
+    reorder_point: list[int] = Field(
+        default_factory=list,
+        description=(
+            "The policy's reorder point each day: forecast x (manufacturer lead time + "
+            "safety days), rounded up. A refill is ordered when stock plus orders falls below it."
+        ),
+    )
 
 
 class ExpiryAlert(BaseModel):

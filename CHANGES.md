@@ -4,6 +4,135 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Dispensary redesign, milestones 4–7: Network, Home, Data and methods, polish — 2026-10-05
+
+**Status:** complete. Nothing committed. Built in one pass at the user's request ("complete all at
+once").
+
+### Network page (milestone 4)
+- **Header:** the title and description, plus a compact day control with "Replay". Playback moved
+  into a shared hook (`state/usePlayback.ts`) so it doesn't depend on the full playback bar.
+- **Stat row:** transfers, units moved, kilometres, units lost to expiry, shelves under a week
+  today, and shelves with over a month spare. All count up to the day shown.
+- **"Who is short and who has spare, today":** a grid with one row per medicine and one column per
+  network facility.
+  - Cell states: − under a week, plain for normal, + over a month spare, dashed outline for doesn't
+    carry it.
+  - Rows are ordered with shortages first. 12 show, with "Show all".
+  - Every cell is focusable and has a description, e.g. "Clinic 2: 0 units on the shelf and 120 due
+    this week, 21 days of stock".
+- **Two panels:**
+  - "Units moved so far": a single line, labelled with its total, and an "Opening rebalance"
+    note when most units moved on day 1.
+  - "Busiest routes", from the event log.
+- **Unmapped PHCs:** the surveyed PHCs with no location, as dashed chips.
+
+### Home (milestone 5)
+- **Hero:**
+  - The new headline and copy, with "Open the Gadag map" and "Watch the story" (the story stays
+    prominent, as asked) and a "See how a transfer works" link.
+  - A still map showing one real transfer, chosen from the run: the first relief transfer into a
+    PHC within two days of running out. Today that's Glimepiride 1mg tablet: PHC 5 out of stock,
+    PHC 1 16.2 km away sends 302, arriving day 2.
+  - The card shows the medicine and its code, both facilities, and the arrival day.
+- **"Gadag already shows the problem.":**
+  - The survey paragraph and a range strip (PHC 1 45.45%, average 74.2%, PHC 4 94.17%), with the
+    49-point gap computed.
+  - A shelf matrix of nine named items (15, 15, 14, 13, 9, 7, 5, 2 and 0 of 15), read from survey
+    item numbers.
+- **"What happens when stock runs low":** the three numbered steps.
+- **Then:** the guided story's chapter list, the green results band (99.0% of medicine-days in
+  stock, 258 transfers, 13,002 units moved, 13 lost to expiry, all from the run), and a footer with
+  credits and the Rajiv Gandhi Entrepreneurship Program 2026–27.
+
+### Data and methods, Settings, About (milestone 6)
+- **Data and methods:** the lead, then "Three kinds of number" and the survey panel. The panel has
+  its stat row on a heavy rule, "On the shelf at no PHC", and a bar chart of the 15 medicine groups
+  under plain names, sorted, with a reference line at the taluk average. Then the formulas (kept),
+  a register table of sources, and "What this proof of concept can't tell you yet", built from the
+  data-status items and coverage statements.
+- **Settings:**
+  - Panels: Facility rules, Supply, Facilities outside the network (the brief said "Without
+    Zealo"; renamed to follow the copy rule), Zealo network, and Run, each with helper text.
+  - A sticky bar with Run simulation, Reset to default and Copy share link, plus a status line
+    ("Simulation ran with these settings.").
+- **About:** reading layout covering what Zealo is, what the demo shows and doesn't, and who built
+  it. No contact section, because no contact details were given.
+
+### Polish (milestone 7)
+- **Old styles removed:** the remaining legacy classes, ALL-CAPS labels, middle-dot separators and
+  9–11 px text are gone from the data-status drawer, the missing-inputs notice and the flag-gated
+  Compare page. The temporary palette aliases are deleted from `index.css`.
+- **Contrast:** every text/background pair in use measures 4.5:1 or better (lowest: muted text on
+  the wash strip, 5.90).
+- **390 px, all eight pages:** no sideways scroll, and no button, link or input without an
+  accessible name.
+- **Fixed:** the Network grid's screen-reader text escaped its scroller and made the page 1,168 px
+  wide. The hero map's credit floated above where the playback bar would be.
+- **Reduced motion** switches off the transfer animation, the story card entrance, the loading
+  shimmer, map fly-to and story playback.
+
+### Checked
+- 1440 px and 390 px. No console errors.
+- Backend 250 tests, ruff clean. Frontend 127 tests (+9), lint and typecheck clean. Main bundle
+  449 kB (Home now includes the map).
+
+---
+
+## Dispensary redesign, milestone 3 of 7: Facilities page — 2026-10-05
+
+**Status:** complete. Nothing committed.
+
+### API (read-only additions, as agreed)
+- The medicine series behind the chart now carries two more lines:
+  - `on_the_way`: units still in transit each day, both orders and transfers. It's a new series
+    the engine records after each day's decisions, and it changes no decisions.
+  - `reorder_point`: computed per day with the policy's own formula,
+    `ceil(forecast × (lead time + safety days))`.
+- Tested: both cover every day, the reorder point matches the formula, and everything on the way
+  is at least what's due this week.
+
+### Facilities page
+- **Identity:**
+  - A facility picker, the name as a 52 px title, then type, ownership, survey stock pattern
+    (illustrative), location ("Not yet checked"), beds, and the state medicine list. Each fact
+    has its provenance badge.
+  - The level-unconfirmed and private-proxy notes appear where they apply.
+  - The network checkbox sits in its own panel and explains that turning it off re-runs the
+    simulation.
+- **Stat row:** medicines carried, a week of stock or more, under a week, out of stock.
+- **"Shelf on day N":**
+  - Group and Status filters, with Status defaulting to Problems first.
+  - Register table: medicine name with its printed code, units with "+N due", days left, next
+    expiry (bold when within 90 days), status chip, and what Zealo is doing (transfers in bold
+    blue).
+  - Out-of-stock rows are tinted. Survey-only items show "—" and "Survey item, no quantity data".
+  - The first 10 rows show, with "Show all".
+- **Chart:**
+  - Three lines: units on the shelf, shelf plus deliveries on the way, and the reorder point.
+  - Also: a "Today" line, labels on the largest transfer steps, a legend, a tooltip with the
+    day's events, and a summary sentence for screen readers.
+  - It opens on the first problem item until you pick one.
+- **Activity at {facility}:** the event feed, newest first.
+- **Approval queue:** Approve / Reject kept unchanged; it explains how to turn approvals on.
+- Expiry alerts are folded into the table: near-expiry rows, their status, and a filter.
+
+### Fixed while checking
+- **"Stocks 47 of the 98" was wrong:** that PHC carries all 98, with 51 of them as survey items
+  without quantities. The old map panel had the same miscount. It now reads "Carries 98 of 98".
+- **Overlapping chart labels:** three transfers landing the same day printed on top of each
+  other. They now share one label ("+56 from 3 facilities") with a white halo, placed to the
+  right near the start of the run.
+- **"+133 due" wrapped** onto three lines; it now stays on one.
+- **Sideways scrolling on phones:** the table pushed the page wide; it now scrolls inside its
+  card.
+
+### Checked
+- 1440 px and 390 px. No console errors.
+- Backend 250 tests (+1), ruff clean. Frontend 118 tests (+10), lint and typecheck clean.
+
+---
+
 ## Dispensary redesign, milestone 2 of 7: Map page, plus a reproducibility fix — 2026-10-04
 
 **Status:** complete. Nothing committed.

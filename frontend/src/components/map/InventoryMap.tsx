@@ -185,6 +185,11 @@ export interface InventoryMapProps {
   highlightedFacilityIds: Set<string> | null;
   /** Set only by the guided story. */
   focus?: MapFocus;
+  /**
+   * False for a picture of the map (the Home page): no dragging, zooming, keyboard or
+   * clicks, so it cannot trap scrolling or focus on a page that is read top to bottom.
+   */
+  interactive?: boolean;
 }
 
 export function InventoryMap({
@@ -197,6 +202,7 @@ export function InventoryMap({
   onSelectFacility,
   highlightedFacilityIds,
   focus,
+  interactive = true,
 }: InventoryMapProps) {
   const transfers = useMemo(
     () =>
@@ -227,8 +233,14 @@ export function InventoryMap({
     <MapContainer
       center={GADAG_CENTRE}
       zoom={DEFAULT_ZOOM}
-      scrollWheelZoom
-      className="zealo-map h-full w-full"
+      scrollWheelZoom={interactive}
+      dragging={interactive}
+      zoomControl={interactive}
+      doubleClickZoom={interactive}
+      touchZoom={interactive}
+      boxZoom={interactive}
+      keyboard={interactive}
+      className={`zealo-map h-full w-full ${interactive ? "" : "zealo-still"}`}
       data-testid="inventory-map"
     >
       <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} maxZoom={19} />
@@ -311,6 +323,8 @@ export function InventoryMap({
             // Selected and spotlit pins sit above the neighbours they overlap.
             zIndexOffset={selected ? 2000 : highlightedFacilityIds && !dimmed ? 1000 : 0}
             title={facility.display_label}
+            interactive={interactive}
+            keyboard={interactive}
             eventHandlers={{ click: () => onSelectFacility(facility.id) }}
           >
             {permanent ? (

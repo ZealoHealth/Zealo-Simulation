@@ -1,579 +1,574 @@
 /**
- * The pitch page: the landing page for a demo.
+ * How it works: the home page.
  *
- * It tells the story in four beats -- the real problem, how Zealo works, what the
- * simulation shows, and the guided tour -- and every number on it is either a
- * published survey figure (badged Real) or computed from the run (badged
- * Estimated). Nothing is written in by hand, so the page cannot overstate the run.
+ * Hero (a still map of Gadag with one real transfer from the run), what the 2021-22
+ * survey found, the three steps Zealo takes, the guided story, and the simulation's
+ * results. Every figure comes from the run, the survey summary or the medicine list;
+ * nothing is typed in by hand.
  */
-import { useEffect, useState, type ReactNode } from "react";
+import { useQueries } from "@tanstack/react-query";
+import { useMemo, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
+import { getFacilityRun } from "../api/client";
+import { shortMedicineName } from "../api/format";
+import { useFacilities, useMedicineRun, useMedicines } from "../api/hooks";
+import type { Facility, FacilityRunResponse, GeoJsonBoundary, Medicine } from "../api/types";
+import {
+  heroCandidates,
+  pickHeroTransfer,
+  shelvesToCheck,
+  type HeroTransfer,
+} from "../components/home/heroTransfer";
+import { InventoryMap } from "../components/map/InventoryMap";
+import { pinHtml, type PinStatus } from "../components/map/icons";
+import { pinStatusesForMedicine } from "../components/map/mapLogic";
 import { MissingInputsNotice } from "../components/MissingInputsNotice";
 import { ProvenanceBadge } from "../components/Provenance";
-import { pct, reduction, type StoryFacts } from "../components/story/storyLogic";
 import { useStory } from "../components/story/useStory";
 import { useViewStore } from "../state/store";
-import { Button } from "../ui";
-import { prefersReducedMotion } from "../ui/motion";
+import { Chip, LogoMark } from "../ui";
+import { buttonClass } from "../ui/buttonStyles";
 
-const COUNT_MS = 1100;
+const NO_FACILITIES: Facility[] = [];
+const NO_MEDICINES: Medicine[] = [];
 
-/** A number that counts up once when it first appears. */
-function CountUp({ value, format }: { value: number; format: (n: number) => string }) {
-  const reduced = prefersReducedMotion();
-  const [shown, setShown] = useState(0);
-  useEffect(() => {
-    if (reduced) return;
-    let frame = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / COUNT_MS);
-      setShown(value * (1 - Math.pow(1 - t, 3)));
-      if (t < 1) frame = requestAnimationFrame(tick);
-    };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, [value, reduced]);
-  return <span className="tabular">{format(reduced ? value : shown)}</span>;
+/** The survey items shown in the shelf matrix, by the survey's own item number. */
+const MATRIX_ITEMS: Array<{ slNo: number; label: string }> = [
+  { slNo: 60, label: "Paracetamol 500 mg tablet" },
+  { slNo: 56, label: "Oral rehydration salts" },
+  { slNo: 71, label: "Ringer lactate infusion" },
+  { slNo: 79, label: "Sodium chloride 0.9% 500 ml" },
+  { slNo: 11, label: "Amoxicillin and clavulanic acid 625 mg tablet" },
+  { slNo: 55, label: "Ondansetron 2 mg/ml injection" },
+  { slNo: 50, label: "Magnesium sulfate 500 mg/ml injection" },
+  { slNo: 17, label: "Calcium gluconate 10% injection" },
+  { slNo: 41, label: "Glyceryl trinitrate 0.5 mg sublingual" },
+];
+const SURVEYED_PHCS = 15;
+
+function ArrowIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" className="shrink-0">
+      <path
+        d="M2 9 H14 M9.5 4.5 L14 9 L9.5 13.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 }
 
-const whole = (n: number) => Math.round(n).toLocaleString();
-const oneDecimal = (n: number) => `${n.toFixed(1)}%`;
-
-function Eyebrow({ children, light = false }: { children: ReactNode; light?: boolean }) {
+function PlayIcon() {
   return (
-    <p
-      className={`text-[11px] font-bold uppercase tracking-[0.14em] ${
-        light ? "text-coral" : "text-purple"
-      }`}
-    >
+    <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true">
+      <path d="M3 1.5 L12 7 L3 12.5 Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function LegendRow({ status, children }: { status: PinStatus; children: ReactNode }) {
+  return (
+    <li className="flex items-center gap-1.5">
+      <span
+        aria-hidden="true"
+        className="inline-block scale-75"
+        dangerouslySetInnerHTML={{ __html: pinHtml("clinic", status) }}
+      />
       {children}
-    </p>
+    </li>
   );
 }
 
-function SectionTitle({
-  eyebrow,
-  title,
-  lede,
+/* ------------------------------------------------------------------ Hero */
+
+function HeroMap({
+  hero,
+  facilities,
+  boundary,
+  labels,
+  medicines,
 }: {
-  eyebrow: string;
-  title: string;
-  lede?: ReactNode;
+  hero: HeroTransfer | null;
+  facilities: Facility[];
+  boundary: GeoJsonBoundary | null;
+  labels: Map<string, string>;
+  medicines: Medicine[];
 }) {
+  const runId = useViewStore((s) => s.runId);
+  const mode = useViewStore((s) => s.mode);
+  const event = hero?.event ?? null;
+  const medicineRun = useMedicineRun(runId, event?.medicine_id ?? null, mode, event?.day ?? 0);
+  const pins = useMemo(
+    () => (medicineRun.data ? pinStatusesForMedicine(medicineRun.data.rows, facilities) : {}),
+    [medicineRun.data, facilities],
+  );
+  const medicine = medicines.find((m) => m.id === event?.medicine_id);
+  const events = useMemo(() => (event ? [event] : []), [event]);
+  const left = hero?.daysLeft;
+
   return (
-    <header className="max-w-3xl">
-      <Eyebrow>{eyebrow}</Eyebrow>
-      <h2 className="mt-2 text-3xl font-extrabold leading-tight tracking-tight text-ink md:text-4xl">
-        {title}
-      </h2>
-      {lede && <p className="mt-3 text-base leading-relaxed text-ink-muted">{lede}</p>}
-    </header>
+    <figure className="relative">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-[14px] border border-line bg-grid">
+        <InventoryMap
+          facilities={facilities}
+          boundary={boundary}
+          pins={pins}
+          events={events}
+          day={event?.day ?? 0}
+          selectedFacilityId={null}
+          onSelectFacility={() => {}}
+          highlightedFacilityIds={null}
+          interactive={false}
+        />
+        <ul className="absolute right-3 top-3 z-[1000] space-y-0.5 rounded-[10px] border border-line bg-surface px-3 py-2 text-[13px] text-ink-2 shadow-[var(--shadow-float)]">
+          <LegendRow status="ok">In stock</LegendRow>
+          <LegendRow status="low">Running low</LegendRow>
+          <LegendRow status="out">Out</LegendRow>
+        </ul>
+      </div>
+
+      {event && (
+        <div className="relative z-[1001] mx-3 -mt-20 rounded-xl border border-line bg-surface p-4 shadow-[var(--shadow-lift)] sm:absolute sm:-bottom-9 sm:-left-6 sm:mx-0 sm:mt-0 sm:w-[320px]">
+          <p className="font-bold text-ink">
+            {medicine ? shortMedicineName(medicine.name, 36) : "A medicine"}
+          </p>
+          <p className="code text-xs text-muted">{event.medicine_id}</p>
+          <dl className="mt-3 space-y-2 text-[15px]">
+            <div className="flex items-center justify-between gap-3">
+              <dt className="font-bold text-ink">{labels.get(event.to_facility_id ?? "")}</dt>
+              <dd>
+                <Chip tone="out">
+                  {left == null || left <= 0
+                    ? "Out of stock"
+                    : `Runs out in ${left} day${left === 1 ? "" : "s"}`}
+                </Chip>
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <dt className="text-ink-2">
+                <span className="font-bold text-ink">
+                  {labels.get(event.from_facility_id ?? "")}
+                </span>
+                {event.distance_km != null && `, ${event.distance_km.toFixed(1)} km away`}
+              </dt>
+              <dd>
+                <Chip tone="scrub">Sends {event.quantity.toLocaleString()}</Chip>
+              </dd>
+            </div>
+          </dl>
+          <p className="mt-3 flex items-center gap-2 border-t border-line-soft pt-3 text-[15px] font-bold text-move">
+            <ArrowIcon />
+            Transfer placed, arrives day {event.day + 2}
+          </p>
+        </div>
+      )}
+      <figcaption className="mt-3 text-sm text-muted sm:mt-12 sm:pl-[310px]">
+        {event
+          ? `From the Gadag simulation, day ${event.day + 1}.`
+          : "Facilities in Gadag taluk, from public records."}
+      </figcaption>
+    </figure>
   );
 }
+
+/* ---------------------------------------------------------------- Survey */
+
+function RangeStrip({ low, average, high }: { low: number; average: number; high: number }) {
+  const markers = [
+    { value: low, label: `PHC 1: ${low.toFixed(2)}%`, bar: "bg-out", text: "text-out-text -top-6 -translate-x-1/2" },
+    { value: average, label: `Average: ${average.toFixed(2)}%`, bar: "bg-ink", text: "text-ink top-11 -translate-x-1/2" },
+    { value: high, label: `PHC 4: ${high.toFixed(2)}%`, bar: "bg-scrub", text: "text-scrub -top-6 -translate-x-full" },
+  ];
+  return (
+    <figure
+      className="mt-6"
+      aria-label={`PHC availability ranged from ${low}% to ${high}%, with an average of ${average}%.`}
+    >
+      <div className="relative h-24" aria-hidden="true">
+        <div className="absolute inset-x-0 top-9 h-3 rounded bg-grid" />
+        <div className="absolute top-9 h-3 bg-stone" style={{ left: `${low}%`, width: `${high - low}%` }} />
+        {markers.map((m) => (
+          <div key={m.label} className="absolute top-6" style={{ left: `${m.value}%` }}>
+            <span className={`absolute -ml-[2px] block h-9 w-1 rounded ${m.bar}`} />
+            <span className={`absolute whitespace-nowrap text-sm font-bold ${m.text}`}>{m.label}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between text-[13px] text-muted" aria-hidden="true">
+        <span>0%</span>
+        <span>100%</span>
+      </div>
+    </figure>
+  );
+}
+
+function ShelfMatrix({ medicines }: { medicines: Medicine[] }) {
+  const bySl = new Map(
+    medicines.filter((m) => m.survey_sl_no != null).map((m) => [m.survey_sl_no!, m]),
+  );
+  const rows = MATRIX_ITEMS.flatMap((item) => {
+    const pct = bySl.get(item.slNo)?.survey_availability_pct;
+    if (pct == null) return [];
+    return [{ ...item, count: Math.round((pct / 100) * SURVEYED_PHCS) }];
+  });
+  return (
+    <figure>
+      <div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-ink pb-2">
+        <h3 className="text-lg font-bold text-ink">Which PHCs had it on the shelf</h3>
+        <p className="flex items-center gap-3 text-[13px] text-ink-2">
+          <span className="flex items-center gap-1.5">
+            <span aria-hidden="true" className="h-[15px] w-[15px] rounded-[3px] bg-scrub" />
+            On the shelf
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span
+              aria-hidden="true"
+              className="h-[15px] w-[15px] rounded-[3px] border-[1.5px] border-stone"
+            />
+            Not on the shelf
+          </span>
+        </p>
+      </div>
+      <ul>
+        {rows.map((row) => (
+          <li
+            key={row.slNo}
+            className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-line-soft py-2.5"
+          >
+            <span className="min-w-0 flex-1 basis-56 text-[15px] text-ink">{row.label}</span>
+            <span className="flex gap-1" aria-hidden="true">
+              {Array.from({ length: SURVEYED_PHCS }, (_, i) => (
+                <span
+                  key={i}
+                  className={`h-[15px] w-[15px] rounded-[3px] ${
+                    i < row.count ? "bg-scrub" : "border-[1.5px] border-stone"
+                  }`}
+                />
+              ))}
+            </span>
+            <span className="tabular w-16 text-right text-[15px] font-bold text-ink">
+              {row.count} of {SURVEYED_PHCS}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <figcaption className="mt-3 text-[13px] text-muted">
+        Each square is one of the {SURVEYED_PHCS} PHCs. Filled means the medicine was on the
+        shelf on the survey day. Order within a row is not the PHC number.
+      </figcaption>
+    </figure>
+  );
+}
+
+const STEPS = [
+  {
+    n: 1,
+    circle: "bg-scrub",
+    title: "Zealo sees it coming",
+    text: "It forecasts each medicine from what patients ask for, and spots a shelf that will run out before the next delivery arrives.",
+  },
+  {
+    n: 2,
+    circle: "bg-move",
+    title: "A neighbour fills the gap",
+    text: "The nearest member with more than it needs sends some across, without dropping below its own reorder point. Stock close to expiry goes to whoever will use it in time.",
+  },
+  {
+    n: 3,
+    circle: "bg-ink",
+    title: "The manufacturer refills",
+    text: "Zealo orders straight from the manufacturer, within the facility's approval limit. There is no warehouse in between. An express order goes out only when no neighbour can help.",
+  },
+];
+
+/* ------------------------------------------------------------------ Page */
 
 export function StoryPage() {
-  const { facts, chapters, survey, isLoading, error, missingInputs } = useStory();
+  const { run, facts, chapters, survey, error, missingInputs } = useStory();
+  const facilitiesQuery = useFacilities();
+  const medicines = useMedicines(true).data?.medicines ?? NO_MEDICINES;
+  const facilities = facilitiesQuery.data?.facilities ?? NO_FACILITIES;
+  const mode = useViewStore((s) => s.mode);
   const setStoryChapter = useViewStore((s) => s.setStoryChapter);
   const navigate = useNavigate();
+
+  const labels = useMemo(
+    () => new Map(facilities.map((f) => [f.id, f.display_label])),
+    [facilities],
+  );
+
+  // The hero transfer: look at the receiving PHCs' shelves for the first few candidates.
+  const candidates = useMemo(
+    () => heroCandidates(run?.events[mode], facilities),
+    [run, mode, facilities],
+  );
+  const toCheck = useMemo(() => shelvesToCheck(candidates), [candidates]);
+  const shelfQueries = useQueries({
+    queries: toCheck.map(({ facilityId, day }) => ({
+      queryKey: ["facility-run", run?.run_id, facilityId, mode, day, null],
+      queryFn: () => getFacilityRun(run!.run_id, facilityId, mode, day),
+      enabled: Boolean(run),
+      staleTime: Infinity,
+    })),
+  });
+  const shelves = new Map<string, FacilityRunResponse>();
+  shelfQueries.forEach((q, i) => {
+    if (q.data) shelves.set(`${toCheck[i].facilityId}:${toCheck[i].day}`, q.data);
+  });
+  const hero = pickHeroTransfer(candidates, shelves);
 
   const startStory = (chapter = 0) => {
     setStoryChapter(chapter);
     navigate("/map");
   };
-  const ready = chapters.length > 0;
+
+  const summary = run?.summaries.find((s) => s.mode === mode)?.metrics;
+  const num = (v: unknown) => (typeof v === "number" ? v.toLocaleString() : "—");
+  const gap = survey
+    ? Math.round(survey.highest_phc.availability_pct - survey.lowest_phc.availability_pct)
+    : null;
 
   return (
     <div className="h-full overflow-y-auto">
-      {/* ------------------------------------------------------------ Hero */}
-      <section className="hero-surface relative overflow-hidden text-white">
-        <div className="dot-grid absolute inset-0" aria-hidden="true" />
-        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-16 md:py-20 lg:grid-cols-[1.25fr_1fr] lg:items-center">
-          <div className="rise">
-            <Eyebrow light>Gadag taluk, Karnataka &middot; proof of concept</Eyebrow>
-            <h1 className="mt-4 text-4xl font-black leading-[1.05] tracking-tight md:text-6xl">
-              The medicine a patient needs is often a few kilometres away.
-            </h1>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
-              Zealo is a shared inventory layer for hospitals, clinics and PHCs. It moves stock
-              between neighbours before it runs out, and refills directly from manufacturers.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button variant="danger" size="lg" onClick={() => startStory()} disabled={!ready}>
-                &#9654; {ready ? "Start the story" : "Preparing the simulation…"}
-              </Button>
-              <Button variant="inverse" size="lg" onClick={() => navigate("/map")}>
-                Explore the live map
-              </Button>
-            </div>
+      {/* Hero */}
+      <section className="mx-auto grid max-w-[1320px] items-center gap-12 px-4 pb-20 pt-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:pt-16">
+        <div>
+          <h1 className="max-w-[600px] text-[44px] font-bold leading-[1.04] tracking-[-0.025em] text-ink sm:text-[62px]">
+            The medicine a patient needs is often a few kilometres away.
+          </h1>
+          <p className="mt-6 max-w-[34em] text-[20px] leading-relaxed text-ink-2">
+            Zealo links the stock rooms of hospitals, primary health centres and clinics in a
+            taluk. When one runs short, stock comes from a neighbour that has more than it needs.
+            Refills go straight to manufacturers.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/map" className={buttonClass("primary", "lg")}>
+              Open the Gadag map
+            </Link>
+            <button
+              type="button"
+              onClick={() => startStory()}
+              disabled={chapters.length === 0}
+              className={`${buttonClass("secondary", "lg")} disabled:opacity-45`}
+            >
+              <PlayIcon /> Watch the story
+            </button>
           </div>
+          <p className="mt-4">
+            <a
+              href="#how"
+              className="inline-flex min-h-11 items-center text-[15px] font-bold text-scrub underline underline-offset-4 hover:text-scrub-dark"
+            >
+              See how a transfer works
+            </a>
+          </p>
+          <p className="mt-4 max-w-[34em] text-[15px] text-muted">
+            A proof of concept for Gadag taluk, Karnataka. Facility locations and medicine lists
+            come from public records. Stock levels are simulated.
+          </p>
+        </div>
+        <HeroMap
+          hero={hero}
+          facilities={facilities}
+          boundary={facilitiesQuery.data?.boundary ?? null}
+          labels={labels}
+          medicines={medicines}
+        />
+      </section>
 
-          <HeroResults facts={facts} loading={isLoading} />
+      {/* The problem, from the survey */}
+      <section className="border-y border-line bg-surface">
+        <div className="mx-auto grid max-w-[1320px] gap-12 px-4 py-16 sm:px-8 lg:grid-cols-2">
+          <div>
+            <h2 className="text-[32px] font-bold leading-tight tracking-[-0.02em] text-ink sm:text-[42px]">
+              Gadag already shows the problem.
+            </h2>
+            {survey ? (
+              <>
+                <p className="mt-4 max-w-[36em] text-[17px] leading-relaxed text-ink-2">
+                  Between {survey.period.replace(" to ", " and ")}, researchers walked into all{" "}
+                  {survey.phcs_surveyed} primary health centres in Gadag taluk and checked{" "}
+                  {survey.items_assessed} essential medicines on the shelf. On the day they
+                  visited, the average PHC had {survey.overall_availability_pct.toFixed(1)}% of
+                  them.
+                </p>
+                <RangeStrip
+                  low={survey.lowest_phc.availability_pct}
+                  average={survey.overall_availability_pct}
+                  high={survey.highest_phc.availability_pct}
+                />
+                <p className="mt-4 max-w-[36em] text-[17px] text-ink-2">
+                  Same taluk, same state supply system, and a {gap}-point gap between the best and
+                  worst stocked centres.
+                </p>
+                <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+                  <ProvenanceBadge provenance="real" />
+                  Tejesh S, Nagaveni SJ (2023), Cureus 15(5): e39341. CC BY 4.0.
+                </p>
+              </>
+            ) : (
+              <div className="skeleton mt-6 h-40" />
+            )}
+          </div>
+          <ShelfMatrix medicines={medicines} />
         </div>
       </section>
 
-      <div className="mx-auto max-w-6xl space-y-20 px-6 py-16">
-        {/* ------------------------------------------------------ Problem */}
-        <section className="space-y-8">
-          <SectionTitle
-            eyebrow="The problem"
-            title="Public health facilities run short of essential medicines"
-            lede="Each facility sees only its own shelves. A medicine can run out at one while the same medicine sits unused at another down the road, and the gap waits for the next order."
-          />
-          {survey ? (
-            <>
-              <div className="grid gap-4 md:grid-cols-3">
-                <ProblemStat
-                  value={<CountUp value={survey.overall_availability_pct} format={oneDecimal} />}
-                  label={`of essential medicines in stock across Gadag's ${survey.phcs_surveyed} PHCs`}
-                />
-                <ProblemStat
-                  value={<CountUp value={survey.lowest_phc.availability_pct} format={oneDecimal} />}
-                  label="at the worst-stocked PHC: fewer than half its medicines"
-                />
-                <ProblemStat
-                  value={<CountUp value={survey.unavailable_everywhere.length} format={whole} />}
-                  label={`of ${survey.items_assessed} medicines missing at every PHC surveyed`}
-                />
+      {/* How it works */}
+      <section id="how" className="mx-auto max-w-[1320px] scroll-mt-6 px-4 py-16 sm:px-8">
+        <h2 className="text-[32px] font-bold leading-tight tracking-[-0.02em] text-ink sm:text-[42px]">
+          What happens when stock runs low
+        </h2>
+        <p className="mt-4 max-w-[44em] text-[17px] leading-relaxed text-ink-2">
+          Each facility sets its rules once: how many days of stock to hold and how large an
+          order can go through without sign-off. After that, Zealo works through three steps every
+          day.
+        </p>
+        <ol className="mt-8 grid gap-5 md:grid-cols-3">
+          {STEPS.map((step) => (
+            <li key={step.n} className="rounded-xl border border-line bg-surface p-6">
+              <span
+                aria-hidden="true"
+                className={`flex h-10 w-10 items-center justify-center rounded-full text-lg font-bold text-white ${step.circle}`}
+              >
+                {step.n}
+              </span>
+              <h3 className="mt-4 text-[22px] font-bold leading-snug text-ink">
+                <span className="sr-only">Step {step.n}: </span>
+                {step.title}
+              </h3>
+              <p className="mt-2 text-[17px] leading-relaxed text-ink-2">{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* The guided story */}
+      {chapters.length > 0 && (
+        <section className="border-t border-line bg-surface">
+          <div className="mx-auto max-w-[1320px] px-4 py-16 sm:px-8">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="text-[32px] font-bold leading-tight tracking-[-0.02em] text-ink sm:text-[42px]">
+                  Watch it happen on the map
+                </h2>
+                <p className="mt-3 max-w-[44em] text-[17px] text-ink-2">
+                  A guided walk through the simulation, compared with the same facilities managing
+                  stock on their own. Step through with the arrow keys or a presentation clicker.
+                </p>
               </div>
-              <AvailabilityGauge value={survey.overall_availability_pct} />
-              <p className="flex flex-wrap items-center gap-2 text-xs text-ink-subtle">
-                <ProvenanceBadge provenance="real" />
-                Tejesh S, Nagaveni SJ (2023), <em>Cureus</em> 15(5): e39341. Survey of{" "}
-                {survey.phcs_surveyed} PHCs, {survey.period}.
-              </p>
-            </>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-3">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="skeleton h-32" />
-              ))}
+              <button
+                type="button"
+                onClick={() => startStory()}
+                className={buttonClass("primary", "lg")}
+              >
+                <PlayIcon /> Watch the story
+              </button>
             </div>
-          )}
-        </section>
-
-        {/* -------------------------------------------------- How it works */}
-        <section className="space-y-8">
-          <SectionTitle
-            eyebrow="How Zealo works"
-            title="One view of every shelf in the network"
-            lede="Facilities join once and set their own rules. Zealo does the watching, every day."
-          />
-          <ol className="grid gap-4 md:grid-cols-3">
-            <Step
-              n={1}
-              title="See every shelf"
-              icon={<IconEye />}
-              text="Members share their stock levels, so Zealo knows where every medicine is and how many days each facility has left."
-            />
-            <Step
-              n={2}
-              title="Move it before it runs out"
-              icon={<IconSwap />}
-              text="A facility about to run short gets stock from the nearest member with surplus. Donors never drop below their own reorder point."
-            />
-            <Step
-              n={3}
-              title="Refill from the source"
-              icon={<IconFactory />}
-              text="Routine refills go directly to the manufacturer. An express order is placed only when no neighbour can help."
-            />
-          </ol>
-          <p className="rounded-xl bg-lavender px-5 py-3 text-sm font-semibold text-navy">
-            No warehouses. No distributors. Stock moves facility to facility, or straight from
-            the manufacturer.
-          </p>
-        </section>
-
-        {/* ------------------------------------------------------- Results */}
-        <section className="space-y-8">
-          <SectionTitle
-            eyebrow="What 180 days look like"
-            title="The same facilities, with and without the network"
-            lede={
-              <>
-                We simulated {facts?.facilityCount ?? 15} real facilities in Gadag for{" "}
-                {facts?.totalDays ?? 180} days, twice: once with each facility on its own, once
-                as a Zealo network. Same demand, same opening stock. Only the network differs.
-              </>
-            }
-          />
-          {missingInputs && error && <MissingInputsNotice detail={error.detail} />}
-          {facts ? (
-            <ResultsGrid facts={facts} />
-          ) : (
-            !missingInputs && (
-              <div className="grid gap-4 md:grid-cols-2">
-                {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className="skeleton h-40" />
-                ))}
-              </div>
-            )
-          )}
-          <p className="flex flex-wrap items-center gap-2 text-xs text-ink-subtle">
-            <ProvenanceBadge provenance="estimated" />
-            Simulated. Facility locations and medicine lists are real; stock levels and demand are
-            modelled from public data. Units only, no prices.
-            <Link to="/sources" className="font-semibold text-purple hover:underline">
-              How each number is made &rarr;
-            </Link>
-          </p>
-        </section>
-
-        {/* --------------------------------------------------------- Story */}
-        <section className="space-y-8">
-          <SectionTitle
-            eyebrow="The story"
-            title="Watch it happen on the map"
-            lede="A guided walk through the run, chapter by chapter. Use the arrow keys or a presentation clicker to step through."
-          />
-          {ready ? (
-            <ol className="grid gap-3 md:grid-cols-2">
+            <ol className="mt-8 grid gap-x-8 md:grid-cols-2">
               {chapters.map((chapter, i) => (
-                <li key={chapter.id}>
+                <li key={chapter.id} className="border-b border-line-soft">
                   <button
                     type="button"
                     onClick={() => startStory(i)}
-                    className="group flex h-full w-full items-start gap-4 rounded-xl bg-surface p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-raised"
+                    className="flex min-h-11 w-full items-baseline gap-4 py-3 text-left hover:text-scrub"
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-lavender text-sm font-extrabold text-purple group-hover:bg-purple group-hover:text-white">
-                      {i + 1}
-                    </span>
+                    <span className="tabular w-6 shrink-0 font-bold text-muted">{i + 1}</span>
                     <span>
-                      <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-coral">
-                        {chapter.kicker}
-                      </span>
-                      <span className="mt-0.5 block text-sm font-bold leading-snug text-ink">
-                        {chapter.title}
-                      </span>
+                      <span className="block text-sm text-muted">{chapter.kicker}</span>
+                      <span className="block text-[17px] font-bold text-ink">{chapter.title}</span>
                     </span>
                   </button>
                 </li>
               ))}
             </ol>
-          ) : (
-            !missingInputs && <div className="skeleton h-40" />
-          )}
-          <Button variant="primary" size="lg" onClick={() => startStory()} disabled={!ready}>
-            &#9654; Start the story
-          </Button>
+          </div>
         </section>
+      )}
 
-        {/* ---------------------------------------------------------- Data */}
-        <section className="grid gap-6 rounded-2xl bg-surface p-8 shadow-card md:grid-cols-[1fr_1.4fr]">
-          <div>
-            <Eyebrow>Built on public data</Eyebrow>
-            <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-ink">
-              Every number says where it came from
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-              Each figure is tagged Real, Derived or Estimated. Facility names, manufacturers and
-              brands are never shown, and there is no clinical guidance anywhere.
-            </p>
-            <Link
-              to="/sources"
-              className="mt-4 inline-block text-sm font-semibold text-purple hover:underline"
-            >
-              See every source &rarr;
+      {/* Results */}
+      <section className="bg-scrub text-white">
+        <div className="mx-auto max-w-[1320px] px-4 py-16 sm:px-8">
+          {missingInputs && error && <MissingInputsNotice detail={error.detail} />}
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <h2 className="text-[32px] font-bold leading-tight tracking-[-0.02em] sm:text-[42px]">
+                {run ? `${run.days} days in Gadag, simulated` : "Gadag, simulated"}
+              </h2>
+              <p className="mt-3 max-w-[44em] text-[17px] text-scrub-label">
+                {facts?.facilityCount ?? facilities.length} real facility locations and their state
+                medicine lists, with demand and stock estimated from public data.
+              </p>
+            </div>
+            <Link to="/network" className={buttonClass("inverse", "lg")}>
+              See the network
             </Link>
           </div>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            <DataItem title="Facility locations" source="OpenStreetMap contributors" />
-            <DataItem title="Medicine lists" source="Karnataka State Annual Indent 2025–26" />
-            <DataItem title="PHC availability" source="Gadag PHC survey, Cureus 2023" />
-            <DataItem title="Population and care-seeking" source="Census 2011 · NSS 75th round" />
+          <dl className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                value:
+                  typeof summary?.availability_rate === "number"
+                    ? `${(summary.availability_rate * 100).toFixed(1)}%`
+                    : "—",
+                label: "of medicine-days in stock",
+              },
+              { value: num(summary?.transfers), label: "transfers between facilities" },
+              {
+                value: num(summary?.transfer_units),
+                label: "units moved to where they were needed",
+              },
+              { value: num(summary?.expired_units), label: "units lost to expiry" },
+            ].map((item) => (
+              <div key={item.label} className="flex flex-col-reverse">
+                <dt className="mt-1 text-[17px] text-scrub-label">{item.label}</dt>
+                <dd className="tabular text-[56px] font-bold leading-none tracking-[-0.02em]">
+                  {item.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-10 text-[15px] text-scrub-label">
+            These are simulation results, not records from the facilities.{" "}
+            <Link to="/sources" className="font-bold text-white underline underline-offset-4">
+              How the simulation works
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-line bg-surface">
+        <div className="mx-auto grid max-w-[1320px] gap-8 px-4 py-12 sm:px-8 md:grid-cols-2">
+          <div>
+            <p className="flex items-center gap-2.5">
+              <LogoMark />
+              <span className="text-[22px] font-bold text-ink">Zealo</span>
+            </p>
+            <p className="mt-3 max-w-[34em] text-[15px] text-ink-2">
+              Built by Shriyans Nayak and Sanjana Srinivas for the Rajiv Gandhi Entrepreneurship
+              Program 2026&ndash;27.
+            </p>
+          </div>
+          <ul className="space-y-1.5 text-sm text-muted">
+            <li>Survey: Tejesh S, Nagaveni SJ (2023), Cureus 15(5): e39341, licensed CC BY 4.0.</li>
+            <li>
+              Medicine lists: Karnataka State Medical Supplies Corporation, Annual Indent
+              2025&ndash;26.
+            </li>
+            <li>Map data &copy; OpenStreetMap contributors.</li>
+            <li>Zealo gives no clinical or dosing advice. Medicines appear here only as stock.</li>
+            <li>
+              <Link to="/sources" className="font-bold text-scrub underline underline-offset-4">
+                Data and methods
+              </Link>
+            </li>
           </ul>
-        </section>
-
-        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-hairline pt-8 text-sm text-ink-muted">
-          <p>
-            Built by <strong className="text-ink">Shriyans Nayak</strong> and{" "}
-            <strong className="text-ink">Sanjana Srinivas</strong>.
-          </p>
-          <Link to="/about" className="font-semibold text-purple hover:underline">
-            What this demo does and does not show &rarr;
-          </Link>
-        </footer>
-      </div>
+        </div>
+      </footer>
     </div>
-  );
-}
-
-/* --------------------------------------------------------------- Pieces */
-
-function HeroResults({ facts, loading }: { facts: StoryFacts | null; loading: boolean }) {
-  return (
-    <div
-      className="rise rounded-2xl bg-white/[0.06] p-6 ring-1 ring-white/15 backdrop-blur"
-      style={{ animationDelay: "150ms" }}
-    >
-      <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/60">
-        Simulated &middot; {facts?.totalDays ?? 180} days &middot; {facts?.facilityCount ?? 15}{" "}
-        facilities
-      </p>
-      {facts ? (
-        <>
-          <p className="mt-3 text-6xl font-black tracking-tight">
-            <CountUp
-              value={reduction(facts.stockoutDays.alone, facts.stockoutDays.zealo) ?? 0}
-              format={(n) => `${Math.round(n)}%`}
-            />
-          </p>
-          <p className="mt-1 text-base font-semibold text-white/85">
-            fewer days with a medicine out of stock
-          </p>
-          <div className="mt-6 space-y-3">
-            <HeroBar
-              label="On their own"
-              value={facts.stockoutDays.alone}
-              max={facts.stockoutDays.alone}
-              muted
-            />
-            <HeroBar
-              label="With Zealo"
-              value={facts.stockoutDays.zealo}
-              max={facts.stockoutDays.alone}
-            />
-          </div>
-          <p className="mt-4 text-xs text-white/55">
-            Facility-medicine days out of stock. Same demand and opening stock in both.
-          </p>
-        </>
-      ) : (
-        <p className="mt-4 text-sm text-white/70">
-          {loading ? "Running the 180-day simulation…" : "The simulation is not available."}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function HeroBar({
-  label,
-  value,
-  max,
-  muted = false,
-}: {
-  label: string;
-  value: number;
-  max: number;
-  muted?: boolean;
-}) {
-  const width = max > 0 ? Math.max(2, (value / max) * 100) : 0;
-  return (
-    <div>
-      <div className="mb-1 flex justify-between text-xs">
-        <span className={muted ? "text-white/60" : "font-semibold text-white"}>{label}</span>
-        <span className="tabular font-bold">{value.toLocaleString()}</span>
-      </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
-        <div
-          className={`h-full rounded-full ${muted ? "bg-white/40" : "bg-coral"}`}
-          style={{ width: `${width}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function ProblemStat({ value, label }: { value: ReactNode; label: string }) {
-  return (
-    <div className="rounded-2xl bg-surface p-6 shadow-card">
-      <p className="text-5xl font-black tracking-tight text-status-red">{value}</p>
-      <p className="mt-2 text-sm leading-snug text-ink-muted">{label}</p>
-    </div>
-  );
-}
-
-/** Where the survey's average sits against the WHO / HAI 80% availability benchmark. */
-function AvailabilityGauge({ value }: { value: number }) {
-  return (
-    <div className="rounded-2xl bg-surface p-6 shadow-card">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
-        <span className="font-semibold text-ink">Average PHC availability against the benchmark</span>
-        <span className="text-xs text-ink-subtle">WHO / Health Action International: 80%</span>
-      </div>
-      <div className="relative mt-4 h-4 rounded-full bg-surface-sunken">
-        <div className="h-full rounded-full bg-status-red/80" style={{ width: `${value}%` }} />
-        <div
-          className="absolute -top-1.5 h-7 w-0.5 bg-navy"
-          style={{ left: "80%" }}
-          aria-hidden="true"
-        />
-      </div>
-      <div className="mt-1.5 flex justify-between text-[11px] text-ink-subtle">
-        <span>0%</span>
-        <span className="tabular font-semibold text-status-red">{value.toFixed(1)}%</span>
-        <span>100%</span>
-      </div>
-    </div>
-  );
-}
-
-function Step({
-  n,
-  title,
-  text,
-  icon,
-}: {
-  n: number;
-  title: string;
-  text: string;
-  icon: ReactNode;
-}) {
-  return (
-    <li className="rounded-2xl bg-surface p-6 shadow-card">
-      <div className="flex items-center gap-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple text-white">
-          {icon}
-        </span>
-        <span className="text-xs font-bold uppercase tracking-[0.12em] text-ink-subtle">
-          Step {n}
-        </span>
-      </div>
-      <h3 className="mt-4 text-lg font-extrabold tracking-tight text-ink">{title}</h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">{text}</p>
-    </li>
-  );
-}
-
-function ResultsGrid({ facts }: { facts: StoryFacts }) {
-  const stockoutCut = reduction(facts.stockoutDays.alone, facts.stockoutDays.zealo) ?? 0;
-  const unmetCut = reduction(facts.unmetUnits.alone, facts.unmetUnits.zealo) ?? 0;
-  const clearZealo = facts.allClear.zealo;
-  const clearAlone = facts.allClear.alone;
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      <ResultCard
-        headline={<CountUp value={stockoutCut} format={(n) => `${Math.round(n)}% fewer`} />}
-        title="days with a medicine out of stock"
-        alone={facts.stockoutDays.alone}
-        zealo={facts.stockoutDays.zealo}
-      />
-      <ResultCard
-        headline={<CountUp value={unmetCut} format={(n) => `${Math.round(n)}% fewer`} />}
-        title="units patients asked for and could not get"
-        alone={facts.unmetUnits.alone}
-        zealo={facts.unmetUnits.zealo}
-      />
-      <div className="rounded-2xl bg-surface p-6 shadow-card">
-        <p className="text-4xl font-black tracking-tight text-purple">
-          {clearZealo != null ? `Day ${clearZealo + 1}` : "—"}
-        </p>
-        <p className="mt-1 text-sm font-semibold text-ink">until no facility is in the red</p>
-        <p className="mt-3 text-sm text-ink-muted">
-          On their own:{" "}
-          <strong className="text-ink">
-            {clearAlone != null ? `day ${clearAlone + 1}` : "not within the run"}
-          </strong>
-          , waiting for manufacturer refills. {facts.openingRed.length} of {facts.facilityCount}{" "}
-          facilities start in the red.
-        </p>
-      </div>
-      <div className="rounded-2xl bg-surface p-6 shadow-card">
-        <p className="text-4xl font-black tracking-tight text-purple">
-          <CountUp value={facts.availability.zealo * 100} format={oneDecimal} />
-        </p>
-        <p className="mt-1 text-sm font-semibold text-ink">of the time, each medicine is in stock</p>
-        <p className="mt-3 text-sm text-ink-muted">
-          On their own: <strong className="text-ink">{pct(facts.availability.alone)}</strong>.
-          Zealo made {facts.transfers.count.toLocaleString()} transfers between neighbours and{" "}
-          {facts.express.count.toLocaleString()} express orders to get there.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function ResultCard({
-  headline,
-  title,
-  alone,
-  zealo,
-}: {
-  headline: ReactNode;
-  title: string;
-  alone: number;
-  zealo: number;
-}) {
-  const scale = Math.max(alone, zealo, 1);
-  return (
-    <div className="rounded-2xl bg-surface p-6 shadow-card">
-      <p className="text-4xl font-black tracking-tight text-purple">{headline}</p>
-      <p className="mt-1 text-sm font-semibold text-ink">{title}</p>
-      <div className="mt-4 space-y-2.5">
-        {[
-          { label: "On their own", value: alone, bar: "bg-ink-subtle/50" },
-          { label: "With Zealo", value: zealo, bar: "bg-purple" },
-        ].map((row) => (
-          <div key={row.label}>
-            <div className="mb-1 flex justify-between text-xs">
-              <span className="text-ink-muted">{row.label}</span>
-              <span className="tabular font-bold text-ink">{row.value.toLocaleString()}</span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-surface-sunken">
-              <div
-                className={`h-full rounded-full ${row.bar}`}
-                style={{ width: `${Math.max(1.5, (row.value / scale) * 100)}%` }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DataItem({ title, source }: { title: string; source: string }) {
-  return (
-    <li className="rounded-xl bg-surface-sunken px-4 py-3">
-      <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-        {title} <ProvenanceBadge provenance="real" />
-      </p>
-      <p className="mt-0.5 text-xs text-ink-muted">{source}</p>
-    </li>
-  );
-}
-
-/* ---------------------------------------------------------------- Icons */
-
-const ICON = {
-  width: 22,
-  height: 22,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round" as const,
-  strokeLinejoin: "round" as const,
-  "aria-hidden": true,
-};
-
-function IconEye() {
-  return (
-    <svg {...ICON}>
-      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function IconSwap() {
-  return (
-    <svg {...ICON}>
-      <path d="M7 4 3 8l4 4" />
-      <path d="M3 8h13a4 4 0 0 1 4 4" />
-      <path d="m17 20 4-4-4-4" />
-      <path d="M21 16H8a4 4 0 0 1-4-4" />
-    </svg>
-  );
-}
-
-function IconFactory() {
-  return (
-    <svg {...ICON}>
-      <path d="M3 21V10l6 4V10l6 4V6l6 3v12Z" />
-      <path d="M7 17h2M12 17h2M17 17h1" />
-    </svg>
   );
 }

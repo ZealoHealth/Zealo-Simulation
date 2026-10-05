@@ -39,7 +39,7 @@ const queryClient = new QueryClient({
 });
 
 function PageFallback() {
-  return <p className="p-6 text-sm text-ink-muted">Loading\u2026</p>;
+  return <p className="p-6 text-sm text-ink-2">Loading\u2026</p>;
 }
 
 export default function App() {

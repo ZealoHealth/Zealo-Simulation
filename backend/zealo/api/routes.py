@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 
 from fastapi import APIRouter, HTTPException, Query
 
@@ -493,6 +494,12 @@ def get_facility_run(
                 status_code=404,
                 detail={"error": "medicine_not_carried", "medicine_id": series},
             )
+        # The same reorder point the policies compute (policies._target_units), from the
+        # same recorded forecast, so the chart shows the line a refill is triggered against.
+        horizon = (
+            scenario.manufacturer.lead_time_days
+            + scenario.facility(facility_id).rules.safety_days
+        )
         medicine_series = MedicineSeries(
             medicine_id=series,
             name=scenario.medicine(series).generic_name,
@@ -502,6 +509,10 @@ def get_facility_run(
             dispensed=[int(v) for v in history["dispensed"]],
             unmet=[int(v) for v in history["unmet"]],
             forecast=[round(float(v), 3) for v in history["forecast"]],
+            on_the_way=[int(v) for v in history["on_the_way"]],
+            reorder_point=[
+                int(math.ceil(float(v) * horizon)) if v > 0 else 0 for v in history["forecast"]
+            ],
         )
 
     events = [

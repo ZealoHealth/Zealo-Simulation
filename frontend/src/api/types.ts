@@ -216,6 +216,10 @@ export interface MedicineSeries {
   dispensed: number[];
   unmet: number[];
   forecast: number[];
+  /** Units still on their way at the end of each day: orders and transfers. */
+  on_the_way?: number[];
+  /** The policy's reorder point each day (forecast x (lead time + safety days)). */
+  reorder_point?: number[];
 }
 
 export interface ExpiryAlert {

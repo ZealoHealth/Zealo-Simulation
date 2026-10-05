@@ -5,8 +5,9 @@
  * call -- there is no per-day request. The interval is driven off the speed setting
  * and cleans itself up, so leaving the tab does not leak timers.
  */
-import { useEffect, useId } from "react";
+import { useId } from "react";
 import { useViewStore } from "../state/store";
+import { usePlaybackClock } from "../state/usePlayback";
 import { Button } from "../ui";
 
 const SPEEDS = [1, 4, 20];
@@ -54,27 +55,11 @@ export function TimeControls({
   /** The map keeps Reset in its side panel, so the bar fits on one line over the map. */
   showReset?: boolean;
 }) {
-  const { day, totalDays, playing, speed, setDay, stepDay, togglePlay, pause, setSpeed, reset } =
+  const { day, totalDays, playing, speed, setDay, stepDay, togglePlay, setSpeed, reset } =
     useViewStore();
   const rangeId = useId();
   const speedId = useId();
-
-  useEffect(() => {
-    if (!playing || disabled || totalDays <= 0) return;
-    const interval = window.setInterval(() => {
-      const state = useViewStore.getState();
-      if (state.day >= state.totalDays - 1) {
-        state.pause();
-        return;
-      }
-      state.stepDay(1);
-    }, 1000 / speed);
-    return () => window.clearInterval(interval);
-  }, [playing, speed, disabled, totalDays]);
-
-  useEffect(() => {
-    if (disabled) pause();
-  }, [disabled, pause]);
+  usePlaybackClock(disabled);
 
   return (
     <div

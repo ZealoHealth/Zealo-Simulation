@@ -17,19 +17,19 @@ Built for an ideathon by **Shriyans Nayak and Sanjana Srinivas**. It is a proof 
 
 | Page | What it shows |
 |---|---|
-| **Story** (`/`) | The pitch: the real problem from the Gadag PHC survey, how Zealo works, the simulated results against the same facilities on their own, and the chapters of the guided story. |
-| **Map** (`/map`) | 15 real facilities, coloured by stock status, with day-by-day playback. You can search for a medicine to see which facilities hold it, nearest first. Transfers appear as lines between facilities. A feed lists stockouts, transfers and express orders. |
-| **Facility** | One facility's full inventory: stock, days of cover, deliveries due, expiry alerts, a stock history chart and the approval queue. You can also take the facility in or out of the network here. |
-| **Network** | What the network has moved up to the selected day (transfers, units, distance, the medicines moved most), and which facilities are short or have surplus that day. |
-| **Settings** | Run length, lead times, facility rules, network membership and approval limits, plus a share link that reproduces the exact scenario. |
-| **Data sources** | Every source, licence and method behind the numbers. |
-| **About** | What Zealo is, and what this demo does and does not show. |
+| **How it works** (`/`) | The home page: a still map with one real transfer from the run, what the 2021–22 Gadag survey found, the three steps Zealo takes, the guided story's chapters, and the simulation's results. |
+| **Map** (`/map`) | 15 real facilities with day-by-day playback. Pin shape shows the facility type; colour and a mark show stock. Search a medicine to recolour the pins by it and list the nearest facilities that have it. Select a facility to see its shelf and what Zealo is doing about anything short. Transfers appear as moving blue lines. |
+| **Facilities** (`/facility`) | One facility's shelf on the day shown, problems first, with what Zealo is doing about each item; a chart of one medicine against its reorder point; its activity and approval queue. You can take the facility in or out of the network here. |
+| **Network** (`/network`) | What has moved so far (transfers, units, distance, expiry), who is short and who has spare today (a medicine-by-facility grid), units moved over time and the busiest routes. |
+| **Data and methods** (`/sources`) | The three kinds of number, what the survey found, how each derived number is made, every source and licence, and what the proof of concept can't tell you yet. |
+| **About** (`/about`) | What Zealo is, what this demo does and does not show, and who built it. |
+| **Simulation settings** (`/settings`, from the header button) | Run length, delivery times, facility rules, network membership and approval limits, plus a share link that reproduces the exact scenario. |
 
 A quiet **Data status** link in the header lists the data that is still interim (see below).
 
 ### Presenting the demo
 
-Open the Story page and press **Start the story**. It plays seven chapters on the live map:
+Press **Watch the story** on the home page or the Map. It plays seven chapters on the live map:
 
 1. The problem
 2. The medicine is already nearby

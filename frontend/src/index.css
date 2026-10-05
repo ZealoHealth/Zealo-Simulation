@@ -29,22 +29,8 @@
   --color-out-row: #fdf4f3;
   --color-out-text: #8e1e17;
   --color-stone: #9fb3ab;
-
-  /*
-   * Legacy names from the first design, pointed at the new palette so pages not yet
-   * restyled keep rendering. Removed in the polish milestone; don't use them in new code.
-   */
-  --color-navy: #10231f;
-  --color-purple: #14503f;
-  --color-coral: #b3261e;
-  --color-lavender: #e6efeb;
-  --color-ink-muted: #33463f;
-  --color-ink-subtle: #4a5e58;
-  --color-surface-sunken: #f6f8f7;
-  --color-hairline: #e3eae6;
-  --color-status-green: #14503f;
-  --color-status-amber: #6b4800;
-  --color-status-red: #b3261e;
+  /* Labels on the scrub-green results band. */
+  --color-scrub-label: #d3e5dd;
 
   --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -52,9 +38,6 @@
   /* Only floating things get a shadow: map overlays and the home transfer card. */
   --shadow-float: 0 6px 18px rgba(16, 35, 31, 0.1);
   --shadow-lift: 0 12px 32px rgba(16, 35, 31, 0.14);
-  /* Legacy shadow names: panels are separated by a border now, not a shadow. */
-  --shadow-card: none;
-  --shadow-raised: 0 6px 18px rgba(16, 35, 31, 0.1);
 }
 
 html,
@@ -164,7 +147,7 @@ body {
   font-size: 22px !important;
 }
 /* Attribution stays visible above the floating playback bar. */
-.zealo-map .leaflet-bottom.leaflet-right {
+.zealo-map:not(.zealo-still) .leaflet-bottom.leaflet-right {
   bottom: 76px;
 }
 .zealo-legend-transfer {
@@ -193,11 +176,6 @@ body {
 
 input[type="range"] {
   accent-color: var(--color-scrub);
-}
-
-/* Temporary: the old home hero, until the new Home page replaces it. */
-.hero-surface {
-  background: var(--color-scrub);
 }
 
 /* Story tour card entrance. */

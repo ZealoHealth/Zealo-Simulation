@@ -254,6 +254,29 @@ def test_medicine_rows_report_deliveries_due_this_week(simulation_inputs):
             assert row["incoming_7d"] == same["incoming_7d"]
 
 
+def test_medicine_series_carries_the_reorder_point_and_stock_on_the_way(simulation_inputs):
+    """The dashboard chart's two policy lines, checked against their definitions."""
+    body = simulate(days=30, lead_time_days=21)
+    run_id = body["run_id"]
+    first = client.get(f"/runs/{run_id}/facilities/phc-01", params={"day": 0}).json()
+    medicine_id = first["medicines"][0]["medicine_id"]
+    series = client.get(
+        f"/runs/{run_id}/facilities/phc-01", params={"day": 0, "series": medicine_id}
+    ).json()["series"]
+    assert len(series["on_the_way"]) == len(series["reorder_point"]) == 30
+
+    safety_days = 7  # default facility rule
+    horizon = 21 + safety_days
+    for day in (0, 9, 29):
+        forecast = series["forecast"][day]
+        # Forecast is rounded to 3 dp in the response, so allow for that in the product.
+        assert abs(series["reorder_point"][day] - forecast * horizon) <= horizon * 0.0005 + 1
+        detail = client.get(f"/runs/{run_id}/facilities/phc-01", params={"day": day}).json()
+        row = next(m for m in detail["medicines"] if m["medicine_id"] == medicine_id)
+        # Everything on the way includes what is due within the week.
+        assert series["on_the_way"][day] >= row["incoming_7d"]
+
+
 def test_a_day_beyond_the_run_is_clamped_rather_than_erroring(simulation_inputs):
     body = simulate(days=10)
     response = client.get(
