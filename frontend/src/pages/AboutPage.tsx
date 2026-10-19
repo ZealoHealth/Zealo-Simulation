@@ -73,10 +73,10 @@ export function AboutPage() {
         <Section title="Who built it">
           <p>
             Zealo was built by <strong className="text-ink">Shriyans Nayak</strong> and{" "}
-            <strong className="text-ink">Sanjana Srinivas</strong> for the Rajiv Gandhi
-            Entrepreneurship Program 2026&ndash;27. It is a proof of concept for one taluk.
+            <strong className="text-ink">Sanjana Srinivas</strong>. 
           </p>
           <p>
+            It is a proof of concept for one taluk.
             Every source behind it is listed on{" "}
             <Link to="/sources" className="font-bold text-scrub underline underline-offset-4">
               Data and methods

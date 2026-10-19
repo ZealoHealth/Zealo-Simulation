@@ -61,8 +61,6 @@ export function InventoryMapPage() {
     selectFacility,
     selectMedicine,
     toggleLayer,
-    setNetworkOnly,
-    setVerifiedOnly,
     setRadiusKm,
     setStoryChapter,
     reset,
@@ -175,7 +173,7 @@ export function InventoryMapPage() {
                   onChange={() => toggleLayer("pharmacy")}
                   label="Pharmacies"
                 />
-                <Checkbox
+                {/* <Checkbox
                   checked={filters.networkOnly}
                   onChange={setNetworkOnly}
                   label="Zealo network only"
@@ -184,7 +182,7 @@ export function InventoryMapPage() {
                   checked={filters.verifiedOnly}
                   onChange={setVerifiedOnly}
                   label="Checked locations only"
-                />
+                /> */}
               </div>
               <p className="mt-1 text-sm text-muted" data-testid="facility-count">
                 Showing {visible.length} of {facilities.length} facilities.

@@ -1,0 +1,44 @@
+# Render Blueprint: one click in the Render dashboard creates both services on the free tier.
+# Render dashboard -> New -> Blueprint -> pick this repo.
+#
+# If Render has to rename a service (name already taken), update the two URLs below to match:
+# VITE_API_BASE_URL on the site, ZEALO_ALLOWED_ORIGINS on the API.
+
+services:
+  # FastAPI backend + simulation engine.
+  - type: web
+    name: zealo-api
+    runtime: python
+    plan: free
+    # Editable install on purpose: zealo.config finds data/ relative to the source tree.
+    buildCommand: pip install -e ./backend
+    startCommand: uvicorn zealo.main:app --host 0.0.0.0 --port $PORT --app-dir backend
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11"
+      # JSON list (pydantic-settings parses list settings as JSON).
+      - key: ZEALO_ALLOWED_ORIGINS
+        value: '["https://zealo-map.onrender.com"]'
+      # One run peaks around 140 MB; the free plan has 512 MB, so keep few runs cached.
+      - key: ZEALO_RUN_CACHE_SIZE
+        value: "3"
+
+  # React frontend, served as static files.
+  - type: web
+    name: zealo-map
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      # Client-side routing: every path serves index.html.
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_API_BASE_URL
+        value: https://zealo-api.onrender.com
+      - key: VITE_SHOW_WITHOUT_ZEALO
+        value: "false"
