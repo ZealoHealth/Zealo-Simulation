@@ -13,7 +13,7 @@ import { GeoJSON, MapContainer, Marker, Polyline, TileLayer, Tooltip, useMap } f
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Facility, GeoJsonBoundary, SimulationEvent } from "../../api/types";
-import { prefersReducedMotion } from "../../ui/motion";
+import { CAMERA_FLIGHT_MS, prefersReducedMotion } from "../../ui/motion";
 import { facilityIcon, TYPE_LABELS, type PinStatus } from "./icons";
 import {
   along,
@@ -148,21 +148,30 @@ function FocusOn({
           maxZoom: 14,
         };
     if (prefersReducedMotion()) map.fitBounds(bounds, options);
-    else map.flyToBounds(bounds, { ...options, duration: 1.1 });
+    else map.flyToBounds(bounds, { ...options, duration: CAMERA_FLIGHT_MS / 1000 });
     // `focus` is summarised by `key`; facilities and boundary are stable per run.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, map]);
   return null;
 }
 
-/** An arrowhead on a route, pointing at the receiving facility. */
-function arrowIcon(bearing: number) {
-  return L.divIcon({
+/**
+ * An arrowhead on a route, pointing at the receiving facility. Cached per whole degree,
+ * like the pins, so an arrow that stays on screen is not rebuilt every day.
+ */
+const arrowIcons = new Map<number, L.DivIcon>();
+function arrowIcon(rawBearing: number) {
+  const bearing = Math.round(rawBearing);
+  const cached = arrowIcons.get(bearing);
+  if (cached) return cached;
+  const icon = L.divIcon({
     className: "zealo-arrow",
     html: `<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="transform:rotate(${bearing}deg)"><path d="M8 1 L14 14 L8 10.5 L2 14 Z" fill="var(--color-move)" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/></svg>`,
     iconSize: [16, 16],
     iconAnchor: [8, 8],
   });
+  arrowIcons.set(bearing, icon);
+  return icon;
 }
 
 const MANUFACTURER_CHIP = L.divIcon({
@@ -243,7 +252,16 @@ export function InventoryMap({
       className={`zealo-map h-full w-full ${interactive ? "" : "zealo-still"}`}
       data-testid="inventory-map"
     >
-      <TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} maxZoom={19} />
+      {/* During a camera flight, fetch tiles for where it lands rather than for every zoom
+          level it passes through (which stuttered the flight), and keep a wider ring of
+          tiles loaded so panning shows fewer blank squares. */}
+      <TileLayer
+        url={TILE_URL}
+        attribution={TILE_ATTRIBUTION}
+        maxZoom={19}
+        updateWhenZooming={false}
+        keepBuffer={4}
+      />
       <KeepSizeInSync />
       <FitToBoundary boundary={boundary} />
       <FocusOn focus={focus} facilities={facilities} boundary={boundary} />

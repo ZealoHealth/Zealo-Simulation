@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import threading
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from zealo import __version__
-from zealo.api.routes import router
+from zealo.api.routes import router, warm_default_run
 from zealo.config import settings
 
 DISCLAIMER = (
@@ -15,10 +18,20 @@ DISCLAIMER = (
     "assigned to map locations for illustration."
 )
 
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # In a thread, so the server answers health checks and data requests while it runs.
+    if settings.warm_default_run:
+        threading.Thread(target=warm_default_run, name="warm-default-run", daemon=True).start()
+    yield
+
+
 app = FastAPI(
     title="Zealo Map API",
     version=__version__,
     description="Medicine inventory map and redistribution simulation for Gadag taluk.",
+    lifespan=lifespan,
 )
 
 app.add_middleware(

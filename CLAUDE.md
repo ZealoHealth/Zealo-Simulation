@@ -422,6 +422,27 @@ Direct equivalents:
 - Scenario settings live in `state/scenario.ts`; share links encode them as base64url JSON in
   `?scenario=`. Settings edits are a draft until "Run simulation".
 
+## Deployment (2026-10-19)
+
+- `render.yaml` at the repo root: `zealo-api` (free Python web service) and `zealo-map` (free static
+  site). Site: https://zealo-map.onrender.com.
+- The API must be installed **editable** (`pip install -e ./backend`): `zealo.config` locates
+  `data/` relative to the source tree, which a normal install would move into site-packages.
+- `ZEALO_ALLOWED_ORIGINS` is a **JSON list**, not comma-separated: pydantic-settings parses list
+  settings as JSON. `ZEALO_RUN_CACHE_SIZE=3` (a run peaks ~140 MB; free plan is 512 MB).
+- The free API sleeps after 15 idle minutes; waking takes up to a minute and loses the run cache.
+  `api/retry.ts` retries unreachable-server failures for ~75 s. Use it for any new query.
+- `/simulate` is ~15 MB of JSON; Render's edge compresses it to ~0.8 MB (brotli). The body is
+  serialised once per run and stored on `CachedRun.response_json`; a per-run lock stops duplicate
+  computation. `ZEALO_WARM_DEFAULT_RUN` (on in production) precomputes the default run, and a test
+  pins that the frontend's default request has the same `run_id` as `ScenarioRequest()`.
+- Render's free CPU is roughly 10x slower than a laptop: anything that costs 0.1 s locally costs
+  about a second there. Profile locally, then multiply.
+- **Story pacing:** forward navigation is locked until the camera lands (`CAMERA_FLIGHT_MS` in
+  `ui/motion.ts`, shared with `FocusOn`) and any playback reaches its last day.
+- **Map icons are cached** (`facilityIcon`, `arrowIcon`). Never build a new `L.divIcon` per render:
+  react-leaflet calls `setIcon` whenever the icon object changes, which replaces the marker element.
+
 ## Open questions
 
 - R1, R4, R7, R8 still being filled by the team; see `data/DATA_TODO.md`.
@@ -441,7 +462,7 @@ Direct equivalents:
 | 8 | Inventory map | **done — end to end on real + interim data** |
 | 9 | Facility dashboard + redistribution view | **done — plus a design-system pass** |
 | 10 | Comparison, Settings, Data Sources, About | **done — Compare hidden by default (flag)** |
-| 11 | Deployment | not started |
+| 11 | Deployment | **done — Render free tier via `render.yaml`** |
 | 12 | Polish | not started |
 
 ## Working style

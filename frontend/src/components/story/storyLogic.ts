@@ -170,6 +170,25 @@ export interface Chapter {
   stats: ChapterStat[];
 }
 
+/** Story playback: a pause after the camera lands, then one day per step. */
+export const PLAY_DELAY_MS = 1200;
+export const PLAY_STEP_MS = 650;
+
+/**
+ * How long a chapter animates before "Next" unlocks: the camera flight, plus the
+ * day-by-day playback when the chapter has a range. Zero with reduced motion, where
+ * the map jumps straight to the end state.
+ */
+export function chapterAnimationMs(
+  chapter: Pick<Chapter, "day" | "playTo">,
+  flightMs: number,
+  reducedMotion = false,
+): number {
+  if (reducedMotion) return 0;
+  const days = chapter.playTo != null ? Math.max(0, chapter.playTo - chapter.day) : 0;
+  return days > 0 ? Math.max(flightMs, PLAY_DELAY_MS + days * PLAY_STEP_MS) : flightMs;
+}
+
 /** The events the map should draw for a chapter. */
 export function chapterEvents(
   chapter: Chapter,

@@ -11,9 +11,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import math
+import threading
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 
 from zealo.api.schemas import (
     AvailabilityOnlyRow,
@@ -42,6 +44,7 @@ from zealo.api.schemas import (
     SourcesResponse,
     TransferPoint,
 )
+from zealo.config import settings
 from zealo.data_access import (
     DatasetMissing,
     load_boundary,
@@ -54,6 +57,7 @@ from zealo.data_access import (
 from zealo.pipeline.data_status import collect as collect_data_status
 from zealo.sim.events import EventType
 from zealo.sim.runner import (
+    CachedRun,
     MissingDemandInputs,
     RunCache,
     build_scenario,
@@ -97,7 +101,18 @@ SIMULATION_CAVEATS = [
 ]
 
 router = APIRouter()
-run_cache = RunCache()
+run_cache = RunCache(capacity=settings.run_cache_size)
+logger = logging.getLogger(__name__)
+
+# One lock per run id, so concurrent requests for the same run wait for the first one
+# instead of computing it again (on a small server that doubled the wait for both).
+_run_locks: dict[str, threading.Lock] = {}
+_run_locks_guard = threading.Lock()
+
+
+def _lock_for(run_id: str) -> threading.Lock:
+    with _run_locks_guard:
+        return _run_locks.setdefault(run_id, threading.Lock())
 
 
 def _dataset_error(exc: DatasetMissing) -> HTTPException:
@@ -272,47 +287,77 @@ def _run_id(request: ScenarioRequest) -> str:
 
 
 @router.post("/simulate", response_model=SimulateResponse, tags=["simulation"])
-def simulate(request: ScenarioRequest) -> SimulateResponse:
+def simulate(request: ScenarioRequest) -> Response:
     """Run both modes over one scenario and return summaries, timeline and events.
 
     Playback happens in the browser from the returned timeline; there is no
     per-day endpoint to poll.
+
+    The JSON body (about 15 MB) is built once per run and kept with it: rebuilding it on
+    every request took several seconds on a small server.
     """
     run_id = _run_id(request)
     cached = run_cache.get(run_id)
-    if cached is None:
-        try:
-            scenario = build_scenario(
-                days=request.days,
-                seed=request.seed,
-                demand_scale=request.demand_scale,
-                lead_time_days=request.lead_time_days,
-                express_lead_time_days=request.express_lead_time_days,
-                min_shelf_life_days=request.min_shelf_life_days,
-                near_expiry_share=request.near_expiry_share,
-                excluded_facility_ids=request.excluded_facility_ids,
-                network_overrides=request.network_overrides,
-                private_demand_share=request.private_demand_share,
-                rule_overrides={k: v.model_dump() for k, v in request.rules.items()},
-                approval_decisions=request.approval_decisions,
-            )
-        except MissingDemandInputs as exc:
-            # Not an internal failure: real-world inputs are genuinely absent, and
-            # the client is told exactly which and how to supply them.
-            raise HTTPException(
-                status_code=422,
-                detail={
-                    "error": "missing_demand_inputs",
-                    "message": str(exc),
-                    "missing": exc.missing,
-                    "requests": exc.requests,
-                },
-            ) from exc
-        except DatasetMissing as exc:
-            raise _dataset_error(exc) from exc
-        cached = run_both_modes(scenario, run_id)
-        run_cache.put(cached)
+    if cached is None or cached.response_json is None:
+        with _lock_for(run_id):
+            # Another request may have finished this run while we waited for the lock.
+            cached = run_cache.get(run_id)
+            if cached is None:
+                cached = _compute_run(request, run_id)
+                run_cache.put(cached)
+            if cached.response_json is None:
+                cached.response_json = (
+                    _simulate_response(request, run_id, cached).model_dump_json().encode()
+                )
+    return Response(content=cached.response_json, media_type="application/json")
 
+
+def warm_default_run() -> None:
+    """Compute the default run in the background at startup, so the first visitor after
+    a deploy or a wake-up finds it ready (or already under way) instead of starting it."""
+    try:
+        simulate(ScenarioRequest())
+        logger.info("Default run ready")
+    except Exception:  # A failed warm-up must never stop the server; requests still work.
+        logger.exception("Warming the default run failed")
+
+
+def _compute_run(request: ScenarioRequest, run_id: str) -> CachedRun:
+    try:
+        scenario = build_scenario(
+            days=request.days,
+            seed=request.seed,
+            demand_scale=request.demand_scale,
+            lead_time_days=request.lead_time_days,
+            express_lead_time_days=request.express_lead_time_days,
+            min_shelf_life_days=request.min_shelf_life_days,
+            near_expiry_share=request.near_expiry_share,
+            excluded_facility_ids=request.excluded_facility_ids,
+            network_overrides=request.network_overrides,
+            private_demand_share=request.private_demand_share,
+            rule_overrides={k: v.model_dump() for k, v in request.rules.items()},
+            approval_decisions=request.approval_decisions,
+        )
+    except MissingDemandInputs as exc:
+        # Not an internal failure: real-world inputs are genuinely absent, and
+        # the client is told exactly which and how to supply them.
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "missing_demand_inputs",
+                "message": str(exc),
+                "missing": exc.missing,
+                "requests": exc.requests,
+            },
+        ) from exc
+    except DatasetMissing as exc:
+        raise _dataset_error(exc) from exc
+    return run_both_modes(scenario, run_id)
+
+
+def _simulate_response(
+    request: ScenarioRequest, run_id: str, cached: CachedRun
+) -> SimulateResponse:
     ctx = cached.context
     context = None
     if ctx is not None:

@@ -23,6 +23,9 @@ services:
       # One run peaks around 140 MB; the free plan has 512 MB, so keep few runs cached.
       - key: ZEALO_RUN_CACHE_SIZE
         value: "3"
+      # Compute the default run at startup, so the first visitor finds it ready.
+      - key: ZEALO_WARM_DEFAULT_RUN
+        value: "true"
 
   # React frontend, served as static files.
   - type: web

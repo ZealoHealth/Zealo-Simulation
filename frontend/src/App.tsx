@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { retryDelay, retryWhileWaking } from "./api/retry";
 import { AppShell } from "./components/AppShell";
 import { SHOW_WITHOUT_ZEALO } from "./config";
 import { StoryPage } from "./pages/StoryPage";
@@ -33,7 +34,12 @@ const NetworkRedistributionPage = lazy(() =>
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { retry: 1, refetchOnWindowFocus: false },
+    // Keep retrying while a sleeping API wakes up; otherwise one retry, as before.
+    queries: {
+      retry: (count, error) => retryWhileWaking(count, error) || count < 1,
+      retryDelay,
+      refetchOnWindowFocus: false,
+    },
     mutations: { retry: 0 },
   },
 });

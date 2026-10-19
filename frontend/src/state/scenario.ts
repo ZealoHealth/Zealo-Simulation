@@ -58,7 +58,7 @@ export interface ShareableState {
   approvalDecisions: Record<string, "approve" | "reject">;
 }
 
-function sameRules(a: RuleSettings, b: RuleSettings): boolean {
+export function sameRules(a: RuleSettings, b: RuleSettings): boolean {
   return (Object.keys(a) as Array<keyof RuleSettings>).every((k) => a[k] === b[k]);
 }
 

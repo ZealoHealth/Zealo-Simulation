@@ -4,6 +4,44 @@ A running log of what changed, milestone by milestone. Newest first.
 
 ---
 
+## Faster loading, a paced story, smoother map — 2026-10-19
+
+- **Story pacing:** "Next" (and the arrow / clicker keys, and the chapter dots ahead) stay
+  disabled until the chapter's camera flight has landed and its playback has reached its last
+  day. A bar fills along the button while it waits. Timing is one pure function,
+  `chapterAnimationMs` in `storyLogic.ts`. Back and Exit are never held.
+- **Faster data:**
+  - `/simulate` builds its ~15 MB JSON once per run and serves the stored bytes after that.
+    A repeat request went from 0.7 s to 0.004 s locally (about 7 s on Render's free CPU). The
+    response is byte-for-byte the same JSON as before (checked against the live API).
+  - Concurrent requests for the same run wait for one computation instead of each running it.
+  - `ZEALO_WARM_DEFAULT_RUN=true` (on in `render.yaml`) computes the default run at startup in
+    a background thread.
+  - The frontend starts the default run without waiting for the facility list first.
+  - Fixed: `ZEALO_RUN_CACHE_SIZE` was never read (the cache was always 8 runs).
+- **Smoother map:** pin and arrow icons are cached, so Leaflet no longer rebuilds every marker on
+  every day of playback; routes, arrows and pin changes fade in; tiles load at the end of a camera
+  flight instead of at every zoom step (`updateWhenZooming={false}`). All motion still respects
+  reduced-motion.
+
+---
+
+## Deployment on Render (free tier) — 2026-10-19
+
+**Status:** live at https://zealo-map.onrender.com (API: https://zealo-api.onrender.com).
+
+- `render.yaml` Blueprint: the API as a free Python web service (editable install, so `zealo.config`
+  still finds `data/`; `ZEALO_RUN_CACHE_SIZE=3` to fit 512 MB), the site as a free static site with
+  an SPA rewrite.
+- Checked live in headless Chrome: home page data, `/map` loaded directly, and the full story to
+  day 180, with no console or network errors.
+- **Cold starts:** the free API sleeps after 15 idle minutes and takes up to a minute to wake. The
+  frontend now retries unreachable-server failures (network error, 502/503/504) for about 75 s
+  (`api/retry.ts`) instead of once; deliberate API answers (422, 404) are still not retried.
+- Fixed the build: the hidden map checkboxes left two unused variables, which failed `tsc -b`.
+
+---
+
 ## Dispensary redesign, milestones 4–7: Network, Home, Data and methods, polish — 2026-10-05
 
 **Status:** complete. Nothing committed. Built in one pass at the user's request ("complete all at

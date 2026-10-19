@@ -634,3 +634,54 @@ def test_poc_demand_is_the_facilitys_share_of_the_whole_taluk(simulation_inputs)
                           and u["medicine_list"] != "none")
     poc_private = [f for f in built.scenario.facilities if f.ownership != "government"]
     assert private_holders > len(poc_private) * 5, "the universe must be the full taluk"
+
+
+# --- /simulate speed: one computation, one serialisation per run ---------------
+
+def test_a_repeat_request_reuses_the_stored_body(simulation_inputs):
+    first = client.post("/simulate", json={"days": 10, "seed": 3})
+    second = client.post("/simulate", json={"days": 10, "seed": 3})
+    assert first.status_code == second.status_code == 200
+    assert first.content == second.content
+    cached = routes.run_cache.get(first.json()["run_id"])
+    assert cached.response_json == first.content
+
+
+def test_concurrent_requests_for_one_run_compute_it_once(simulation_inputs, monkeypatch):
+    import threading
+
+    calls = []
+    real = routes.run_both_modes
+
+    def counting(scenario, run_id):
+        calls.append(run_id)
+        return real(scenario, run_id)
+
+    monkeypatch.setattr(routes, "run_both_modes", counting)
+    results = []
+    threads = [
+        threading.Thread(
+            target=lambda: results.append(client.post("/simulate", json={"days": 10, "seed": 4}))
+        )
+        for _ in range(3)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert [r.status_code for r in results] == [200, 200, 200]
+    assert len(calls) == 1
+
+
+def test_the_warm_up_computes_the_run_the_frontend_asks_for_first(simulation_inputs):
+    # The frontend's default request (DEFAULT_SCENARIO in state/scenario.ts) must name the
+    # same run as an empty request, or the warm-up would compute a run nobody asks for.
+    frontend_default = routes.ScenarioRequest(
+        days=180, seed=42, demand_scale=1, lead_time_days=21, express_lead_time_days=5,
+        min_shelf_life_days=180, near_expiry_share=0.15, network_overrides={},
+        approval_decisions={},
+    )
+    run_id = routes._run_id(frontend_default)
+    assert run_id == routes._run_id(routes.ScenarioRequest())
+    routes.warm_default_run()
+    assert routes.run_cache.get(run_id).response_json is not None

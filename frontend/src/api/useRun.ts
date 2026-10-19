@@ -10,8 +10,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { simulate } from "./client";
 import { useFacilities } from "./hooks";
+import { retryDelay, retryWhileWaking } from "./retry";
 import { ApiError } from "./types";
-import { buildScenarioRequest } from "../state/scenario";
+import { buildScenarioRequest, DEFAULT_RULES, sameRules } from "../state/scenario";
 import { useViewStore } from "../state/store";
 
 export function useRun() {
@@ -35,9 +36,13 @@ export function useRun() {
     queryKey: ["run", request],
     queryFn: () => simulate(request),
     staleTime: Infinity,
-    enabled: facilityIds.length > 0,
-    // A refused run means inputs are missing, not that the request was flaky.
-    retry: (count, error) => !(error instanceof ApiError) && count < 1,
+    // Facility ids are only part of the request when rules differ from the defaults, so
+    // the default run starts at once instead of waiting for the facility list.
+    enabled: facilityIds.length > 0 || sameRules(scenario.rules, DEFAULT_RULES),
+    // A refused run means inputs are missing, not that the request was flaky. Only retry while
+    // the API is unreachable (asleep on the free plan and waking up).
+    retry: retryWhileWaking,
+    retryDelay,
   });
 
   useEffect(() => {

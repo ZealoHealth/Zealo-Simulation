@@ -338,6 +338,8 @@ class CachedRun:
     scenario: Scenario
     results: dict[str, RunResult]
     context: ScenarioContext | None = None
+    # The serialised /simulate body, built on first request and reused after that.
+    response_json: bytes | None = None
 
 
 class RunCache:

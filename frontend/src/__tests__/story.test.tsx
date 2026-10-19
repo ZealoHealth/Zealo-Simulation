@@ -1,15 +1,19 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DayStatus, FacilityStatus, SimulateResponse, SimulationEvent } from "../api/types";
 import { StoryTour } from "../components/story/StoryTour";
 import {
   buildChapters,
+  chapterAnimationMs,
   chapterEvents,
+  PLAY_DELAY_MS,
+  PLAY_STEP_MS,
   reduction,
   storyFacts,
   type StoryNames,
 } from "../components/story/storyLogic";
 import { useViewStore } from "../state/store";
+import { CAMERA_FLIGHT_MS } from "../ui/motion";
 
 // Synthetic on purpose: three facilities over six days, small enough to check by hand.
 function day(index: number, status: Record<string, FacilityStatus>, rate: number): DayStatus {
@@ -256,10 +260,18 @@ describe("story tour", () => {
     });
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("opens on the first chapter and steps with arrow keys and clicker keys", () => {
+    vi.useFakeTimers();
     render(<StoryTour chapters={chapters} run={run} />);
     expect(screen.getByText("2 of 3 facilities start in the red")).toBeInTheDocument();
 
+    act(() => {
+      vi.advanceTimersByTime(CAMERA_FLIGHT_MS);
+    });
     act(() => {
       fireEvent.keyDown(window, { key: "ArrowRight" });
     });
@@ -269,6 +281,49 @@ describe("story tour", () => {
       fireEvent.keyDown(window, { key: "PageUp" });
     });
     expect(useViewStore.getState().storyChapter).toBe(0);
+  });
+
+  it("holds Next until the camera has landed", () => {
+    vi.useFakeTimers();
+    render(<StoryTour chapters={chapters} run={run} />);
+    const next = screen.getByRole("button", { name: "Next" });
+    expect(next).toBeDisabled();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: "ArrowRight" });
+    });
+    expect(useViewStore.getState().storyChapter).toBe(0);
+
+    act(() => {
+      vi.advanceTimersByTime(CAMERA_FLIGHT_MS);
+    });
+    expect(next).toBeEnabled();
+  });
+
+  it("holds Next until a playback chapter reaches its last day", () => {
+    vi.useFakeTimers();
+    const playing = chapters.findIndex((c) => c.playTo != null);
+    const chapter = chapters[playing];
+    act(() => useViewStore.getState().setStoryChapter(playing));
+    render(<StoryTour chapters={chapters} run={run} />);
+
+    act(() => {
+      vi.advanceTimersByTime(CAMERA_FLIGHT_MS);
+    });
+    expect(useViewStore.getState().day).toBeLessThan(chapter.playTo!);
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+
+    act(() => {
+      vi.advanceTimersByTime(chapterAnimationMs(chapter, CAMERA_FLIGHT_MS));
+    });
+    expect(useViewStore.getState().day).toBe(chapter.playTo);
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+  });
+
+  it("times a chapter as its camera flight plus its playback", () => {
+    expect(chapterAnimationMs({ day: 0 }, 1200)).toBe(1200);
+    expect(chapterAnimationMs({ day: 3, playTo: 5 }, 1200)).toBe(PLAY_DELAY_MS + 2 * PLAY_STEP_MS);
+    expect(chapterAnimationMs({ day: 3, playTo: 5 }, 1200, true)).toBe(0);
   });
 
   it("moves the map to each chapter's day", () => {

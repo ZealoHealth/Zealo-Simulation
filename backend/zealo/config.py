@@ -17,10 +17,12 @@ MANUAL_DIR = DATA_DIR / "manual"
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="ZEALO_", env_file=".env", extra="ignore")
 
-    # CORS origins for the Vercel frontend; comma-separated in the env var.
+    # CORS origins for the frontend. In the env var, a JSON list: '["https://..."]'.
     allowed_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     # How many finished simulation runs to keep in memory before evicting the oldest.
     run_cache_size: int = 8
+    # Compute the default run in the background at startup (on in production, off in tests).
+    warm_default_run: bool = False
 
 
 settings = Settings()

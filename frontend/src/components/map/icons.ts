@@ -105,12 +105,24 @@ export function pinHtml(type: string, status: PinStatus, options: PinOptions = {
   );
 }
 
+// One icon object per look. Leaflet replaces a marker's element whenever it is handed a
+// new icon object, so building fresh icons on every render rebuilt every pin on every
+// day of playback; reusing them leaves a pin alone until its look actually changes.
+const iconCache = new Map<string, L.DivIcon>();
+
 export function facilityIcon(type: string, status: PinStatus, options: PinOptions = {}): L.DivIcon {
+  const key = `${type}|${status}|${options.selected ? 1 : 0}${options.dimmed ? 1 : 0}${
+    options.approximate ? 1 : 0
+  }`;
+  const cached = iconCache.get(key);
+  if (cached) return cached;
   const box = options.selected ? SELECTED_BOX : PIN_BOX;
-  return L.divIcon({
+  const icon = L.divIcon({
     html: pinHtml(type, status, options),
     className: "zealo-pin",
     iconSize: [box, box],
     iconAnchor: [box / 2, box / 2],
   });
+  iconCache.set(key, icon);
+  return icon;
 }

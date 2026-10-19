@@ -4,18 +4,23 @@
  * Each chapter moves the map to its day (and plays through a range of days when it
  * has one), spotlights the facilities it is about, and narrates with numbers from
  * the run. Arrow keys and presentation clickers (Page Up / Page Down) step through
- * it; Escape leaves it.
+ * it; Escape leaves it. Moving forward waits until the chapter's camera flight and
+ * playback have finished, so a fast click never skips the moment being told.
  */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { SimulateResponse } from "../../api/types";
 import { useViewStore } from "../../state/store";
 import { Button } from "../../ui";
-import { prefersReducedMotion } from "../../ui/motion";
+import { CAMERA_FLIGHT_MS, prefersReducedMotion } from "../../ui/motion";
 import { ProvenanceBadge } from "../Provenance";
-import { pct, redOn, type Chapter } from "./storyLogic";
-
-const PLAY_DELAY_MS = 1200;
-const PLAY_STEP_MS = 650;
+import {
+  chapterAnimationMs,
+  pct,
+  PLAY_DELAY_MS,
+  PLAY_STEP_MS,
+  redOn,
+  type Chapter,
+} from "./storyLogic";
 
 const TONE: Record<string, string> = {
   zealo: "text-scrub",
@@ -58,13 +63,28 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
     };
   }, [current, chapterDay, playTo, setDay]);
 
+  // Forward is locked until the camera has landed and the playback reached its last day.
+  const reducedMotion = prefersReducedMotion();
+  const [landedChapter, setLandedChapter] = useState<number | null>(null);
+  useEffect(() => {
+    if (current == null) return;
+    const timer = window.setTimeout(
+      () => setLandedChapter(current),
+      reducedMotion ? 0 : CAMERA_FLIGHT_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [current, reducedMotion]);
+  const playEnd = playTo == null ? null : Math.min(playTo, run.days - 1);
+  const stillPlaying = playEnd != null && chapterDay != null && playEnd > chapterDay && day < playEnd;
+  const locked = landedChapter !== current || stillPlaying;
+
   useEffect(() => {
     if (current == null) return;
     const onKey = (event: KeyboardEvent) => {
       if ((event.target as HTMLElement | null)?.closest?.("input, select, textarea")) return;
       if (event.key === "ArrowRight" || event.key === "PageDown") {
         event.preventDefault();
-        setChapter(Math.min(current + 1, last));
+        if (!locked) setChapter(Math.min(current + 1, last));
       } else if (event.key === "ArrowLeft" || event.key === "PageUp") {
         event.preventDefault();
         setChapter(Math.max(current - 1, 0));
@@ -74,7 +94,7 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [current, last, setChapter]);
+  }, [current, last, locked, setChapter]);
 
   if (!chapter || current == null) return null;
 
@@ -130,7 +150,8 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
                   aria-selected={i === current}
                   aria-label={`Chapter ${i + 1}: ${c.kicker}`}
                   onClick={() => setChapter(i)}
-                  className="flex h-11 w-6 items-center justify-center"
+                  disabled={locked && i > current}
+                  className="flex h-11 w-6 items-center justify-center disabled:cursor-not-allowed"
                 >
                   <span
                     className={`block h-2 rounded-full transition-all ${
@@ -148,8 +169,25 @@ export function StoryTour({ chapters, run }: { chapters: Chapter[]; run: Simulat
                 Back
               </Button>
               {current < last ? (
-                <Button variant="primary" onClick={() => setChapter(current + 1)}>
+                <Button
+                  variant="primary"
+                  onClick={() => setChapter(current + 1)}
+                  disabled={locked}
+                  aria-busy={locked}
+                  className="relative overflow-hidden"
+                >
                   Next
+                  {locked && (
+                    // Fills while the chapter animates, so a disabled Next reads as "wait".
+                    <span
+                      key={chapter.id}
+                      aria-hidden="true"
+                      className="next-progress"
+                      style={{
+                        animationDuration: `${chapterAnimationMs(chapter, CAMERA_FLIGHT_MS)}ms`,
+                      }}
+                    />
+                  )}
                 </Button>
               ) : (
                 <Button variant="primary" onClick={() => setChapter(null)}>
