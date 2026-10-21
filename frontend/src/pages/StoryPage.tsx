@@ -549,8 +549,7 @@ export function StoryPage() {
               <span className="text-[22px] font-bold text-ink">Zealo</span>
             </p>
             <p className="mt-3 max-w-[34em] text-[15px] text-ink-2">
-              Built by Shriyans Nayak and Sanjana Srinivas for the Rajiv Gandhi Entrepreneurship
-              Program 2026&ndash;27.
+              Built by Shriyans Nayak and Sanjana Srinivas.
             </p>
           </div>
           <ul className="space-y-1.5 text-sm text-muted">

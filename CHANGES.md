@@ -80,8 +80,7 @@ once").
     item numbers.
 - **"What happens when stock runs low":** the three numbered steps.
 - **Then:** the guided story's chapter list, the green results band (99.0% of medicine-days in
-  stock, 258 transfers, 13,002 units moved, 13 lost to expiry, all from the run), and a footer with
-  credits and the Rajiv Gandhi Entrepreneurship Program 2026–27.
+  stock, 258 transfers, 13,002 units moved, 13 lost to expiry, all from the run).
 
 ### Data and methods, Settings, About (milestone 6)
 - **Data and methods:** the lead, then "Three kinds of number" and the survey panel. The panel has
